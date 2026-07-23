@@ -22,6 +22,7 @@ interface ProductVideoStreamingPlayerProps {
   onVideoEnd?: () => void;
   isCinematic?: boolean;
   onToggleCinematic?: () => void;
+  videoUrl?: string;
 }
 
 // High quality tech/AI video loops
@@ -52,7 +53,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   compactMode = false,
   onVideoEnd,
   isCinematic = false,
-  onToggleCinematic
+  onToggleCinematic,
+  videoUrl
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(true);
@@ -129,7 +131,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
   };
 
-  const videoSource = STREAMING_VIDEOS[productId] || STREAMING_VIDEOS['ai-reporting-platform'];
+  const videoSource = videoUrl || STREAMING_VIDEOS[productId] || STREAMING_VIDEOS['ai-reporting-platform'];
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video">

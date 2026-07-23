@@ -112,6 +112,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             productId={currentProduct.id}
             productTitle={currentProduct.title}
             imageUrl={currentProduct.imageUrl}
+            videoUrl={currentProduct.detailContent?.videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}
