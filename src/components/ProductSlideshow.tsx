@@ -43,11 +43,16 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   // Restart animation key when slide changes
   const [animationKey, setAnimationKey] = useState(0);
 
-  // Removed timer: slideshow advances when video finishes
+  // 30 second timer per slide
   useEffect(() => {
-    // We keep a dependency on animationKey just to satisfy any previous hooks if needed,
-    // but the actual auto-play is now driven by the onVideoEnd callback on the video player.
-  }, [isPlaying, featuredProducts.length]);
+    if (!isPlaying) return;
+    
+    const timer = setTimeout(() => {
+      handleNext();
+    }, 30000); // 30 seconds
+
+    return () => clearTimeout(timer);
+  }, [isPlaying, currentIndex, featuredProducts.length, animationKey]);
 
   if (featuredProducts.length === 0) return null;
 
@@ -116,11 +121,6 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}
-            onVideoEnd={() => {
-              if (isPlaying) {
-                handleNext();
-              }
-            }}
           />
         </div>
       </div>

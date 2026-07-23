@@ -143,9 +143,9 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         src={videoSource}
         poster={imageUrl}
         autoPlay
+        loop
         muted={isMuted}
         playsInline
-        onEnded={onVideoEnd}
         onTimeUpdate={() => {
           if (videoRef.current && videoRef.current.duration) {
             setDuration(Math.min(30, videoRef.current.duration));
