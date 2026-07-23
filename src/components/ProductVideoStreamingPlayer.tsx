@@ -26,23 +26,25 @@ interface ProductVideoStreamingPlayerProps {
 }
 
 // High quality tech/AI video loops
+const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
+
 const STREAMING_VIDEOS: Record<string, string> = {
   'ai-reporting-platform': 'https://assets.mixkit.co/videos/preview/mixkit-technological-hud-interface-with-data-and-graphs-42846-large.mp4',
-  'qlik-to-powerbi-migration': '/media/videos/qlik2powerbi.mp4',
+  'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
   'gbti-smart-home-builder': 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4',
-  'buildsmart-estimator': '/media/videos/buildsmart.mp4',
-  'faceauth': '/media/videos/faceauth.mp4',
+  'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart.mp4`,
+  'faceauth': `${SUPABASE_MEDIA}/faceauth.mp4`,
   'packaging-optimization-platform': 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4',
-  'ai-l1-support-agent': '/media/videos/l1_agent.mp4',
+  'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent.mp4`,
   'postgresql-to-sqlserver-migration': 'https://assets.mixkit.co/videos/preview/mixkit-technological-hud-interface-with-data-and-graphs-42846-large.mp4',
-  'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard.mp4',
-  'application-analysis-report': '/media/videos/powerbi/application-analysis-report.mp4',
-  'e-grow-analysis-dashboard': '/media/videos/powerbi/e-grow-analysis-dashboard.mp4',
-  'google-analytics-dashboard': '/media/videos/powerbi/google-analytics-dashboard.mp4',
-  'hva-score-analysis-dashboard': '/media/videos/powerbi/hva-score-analysis-dashboard.mp4',
-  'final-quality-inspection-dashboard': '/media/videos/powerbi/final-quality-inspection-dashboard.mp4',
-  'food-inspection-dashboard': '/media/videos/powerbi/food-inspection-dashboard.mp4',
-  'energy-consumption-dashboard': '/media/videos/powerbi/energy-consumption-dashboard.mp4',
+  'all-phase-dashboard': `${SUPABASE_MEDIA}/powerbi/all-phase-dashboard.mp4`,
+  'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
+  'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard.mp4`,
+  'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`,
+  'hva-score-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard.mp4`,
+  'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`,
+  'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard.mp4`,
+  'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard.mp4`,
   'hr-analytics-dashboard': 'https://assets.mixkit.co/videos/preview/mixkit-technological-hud-interface-with-data-and-graphs-42846-large.mp4',
 };
 
