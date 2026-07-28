@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
+import { getValidImageUrl } from '../utils/imageFallback';
 import { 
   BarChart3, 
   ArrowLeftRight, 
@@ -139,7 +140,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             key={currentProduct.id}
             productId={currentProduct.id}
             productTitle={currentProduct.title}
-            imageUrl={currentProduct.imageUrl}
+            imageUrl={getValidImageUrl(currentProduct.imageUrl, currentProduct.category, currentProduct.title, currentProduct.id)}
             videoUrl={currentProduct.detailContent?.videoUrl || (currentProduct.demoSnippet as any)?.videoUrl}
             compactMode={false}
             isCinematic={isCinematic}

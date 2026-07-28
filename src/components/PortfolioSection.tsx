@@ -3,6 +3,7 @@ import { Product } from '../types';
 import { useProjects } from '../hooks/useProjects';
 import { ProductSlideshow } from './ProductSlideshow';
 import { ScrollReveal } from './animations/ScrollReveal';
+import { getValidImageUrl, handleImageError } from '../utils/imageFallback';
 import { 
   BarChart3, 
   ArrowLeftRight, 
@@ -199,7 +200,8 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
                   }`}>
                     <div className="relative w-full h-full">
                       <img
-                        src={product.imageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'}
+                        src={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
+                        onError={handleImageError(product.category, product.title, product.id)}
                         alt={product.title}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"

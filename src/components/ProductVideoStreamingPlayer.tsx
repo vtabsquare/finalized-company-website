@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { getValidImageUrl } from '../utils/imageFallback';
 import { 
   Play, 
   Pause, 
@@ -199,7 +200,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       <video
         ref={videoRef}
         src={videoSource}
-        poster={imageUrl}
+        poster={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
         autoPlay
         loop
         muted={isMuted}

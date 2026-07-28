@@ -2,9 +2,15 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Product } from '../types';
 import { PRODUCTS_DATA } from '../data/contentData';
+import { getValidImageUrl } from '../utils/imageFallback';
 
 export function useProjects() {
-  const [projects, setProjects] = useState<Product[]>(PRODUCTS_DATA);
+  const [projects, setProjects] = useState<Product[]>(() =>
+    PRODUCTS_DATA.map(p => ({
+      ...p,
+      imageUrl: getValidImageUrl(p.imageUrl, p.category, p.title, p.id)
+    }))
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -21,7 +27,7 @@ export function useProjects() {
         }
 
         if (data && data.length > 0) {
-          const formattedData: Product[] = data.map(item => {
+          const formattedData: Product[] = data.map((item: any) => {
             let demoSnippet: any = item.demo_snippet || item.demoSnippet;
             if (typeof demoSnippet === 'string') {
               try { demoSnippet = JSON.parse(demoSnippet); } catch(e) {}
@@ -51,7 +57,7 @@ export function useProjects() {
               techStack: typeof item.tech_stack === 'string' ? JSON.parse(item.tech_stack) : item.techStack || item.tech_stack || [],
               iconName: item.icon_name || item.iconName || 'Package',
               featured: item.featured ?? true,
-              imageUrl: item.image_url || item.imageUrl,
+              imageUrl: getValidImageUrl(item.image_url || item.imageUrl, item.category, item.title, item.id),
               demoSnippet,
               detailContent
             };

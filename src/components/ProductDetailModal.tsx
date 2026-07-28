@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
+import { getValidImageUrl, handleImageError } from '../utils/imageFallback';
 import { X, Sparkles, CheckCircle2, Cpu, Layers, ArrowRight, ShieldCheck, Play, Terminal, Radio, Eye } from 'lucide-react';
 
 interface ProductDetailModalProps {
@@ -85,14 +86,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <ProductVideoStreamingPlayer
                 productId={product.id}
                 productTitle={product.title}
-                imageUrl={product.imageUrl}
+                imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
                 videoUrl={product.detailContent?.videoUrl || (product.demoSnippet as any)?.videoUrl}
                 compactMode={false}
               />
             ) : (
               <div className="relative w-full h-full">
                 <img
-                  src={product.imageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'}
+                  src={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
+                  onError={handleImageError(product.category, product.title, product.id)}
                   alt={product.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center"

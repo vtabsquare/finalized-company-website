@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Product } from '../types';
+import { getValidImageUrl } from '../utils/imageFallback';
 import { 
   ArrowLeft, 
   Target, 
@@ -105,7 +106,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   <ProductVideoStreamingPlayer
                     productId={product.id}
                     productTitle={product.title}
-                    imageUrl={product.imageUrl}
+                    imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
                     videoUrl={detail?.videoUrl || (product.demoSnippet as any)?.videoUrl}
                     compactMode={false}
                   />
