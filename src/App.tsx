@@ -156,13 +156,12 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      {!selectedProduct && (
-        <Footer
-          setActiveTab={setActiveTab}
-          onOpenDemoModal={handleOpenDemoModal}
-          isLightMode={isLightMode}
-        />
-      )}
+      <Footer
+        setActiveTab={setActiveTab}
+        onOpenDemoModal={handleOpenDemoModal}
+        onSelectProduct={handleSelectProduct}
+        isLightMode={isLightMode}
+      />
 
       {/* Integrated Floating AI Assistant Bot */}
       {!selectedProduct && (

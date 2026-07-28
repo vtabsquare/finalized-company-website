@@ -1,18 +1,33 @@
 import React, { useState } from 'react';
 import { Bot, Mail, Check, ArrowRight, Shield, Globe, Loader2 } from 'lucide-react';
-import { NavTab } from '../types';
+import { NavTab, Product } from '../types';
+import { PRODUCTS_DATA } from '../data/contentData';
 import { sendSubscribeEmail } from '../lib/brevoService';
 
 interface FooterProps {
   setActiveTab: (tab: NavTab) => void;
   onOpenDemoModal: () => void;
+  onSelectProduct?: (product: Product) => void;
   isLightMode?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, isLightMode = false }) => {
+export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, onSelectProduct, isLightMode = false }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const handlePortfolioClick = (id: string) => {
+    if (onSelectProduct) {
+      const prod = PRODUCTS_DATA.find(p => p.id === id);
+      if (prod) {
+        onSelectProduct(prod);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+    setActiveTab('products');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,27 +82,27 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, i
             <h4 className={`text-xs font-bold uppercase tracking-wider ${isLightMode ? 'text-slate-900' : 'text-white'}`}>AI Portfolio</h4>
             <ul className="space-y-2">
               <li>
-                <button onClick={() => setActiveTab('products')} className="hover:text-blue-400 transition-colors cursor-pointer">
+                <button onClick={() => handlePortfolioClick('ai-reporting-platform')} className="hover:text-blue-400 transition-colors cursor-pointer text-left">
                   AI Reporting Platform
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('products')} className="hover:text-blue-400 transition-colors cursor-pointer">
+                <button onClick={() => handlePortfolioClick('qlik-to-powerbi-migration')} className="hover:text-blue-400 transition-colors cursor-pointer text-left">
                   Qlik to Power BI Migration
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('products')} className="hover:text-blue-400 transition-colors cursor-pointer">
+                <button onClick={() => handlePortfolioClick('gbti-smart-home-builder')} className="hover:text-blue-400 transition-colors cursor-pointer text-left">
                   GBTI Smart Home Builder
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('products')} className="hover:text-blue-400 transition-colors cursor-pointer">
+                <button onClick={() => handlePortfolioClick('buildsmart-estimator')} className="hover:text-blue-400 transition-colors cursor-pointer text-left">
                   BuildSmart Estimator
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('products')} className="hover:text-blue-400 transition-colors cursor-pointer">
+                <button onClick={() => handlePortfolioClick('faceauth')} className="hover:text-blue-400 transition-colors cursor-pointer text-left">
                   FaceAuth Biometrics
                 </button>
               </li>
