@@ -119,7 +119,7 @@ export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ 
         </p>
 
         <div style="margin-top: 32px; text-align: center;">
-          <a href="https://vtabsquare.com" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px;">Explore Our AI Portfolio</a>
+          <a href="https://vtab-square-company-website.onrender.com" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px;">Explore Our AI Portfolio</a>
         </div>
       </div>
 
