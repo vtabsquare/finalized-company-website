@@ -101,6 +101,7 @@ export const PRODUCTS_DATA: Product[] = [
     ],
     techStack: ['Python PyMuPDF', 'PyTorch', 'FastAPI', 'Pandas', 'React'],
     iconName: 'Calculator',
+    featured: true,
     imageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
     demoSnippet: {
       type: 'chart',
@@ -128,6 +129,7 @@ export const PRODUCTS_DATA: Product[] = [
     ],
     techStack: ['PyTorch', 'ONNX Runtime', 'WebRTC', 'React', 'Docker'],
     iconName: 'ScanFace',
+    featured: true,
     imageUrl: '/src/assets/images/faceauth_biometric_1784778584512.jpg',
     demoSnippet: {
       type: 'biometric',
