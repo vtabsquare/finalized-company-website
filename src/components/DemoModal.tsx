@@ -153,9 +153,24 @@ export const DemoModal: React.FC<DemoModalProps> = ({
                   </label>
                   <input
                     type="date"
+                    min={new Date().toISOString().split('T')[0]}
                     value={form.preferredDate}
+                    onClick={(e) => {
+                      try {
+                        if ('showPicker' in e.currentTarget) {
+                          e.currentTarget.showPicker();
+                        }
+                      } catch {}
+                    }}
+                    onFocus={(e) => {
+                      try {
+                        if ('showPicker' in e.currentTarget) {
+                          e.currentTarget.showPicker();
+                        }
+                      } catch {}
+                    }}
                     onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
-                    className="w-full bg-transparent border border-slate-200 dark:border-slate-700/80 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600/30 dark:focus:ring-teal-500/30 focus:border-teal-600 dark:focus:border-teal-500 transition-all shadow-sm"
+                    className="w-full bg-transparent border border-slate-200 dark:border-slate-700/80 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600/30 dark:focus:ring-teal-500/30 focus:border-teal-600 dark:focus:border-teal-500 transition-all shadow-sm cursor-pointer dark:[color-scheme:dark] [color-scheme:light]"
                   />
                 </div>
               </div>

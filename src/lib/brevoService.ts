@@ -72,20 +72,21 @@ async function sendBrevoEmail({ to, subject, htmlContent, replyTo }: SendEmailPa
 export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ success: boolean }> {
   const config = getBrevoConfig();
   
-  // Save to Supabase (non-blocking / error resilient)
-  try {
-    await supabase.from('demo_requests').insert([{
-      full_name: formData.fullName,
-      work_email: formData.workEmail,
-      company_name: formData.companyName,
-      team_size: formData.teamSize,
-      interest_area: formData.interestArea,
-      preferred_date: formData.preferredDate || 'Flexible',
-      message: formData.message || '',
-      created_at: new Date().toISOString()
-    }]);
-  } catch (e) {
-    console.warn('Supabase logging skipped or failed:', e);
+  // Save to Supabase
+  const { error: dbError } = await supabase.from('demo_requests').insert([{
+    full_name: formData.fullName,
+    work_email: formData.workEmail,
+    company_name: formData.companyName,
+    team_size: formData.teamSize,
+    interest_area: formData.interestArea,
+    preferred_date: formData.preferredDate || 'Flexible',
+    message: formData.message || '',
+    created_at: new Date().toISOString()
+  }]);
+  if (dbError) {
+    console.error('[LEADS] Failed to save demo request to Supabase:', dbError.code, dbError.message);
+  } else {
+    console.log('[LEADS] Demo request saved to Supabase successfully');
   }
 
   // Client Confirmation Email HTML
@@ -334,3 +335,92 @@ export async function sendSubscribeEmail(email: string): Promise<{ success: bool
 
   return { success: clientSent };
 }
+
+/**
+ * 4. Request Early Beta Access Functionality (Future Innovations)
+ */
+export async function sendEarlyAccessEmail(email: string, innovationTitle: string): Promise<{ success: boolean }> {
+  const config = getBrevoConfig();
+
+  // Save to Supabase demo_requests table (so it shows up in Admin Leads)
+  const { error: dbError } = await supabase.from('demo_requests').insert([{
+    full_name: 'Early Access Request',
+    work_email: email,
+    company_name: '—',
+    team_size: '—',
+    interest_area: `[Early Access] ${innovationTitle}`,
+    preferred_date: 'Flexible',
+    message: `Requested early beta access for future innovation: ${innovationTitle}`,
+    created_at: new Date().toISOString()
+  }]);
+  if (dbError) {
+    console.error('[LEADS] Failed to save early access request to Supabase:', dbError.code, dbError.message);
+  } else {
+    console.log('[LEADS] Early access request saved to Supabase successfully');
+  }
+
+  // Client Confirmation Email HTML
+  const clientHtml = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #050814; color: #f1f5f9; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
+      <div style="background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%); padding: 32px 24px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">VTAB SQUARE AI</h1>
+        <p style="color: #e9d5ff; margin: 8px 0 0 0; font-size: 14px;">Innovation Lab & Future Systems</p>
+      </div>
+      
+      <div style="padding: 32px 24px;">
+        <h2 style="color: #ffffff; font-size: 20px; margin-top: 0;">Your Early Access Request is in Progress ⚡</h2>
+        <p style="color: #94a3b8; line-height: 1.6; font-size: 15px;">
+          Thank you for requesting early beta access to <strong style="color: #a855f7;">${innovationTitle}</strong>.
+        </p>
+        <p style="color: #94a3b8; line-height: 1.6; font-size: 15px;">
+          Our engineering team has received your request and logged your priority status in our beta queue. We are currently setting up the secure benchmarking environment for this system.
+        </p>
+
+        <div style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; margin: 24px 0;">
+          <h3 style="color: #f8fafc; font-size: 14px; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em;">Request Summary</h3>
+          <p style="color: #94a3b8; font-size: 14px; margin: 6px 0;"><strong>System:</strong> ${innovationTitle}</p>
+          <p style="color: #94a3b8; font-size: 14px; margin: 6px 0;"><strong>Status:</strong> <span style="color: #a855f7; font-weight: 600;">In Queue / Preparing Environment</span></p>
+          <p style="color: #94a3b8; font-size: 14px; margin: 6px 0;"><strong>Email:</strong> ${email}</p>
+        </div>
+
+        <p style="color: #94a3b8; line-height: 1.6; font-size: 15px;">
+          As soon as the next wave of beta invitations is released, you will receive your exclusive credentials and sandbox access directly to this email address.
+        </p>
+
+        <p style="color: #94a3b8; line-height: 1.6; font-size: 15px; margin-top: 24px;">
+          Best regards,<br/>
+          <strong style="color: #f1f5f9;">VTab Square AI Engineering Team</strong>
+        </p>
+      </div>
+      
+      <div style="background-color: #020617; padding: 20px 24px; text-align: center; border-top: 1px solid #1e293b;">
+        <p style="color: #64748b; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} VTab Square. Enterprise AI Innovation Lab.</p>
+      </div>
+    </div>
+  `;
+
+  // Admin Notification
+  const adminHtml = `
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+      <h3 style="color: #7c3aed;">⚡ New Early Beta Access Request!</h3>
+      <p><strong>System:</strong> ${innovationTitle}</p>
+      <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+    </div>
+  `;
+
+  const clientSent = await sendBrevoEmail({
+    to: [{ email }],
+    subject: `⚡ Your Early Access Request is in Progress: ${innovationTitle}`,
+    htmlContent: clientHtml,
+  });
+
+  // Also notify admins silently
+  sendBrevoEmail({
+    to: config.adminEmails,
+    subject: `⚡ New Early Beta Request: ${innovationTitle} (${email})`,
+    htmlContent: adminHtml,
+  });
+
+  return { success: clientSent };
+}
+

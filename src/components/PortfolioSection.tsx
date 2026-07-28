@@ -183,7 +183,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product, idx) => {
             return (
-              <ScrollReveal key={product.id} animation="fade-up" delay={0.1 * (idx % 6)}>
+              <ScrollReveal key={product.id} animation="fade-up" delay={0.05 * (idx % 3)}>
                 <div
                   className={`backdrop-blur-xl h-full rounded-2xl shadow-2xl flex flex-col justify-between group relative overflow-hidden transition-all duration-500 border hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(59,130,246,0.2)] ${
                     isLightMode

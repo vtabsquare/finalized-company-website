@@ -119,11 +119,6 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('lab')} className="hover:text-blue-400 transition-colors cursor-pointer">
-                  Innovation Lab (Labs)
-                </button>
-              </li>
-              <li>
                 <button onClick={() => setActiveTab('solutions')} className="hover:text-blue-400 transition-colors cursor-pointer">
                   Enterprise Solutions
                 </button>

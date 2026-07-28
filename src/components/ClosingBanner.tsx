@@ -44,26 +44,15 @@ export const ClosingBanner: React.FC<ClosingBannerProps> = ({
 
         {/* Dual CTAs */}
         <ScrollReveal animation="fade-up" delay={0.4}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex items-center justify-center pt-4">
             <button
               onClick={() => onScheduleDemo()}
-              className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               id="closing-book-demo-btn"
             >
-              <Calendar className="w-4 h-4" />
-              <span>Schedule a Demo</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => onScheduleDemo('Talk to Our AI Experts')}
-              className={`w-full sm:w-auto px-8 py-4 border font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                isLightMode ? 'border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 bg-white shadow-sm' : 'border-slate-700 hover:border-slate-500 text-slate-200'
-              }`}
-              id="closing-talk-experts-btn"
-            >
-              <Bot className={`w-4 h-4 ${isLightMode ? 'text-blue-600' : 'text-cyan-400'}`} />
-              <span>Contact Experts</span>
+              <Calendar className="w-5 h-5" />
+              <span className="text-lg">Schedule a Demo</span>
+              <ArrowRight className="w-5 h-5 ml-1" />
             </button>
           </div>
         </ScrollReveal>

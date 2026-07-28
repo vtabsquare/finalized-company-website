@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Innovation } from '../types';
 import { supabase } from '../lib/supabaseClient';
-import { Sparkles, Mic, Users, FileText, Code2, CheckCircle2, Lock, Cpu, Activity, Terminal } from 'lucide-react';
+import { Sparkles, Mic, Users, FileText, Code2, CheckCircle2, Lock, Cpu, Activity, Terminal, Send, Loader2 } from 'lucide-react';
+import { sendEarlyAccessEmail } from '../lib/brevoService';
 import { ScrollReveal } from './animations/ScrollReveal';
 
 interface FutureInnovationsProps {
@@ -15,6 +16,9 @@ export const FutureInnovations: React.FC<FutureInnovationsProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [accessSubmitted, setAccessSubmitted] = useState<string | null>(null);
+  const [requestingTitle, setRequestingTitle] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [innovations, setInnovations] = useState<Innovation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,12 +48,18 @@ export const FutureInnovations: React.FC<FutureInnovationsProps> = ({
     }
   };
 
-  const handleEarlyAccess = (title: string) => {
+  const handleEarlyAccessSubmit = async (e: React.FormEvent, title: string) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) return;
+    setSubmitting(true);
+    await sendEarlyAccessEmail(email, title);
+    setSubmitting(false);
+    setRequestingTitle(null);
+    setEmail('');
     setAccessSubmitted(title);
     setTimeout(() => {
       setAccessSubmitted(null);
-      onScheduleDemo(`Early Access: ${title}`);
-    }, 1500);
+    }, 5000);
   };
 
   return (
@@ -90,7 +100,7 @@ export const FutureInnovations: React.FC<FutureInnovationsProps> = ({
             ) : innovations.map((innovation, idx) => {
               const isActive = activeIndex === idx;
               return (
-                <ScrollReveal key={innovation.id} animation="fade-right" delay={0.1 * idx}>
+                <ScrollReveal key={innovation.id} animation="fade-right" delay={0.05 * (idx % 3)}>
                   <button
                     onClick={() => setActiveIndex(idx)}
                     className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 group cursor-pointer ${
@@ -173,28 +183,69 @@ export const FutureInnovations: React.FC<FutureInnovationsProps> = ({
                 </div>
 
                 <div>
-                  <button
-                    onClick={() => handleEarlyAccess(activeInnovation.title)}
-                    disabled={accessSubmitted === activeInnovation.title}
-                    className={`group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold border backdrop-blur-xl transition-all cursor-pointer overflow-hidden disabled:opacity-50 ${
-                      isLightMode 
-                        ? 'text-slate-700 bg-white hover:bg-slate-50 border-slate-300 hover:border-purple-300 shadow-sm' 
-                        : 'text-white bg-white/5 hover:bg-white/10 border-white/10 hover:border-purple-500/50'
-                    }`}
-                  >
-                    {accessSubmitted === activeInnovation.title ? (
-                      <>
-                        <CheckCircle2 className={`w-5 h-5 ${isLightMode ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                        <span className={isLightMode ? 'text-emerald-600' : 'text-emerald-400'}>Request Sent Successfully</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Activity className={`w-5 h-5 relative z-10 ${isLightMode ? 'text-purple-600' : 'text-purple-400'}`} />
-                        <span className="relative z-10">Request Early Beta Access</span>
-                      </>
-                    )}
-                  </button>
+                  {accessSubmitted === activeInnovation.title ? (
+                    <div className={`inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold border ${
+                      isLightMode ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                    }`}>
+                      <CheckCircle2 className="w-5 h-5 shrink-0" />
+                      <span>Priority Request Queued & Email Sent!</span>
+                    </div>
+                  ) : requestingTitle === activeInnovation.title ? (
+                    <form onSubmit={(e) => handleEarlyAccessSubmit(e, activeInnovation.title)} className="flex flex-col sm:flex-row gap-2 max-w-md">
+                      <input
+                        type="email"
+                        required
+                        placeholder="Enter your work email..."
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className={`flex-1 px-4 py-3.5 rounded-xl text-sm border focus:outline-none focus:ring-2 transition-all ${
+                          isLightMode
+                            ? 'bg-white border-slate-300 text-slate-900 focus:ring-purple-500 focus:border-purple-500 shadow-sm'
+                            : 'bg-slate-900/80 border-white/20 text-white placeholder-slate-400 focus:ring-purple-500 focus:border-purple-500'
+                        }`}
+                      />
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-500/25 transition-all cursor-pointer disabled:opacity-50 shrink-0"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Sending...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            <span>Get Priority Access</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRequestingTitle(null)}
+                        className={`px-3 py-3.5 text-xs font-medium rounded-xl border transition-colors ${
+                          isLightMode ? 'border-slate-200 hover:bg-slate-100 text-slate-500' : 'border-white/10 hover:bg-white/10 text-slate-400'
+                        }`}
+                        title="Cancel"
+                      >
+                        Cancel
+                      </button>
+                    </form>
+                  ) : (
+                    <button
+                      onClick={() => setRequestingTitle(activeInnovation.title)}
+                      className={`group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold border backdrop-blur-xl transition-all cursor-pointer overflow-hidden ${
+                        isLightMode 
+                          ? 'text-slate-700 bg-white hover:bg-slate-50 border-slate-300 hover:border-purple-300 shadow-sm' 
+                          : 'text-white bg-white/5 hover:bg-white/10 border-white/10 hover:border-purple-500/50'
+                      }`}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <Activity className={`w-5 h-5 relative z-10 ${isLightMode ? 'text-purple-600' : 'text-purple-400'}`} />
+                      <span className="relative z-10">Request Early Beta Access</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

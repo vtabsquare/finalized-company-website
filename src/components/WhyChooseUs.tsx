@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ShieldCheck, Zap, Wrench, Brain, Layers, Play } from 'lucide-react';
+import { Sparkles, ShieldCheck, Zap, Wrench, Brain, Layers, Play, Code2, Rocket, ArrowRight } from 'lucide-react';
 import { WHY_CHOOSE_US } from '../data/contentData';
 import { ScrollReveal } from './animations/ScrollReveal';
 
@@ -28,7 +28,33 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ onScheduleDemo, isLigh
     }
   };
 
-  const deliverySteps = ['Consulting', 'Architecture', 'Development', 'Deployment', 'Support'];
+  const lifecycleSteps = [
+    {
+      title: 'Consulting',
+      desc: 'Strategic audit & feasibility analysis.',
+      icon: <Brain className="w-5 h-5" />
+    },
+    {
+      title: 'Architecture',
+      desc: 'System design & data pipeline mapping.',
+      icon: <Layers className="w-5 h-5" />
+    },
+    {
+      title: 'Development',
+      desc: 'Model training & agent synthesis.',
+      icon: <Code2 className="w-5 h-5" />
+    },
+    {
+      title: 'Deployment',
+      desc: 'Sandboxed testing & cloud rollout.',
+      icon: <Rocket className="w-5 h-5" />
+    },
+    {
+      title: 'Support',
+      desc: '24/7 managed model monitoring.',
+      icon: <ShieldCheck className="w-5 h-5" />
+    }
+  ];
 
   const getBentoClasses = (idx: number) => {
     switch (idx) {
@@ -77,7 +103,7 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ onScheduleDemo, isLigh
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 auto-rows-auto md:auto-rows-[minmax(220px,auto)] mb-4 lg:mb-6">
           
           {WHY_CHOOSE_US.map((item, idx) => (
-            <ScrollReveal key={idx} animation="fade-up" delay={0.1 * idx} className={getBentoClasses(idx)}>
+            <ScrollReveal key={idx} animation="fade-up" delay={0.05 * idx} className={getBentoClasses(idx)}>
               <div
                 className={`group relative overflow-hidden rounded-3xl border backdrop-blur-2xl p-8 shadow-2xl transition-all duration-500 h-full w-full flex ${
                   idx === 0 ? `flex-col sm:flex-row items-start sm:items-center gap-6 ${isLightMode ? 'bg-gradient-to-br from-blue-50 to-white hover:border-blue-300 border-slate-200 shadow-sm' : 'bg-gradient-to-br from-blue-900/20 to-black/40 hover:border-blue-500/30 border-white/5'}` :
@@ -132,48 +158,67 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ onScheduleDemo, isLigh
         {/* Timeline Bento Card */}
         <ScrollReveal animation="fade-up" delay={0.2}>
           <div className={`w-full border backdrop-blur-2xl rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden group transition-all duration-500 ${
-            isLightMode ? 'bg-gradient-to-r from-blue-50 via-white to-purple-50 border-slate-200 hover:border-blue-300' : 'bg-gradient-to-r from-blue-900/10 via-black/40 to-purple-900/10 border-white/5 hover:border-blue-500/20'
+            isLightMode ? 'bg-gradient-to-br from-slate-50 via-white to-blue-50/50 border-slate-200' : 'bg-gradient-to-br from-slate-900/40 via-black/40 to-blue-900/10 border-white/5'
           }`}>
-            <div className={`absolute top-0 right-0 p-8 opacity-10 ${isLightMode ? 'text-blue-600' : 'text-blue-500'}`}>
-              <Play className="w-32 h-32" />
-            </div>
+            {/* Background Accents */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-blue-500/10 to-transparent blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-purple-500/10 to-transparent blur-[80px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/3" />
             
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-8 lg:mb-12">
-              <div>
-                <h3 className={`text-2xl font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Our End-to-End AI Lifecycle</h3>
-                <p className={`font-medium ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>From strategic audit to 24/7 managed model monitoring.</p>
+            <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+              <div className="max-w-2xl">
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 border ${
+                  isLightMode ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                }`}>
+                  <Sparkles className="w-3 h-3" />
+                  <span>The VTab Methodology</span>
+                </div>
+                <h3 className={`text-3xl font-extrabold mb-3 tracking-tight ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
+                  End-to-End <span className={isLightMode ? 'text-blue-600' : 'text-blue-400'}>AI Lifecycle</span>
+                </h3>
+                <p className={`font-medium text-sm md:text-base leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                  We don't just build models; we engineer intelligent systems. From the initial strategic audit to 24/7 managed monitoring, our proven methodology ensures risk-free enterprise deployment.
+                </p>
               </div>
               
-              <button onClick={onScheduleDemo} className={`shrink-0 px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg backdrop-blur-md cursor-pointer ${
-                isLightMode ? 'bg-blue-600 hover:bg-blue-700 text-white border-transparent' : 'bg-white/5 hover:bg-white/10 border-white/10 text-white'
+              <button onClick={onScheduleDemo} className={`shrink-0 px-6 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center gap-2 cursor-pointer group/btn ${
+                isLightMode ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30' : 'bg-white hover:bg-slate-100 text-slate-900 shadow-white/10'
               }`}>
-                Start Your Journey
+                <span>Start Your Journey</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
               </button>
             </div>
 
-            <div className="relative z-10 flex flex-col sm:flex-row justify-between gap-4 lg:gap-0">
-              {/* Connecting line */}
-              <div className={`hidden sm:block absolute top-1/2 left-0 w-full h-[2px] -translate-y-1/2 z-0 ${
-                isLightMode ? 'bg-gradient-to-r from-blue-200/0 via-blue-300 to-blue-200/0' : 'bg-gradient-to-r from-blue-500/0 via-blue-500/20 to-blue-500/0'
-              }`} />
-              
-              {deliverySteps.map((step, idx) => (
-                <div
-                  key={idx}
-                  className={`relative z-10 flex items-center sm:flex-col gap-4 sm:gap-3 p-4 sm:p-0 rounded-2xl sm:rounded-none border sm:border-none group/step cursor-default ${
-                    isLightMode ? 'bg-white/50 sm:bg-transparent border-slate-200' : 'bg-black/50 sm:bg-transparent border-white/5'
-                  }`}
-                >
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center font-bold text-sm sm:text-base group-hover/step:bg-blue-600 group-hover/step:border-blue-500 group-hover/step:text-white transition-all duration-300 ${
-                    isLightMode ? 'bg-white border-slate-300 text-slate-500 group-hover/step:shadow-[0_0_20px_rgba(37,99,235,0.2)]' : 'bg-slate-900 border-slate-700 text-slate-400 group-hover/step:shadow-[0_0_20px_rgba(37,99,235,0.4)]'
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-6 mt-8">
+              {/* Desktop Connecting Line */}
+              <div className={`hidden md:block absolute top-[28px] left-[10%] right-[10%] h-[2px] z-0 ${
+                isLightMode ? 'bg-slate-100' : 'bg-slate-800'
+              }`}>
+                <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 w-full opacity-50" />
+              </div>
+
+              {lifecycleSteps.map((step, idx) => (
+                <div key={idx} className="relative z-10 group/step cursor-default">
+                  {/* Icon Node */}
+                  <div className={`w-14 h-14 mx-auto rounded-2xl flex items-center justify-center border-2 shadow-lg mb-4 transition-all duration-300 transform group-hover/step:-translate-y-2 group-hover/step:scale-110 ${
+                    isLightMode 
+                      ? 'bg-white border-slate-100 text-slate-400 group-hover/step:border-blue-500 group-hover/step:text-blue-600 group-hover/step:shadow-[0_8px_20px_rgba(37,99,235,0.15)]' 
+                      : 'bg-slate-900 border-slate-800 text-slate-500 group-hover/step:border-blue-500 group-hover/step:text-blue-400 group-hover/step:shadow-[0_8px_20px_rgba(37,99,235,0.25)]'
                   }`}>
-                    0{idx + 1}
+                    {step.icon}
                   </div>
-                  <span className={`font-semibold transition-colors ${
-                    isLightMode ? 'text-slate-700 group-hover/step:text-blue-700' : 'text-slate-300 group-hover/step:text-blue-300'
+                  
+                  {/* Content Card */}
+                  <div className={`p-5 rounded-2xl border text-center transition-all duration-300 transform group-hover/step:-translate-y-1 h-full ${
+                    isLightMode
+                      ? 'bg-white/60 border-slate-200 group-hover/step:bg-white group-hover/step:border-blue-200 group-hover/step:shadow-xl'
+                      : 'bg-black/40 border-white/5 group-hover/step:bg-slate-900 group-hover/step:border-white/10 group-hover/step:shadow-2xl'
                   }`}>
-                    {step}
-                  </span>
+                    <div className="text-[10px] font-bold uppercase tracking-widest mb-2 opacity-50">Step 0{idx + 1}</div>
+                    <h4 className={`text-sm font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>{step.title}</h4>
+                    <p className={`text-[11px] leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                      {step.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
