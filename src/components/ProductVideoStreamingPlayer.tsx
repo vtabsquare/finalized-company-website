@@ -29,15 +29,15 @@ interface ProductVideoStreamingPlayerProps {
 const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
 
 const STREAMING_VIDEOS: Record<string, string> = {
-  'ai-reporting-platform': 'https://assets.mixkit.co/videos/preview/mixkit-technological-hud-interface-with-data-and-graphs-42846-large.mp4',
+  'ai-reporting-platform': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
   'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
-  'gbti-smart-home-builder': 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4',
+  'gbti-smart-home-builder': '/media/videos/ai_smart_home.mp4',
   'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart.mp4`,
   'faceauth': `${SUPABASE_MEDIA}/faceauth.mp4`,
-  'packaging-optimization-platform': 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4',
+  'packaging-optimization-platform': '/media/videos/ai_logistics.mp4',
   'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent.mp4`,
-  'postgresql-to-sqlserver-migration': 'https://assets.mixkit.co/videos/preview/mixkit-technological-hud-interface-with-data-and-graphs-42846-large.mp4',
-  'all-phase-dashboard': `${SUPABASE_MEDIA}/powerbi/all-phase-dashboard.mp4`,
+  'postgresql-to-sqlserver-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
+  'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard.mp4',
   'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
   'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard.mp4`,
   'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`,
@@ -45,7 +45,55 @@ const STREAMING_VIDEOS: Record<string, string> = {
   'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`,
   'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard.mp4`,
   'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard.mp4`,
-  'hr-analytics-dashboard': 'https://assets.mixkit.co/videos/preview/mixkit-technological-hud-interface-with-data-and-graphs-42846-large.mp4',
+  'hr-analytics-dashboard': '/media/videos/powerbi/hr-analytics-dashboard.mp4',
+};
+
+const DEFAULT_VIDEO_POOL = [
+  `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard.mp4`,
+  `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
+  `${SUPABASE_MEDIA}/buildsmart.mp4`,
+  '/media/videos/ai_logistics.mp4',
+  '/media/videos/ai_smart_home.mp4',
+];
+
+const getVideoForProduct = (id: string, title?: string, customUrl?: string): string => {
+  if (customUrl && customUrl.trim() !== '') return customUrl;
+  
+  const cleanId = (id || '').toLowerCase().trim();
+  if (STREAMING_VIDEOS[cleanId]) return STREAMING_VIDEOS[cleanId];
+
+  const text = `${cleanId} ${title || ''}`.toLowerCase();
+  if (text.includes('sql') || text.includes('db') || text.includes('database') || text.includes('migration')) {
+    return `${SUPABASE_MEDIA}/qlik2powerbi.mp4`;
+  }
+  if (text.includes('home') || text.includes('energy') || text.includes('builder') || text.includes('smart')) {
+    return '/media/videos/ai_smart_home.mp4';
+  }
+  if (text.includes('packaging') || text.includes('logistics') || text.includes('shipping') || text.includes('supply')) {
+    return '/media/videos/ai_logistics.mp4';
+  }
+  if (text.includes('inspection') || text.includes('quality') || text.includes('food')) {
+    return `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`;
+  }
+  if (text.includes('analytics') || text.includes('marketing') || text.includes('sales') || text.includes('customer') || text.includes('sample')) {
+    return `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`;
+  }
+  if (text.includes('score') || text.includes('hr') || text.includes('employee') || text.includes('support')) {
+    return `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard.mp4`;
+  }
+
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = (hash << 5) - hash + text.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % DEFAULT_VIDEO_POOL.length;
+  return DEFAULT_VIDEO_POOL[index];
 };
 
 export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerProps> = ({
@@ -133,11 +181,21 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
   };
 
-  const videoSource = videoUrl || STREAMING_VIDEOS[productId] || STREAMING_VIDEOS['ai-reporting-platform'];
+  const videoSource = getVideoForProduct(productId, productTitle, videoUrl);
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video">
-      {/* Video Stream Element */}
+    <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
+      {/* Ambient Blurred Background Video to eliminate black bars without cropping main content */}
+      <video
+        src={videoSource}
+        autoPlay
+        loop
+        muted={true}
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 pointer-events-none scale-110"
+      />
+
+      {/* Main Video Stream Element - Uncropped */}
       <video
         ref={videoRef}
         src={videoSource}
@@ -151,7 +209,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
             setDuration(Math.min(30, videoRef.current.duration));
           }
         }}
-        className="w-full h-full object-cover object-center opacity-90 group-hover/video:opacity-100 transition-opacity"
+        className="relative z-10 w-full h-full object-contain opacity-95 group-hover/video:opacity-100 transition-opacity drop-shadow-2xl"
       />
 
 

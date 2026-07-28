@@ -36,9 +36,32 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   isLightMode = false
 }) => {
   const featuredProducts = products.filter(p => p.featured || p.imageUrl);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const savedId = sessionStorage.getItem('last_selected_product_id');
+    if (savedId && featuredProducts.length > 0) {
+      const idx = featuredProducts.findIndex(p => p.id === savedId);
+      if (idx !== -1) return idx;
+    }
+    return 0;
+  });
   const [isPlaying, setIsPlaying] = useState(true);
   const [isCinematic, setIsCinematic] = useState(false);
+
+  useEffect(() => {
+    const savedId = sessionStorage.getItem('last_selected_product_id');
+    if (savedId && featuredProducts.length > 0) {
+      const idx = featuredProducts.findIndex(p => p.id === savedId);
+      if (idx !== -1 && idx !== currentIndex) {
+        setCurrentIndex(idx);
+      }
+    }
+  }, [featuredProducts.length]);
+
+  useEffect(() => {
+    if (featuredProducts.length > 0 && featuredProducts[currentIndex]) {
+      sessionStorage.setItem('last_selected_product_id', featuredProducts[currentIndex].id);
+    }
+  }, [currentIndex, featuredProducts]);
 
   // Restart animation key when slide changes
   const [animationKey, setAnimationKey] = useState(0);
@@ -117,7 +140,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             productId={currentProduct.id}
             productTitle={currentProduct.title}
             imageUrl={currentProduct.imageUrl}
-            videoUrl={currentProduct.detailContent?.videoUrl}
+            videoUrl={currentProduct.detailContent?.videoUrl || (currentProduct.demoSnippet as any)?.videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

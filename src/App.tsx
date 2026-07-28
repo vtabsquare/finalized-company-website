@@ -12,7 +12,6 @@ import { ImpactStats } from './components/ImpactStats';
 import { ClosingBanner } from './components/ClosingBanner';
 import { Footer } from './components/Footer';
 import { DemoModal } from './components/DemoModal';
-import { ProductDetailModal } from './components/ProductDetailModal';
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { InteractiveAiSandboxModal } from './components/InteractiveAiSandboxModal';
 import { PageViews } from './components/PageViews';
@@ -49,6 +48,27 @@ export default function App() {
     }
   };
 
+  const handleSelectProduct = (prod: Product) => {
+    sessionStorage.setItem('last_selected_product_id', prod.id);
+    sessionStorage.setItem('last_scroll_y', window.scrollY.toString());
+    setSelectedProduct(prod);
+  };
+
+  const handleBackFromDetail = () => {
+    const savedScrollY = sessionStorage.getItem('last_scroll_y');
+    setSelectedProduct(null);
+    setTimeout(() => {
+      if (savedScrollY !== null && savedScrollY !== undefined) {
+        window.scrollTo({ top: parseInt(savedScrollY, 10), behavior: 'instant' });
+      } else {
+        const el = document.getElementById('ai-portfolio');
+        if (el) {
+          el.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+      }
+    }, 20);
+  };
+
   return (
     <div className={`min-h-screen selection:bg-blue-500 selection:text-white relative transition-colors duration-300 ${
       isLightMode ? 'light-mode bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-100'
@@ -58,7 +78,7 @@ export default function App() {
       <NeuralBackground isLightMode={isLightMode} />
 
       {/* Glassmorphism Header Bar */}
-      {(!selectedProduct || !selectedProduct.detailContent) && (
+      {!selectedProduct && (
         <Navbar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -72,11 +92,11 @@ export default function App() {
       {/* Main Content Area */}
       <main className="relative z-10">
         
-        {/* Full-page detail view for products with detailContent */}
-        {selectedProduct && selectedProduct.detailContent ? (
+        {/* Full-page detail view for all selected products */}
+        {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
-            onBack={() => setSelectedProduct(null)}
+            onBack={handleBackFromDetail}
             onScheduleDemo={handleOpenDemoModal}
             isLightMode={isLightMode}
           />
@@ -86,7 +106,7 @@ export default function App() {
             setActiveTab={setActiveTab}
             onScheduleDemo={handleOpenDemoModal}
             onOpenSandbox={() => setIsSandboxModalOpen(true)}
-            onSelectProduct={(prod) => setSelectedProduct(prod)}
+            onSelectProduct={handleSelectProduct}
           />
         ) : (
           <>
@@ -110,7 +130,7 @@ export default function App() {
 
             {/* AI Portfolio */}
             <PortfolioSection
-              onSelectProduct={(prod) => setSelectedProduct(prod)}
+              onSelectProduct={handleSelectProduct}
               onScheduleDemo={handleOpenDemoModal}
               isLightMode={isLightMode}
             />
@@ -136,7 +156,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      {(!selectedProduct || !selectedProduct.detailContent) && (
+      {!selectedProduct && (
         <Footer
           setActiveTab={setActiveTab}
           onOpenDemoModal={handleOpenDemoModal}
@@ -145,11 +165,11 @@ export default function App() {
       )}
 
       {/* Integrated Floating AI Assistant Bot */}
-      {(!selectedProduct || !selectedProduct.detailContent) && (
+      {!selectedProduct && (
         <AiChatBot
           onScheduleDemo={handleOpenDemoModal}
           onOpenSandbox={() => setIsSandboxModalOpen(true)}
-          onSelectProduct={(prod) => setSelectedProduct(prod)}
+          onSelectProduct={handleSelectProduct}
           onNavigateTab={(tab) => {
             setActiveTab(tab);
             if (tab === 'products') {
@@ -169,16 +189,6 @@ export default function App() {
         onClose={() => setIsDemoModalOpen(false)}
         initialInterest={demoInterest}
       />
-
-      {/* Product detail modal for products WITHOUT detailContent */}
-      {selectedProduct && !selectedProduct.detailContent && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onScheduleDemo={handleOpenDemoModal}
-          onOpenSandbox={() => setIsSandboxModalOpen(true)}
-        />
-      )}
 
       <InteractiveAiSandboxModal
         isOpen={isSandboxModalOpen}

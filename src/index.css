@@ -90,6 +90,24 @@
   color: #0f172a !important;
 }
 
+/* Protect buttons, badges, and colored gradient backgrounds from text-white override */
+.light-mode button.text-white,
+.light-mode button .text-white,
+.light-mode a.text-white,
+.light-mode a .text-white,
+.light-mode [class*="bg-slate-900"].text-white,
+.light-mode [class*="bg-slate-950"].text-white,
+.light-mode [class*="bg-black"].text-white,
+.light-mode [class*="bg-gradient-"].text-white,
+.light-mode [class*="from-"].text-white,
+.light-mode [class*="bg-blue-"].text-white,
+.light-mode [class*="bg-indigo-"].text-white,
+.light-mode [class*="bg-cyan-"].text-white,
+.light-mode [class*="bg-purple-"].text-white,
+.light-mode [class*="bg-emerald-"].text-white {
+  color: #ffffff !important;
+}
+
 .light-mode .text-slate-100,
 .light-mode .text-slate-200,
 .light-mode .text-slate-300 {
@@ -102,6 +120,60 @@
 
 .light-mode .text-slate-500 {
   color: #64748b !important;
+}
+
+/* Protect Dark Hero Canvas & All Its Children in Light Mode */
+.light-mode .dark-hero-canvas,
+.light-mode .dark-hero-canvas .glass-panel,
+.light-mode .dark-hero-canvas .backdrop-blur-xl,
+.light-mode .dark-hero-canvas .backdrop-blur-2xl,
+.light-mode .dark-hero-canvas .bg-slate-950\/80,
+.light-mode .dark-hero-canvas [class*="bg-black"],
+.light-mode .dark-hero-canvas [class*="bg-white/"] {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+.light-mode .dark-hero-canvas .bg-gradient-to-b {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)) !important;
+}
+
+.light-mode .dark-hero-canvas .bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px) !important;
+}
+
+.light-mode .dark-hero-canvas font-mono,
+.light-mode .dark-hero-canvas pre {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+.light-mode .dark-hero-canvas,
+.light-mode .dark-hero-canvas .text-white,
+.light-mode .dark-hero-canvas h1,
+.light-mode .dark-hero-canvas h2,
+.light-mode .dark-hero-canvas h3,
+.light-mode .dark-hero-canvas p {
+  color: #ffffff !important;
+}
+.light-mode .dark-hero-canvas .text-slate-200,
+.light-mode .dark-hero-canvas .text-slate-300 {
+  color: #e2e8f0 !important;
+}
+.light-mode .dark-hero-canvas .text-slate-400 {
+  color: #94a3b8 !important;
+}
+.light-mode .dark-hero-canvas .text-cyan-300,
+.light-mode .dark-hero-canvas .text-cyan-400 {
+  color: #22d3ee !important;
+}
+.light-mode .dark-hero-canvas .text-emerald-400 {
+  color: #34d399 !important;
+}
+.light-mode .dark-hero-canvas .text-purple-400 {
+  color: #c084fc !important;
 }
 
 /* Borders in Light Mode */

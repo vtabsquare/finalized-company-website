@@ -80,12 +80,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
           </div>
 
-          <div className="h-56 w-full rounded-xl overflow-hidden border border-white/10 shadow-xl bg-slate-950">
+          <div className="h-64 sm:h-72 w-full rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-slate-950">
             {modalMediaTab === 'video' ? (
               <ProductVideoStreamingPlayer
                 productId={product.id}
                 productTitle={product.title}
                 imageUrl={product.imageUrl}
+                videoUrl={product.detailContent?.videoUrl || (product.demoSnippet as any)?.videoUrl}
                 compactMode={false}
               />
             ) : (
