@@ -35,6 +35,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   onSelectProduct,
   onScheduleDemo,
   isLightMode = false
+}) => {
   const featuredProducts = products.filter(p => p.featured === true);
   const [currentIndex, setCurrentIndex] = useState(() => {
     const savedId = sessionStorage.getItem('last_selected_product_id');
