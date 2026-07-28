@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, CheckCircle2, Sparkles, Building2, User, Mail, Users, MessageSquare, Send } from 'lucide-react';
+import { X, Calendar, CheckCircle2, Sparkles, Building2, User, Mail, Users, MessageSquare, Send, Loader2 } from 'lucide-react';
 import { DemoFormState } from '../types';
+import { sendDemoRequestEmails } from '../lib/brevoService';
 
 interface DemoModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialInterest) {
@@ -33,8 +35,11 @@ export const DemoModal: React.FC<DemoModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    await sendDemoRequestEmails(form);
+    setLoading(false);
     setSubmitted(true);
   };
 
@@ -182,11 +187,21 @@ export const DemoModal: React.FC<DemoModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-xl shadow-blue-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              disabled={loading}
+              className="w-full py-3 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-blue-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
               id="submit-demo-form-btn"
             >
-              <Send className="w-4 h-4" />
-              <span>Confirm & Request Session</span>
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Sending Booking Request...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>Confirm & Request Session</span>
+                </>
+              )}
             </button>
           </form>
         ) : (

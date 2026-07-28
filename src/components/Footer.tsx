@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Bot, Mail, Check, ArrowRight, Shield, Globe } from 'lucide-react';
+import { Bot, Mail, Check, ArrowRight, Shield, Globe, Loader2 } from 'lucide-react';
 import { NavTab } from '../types';
+import { sendSubscribeEmail } from '../lib/brevoService';
 
 interface FooterProps {
   setActiveTab: (tab: NavTab) => void;
@@ -11,15 +12,19 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, isLightMode = false }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+    setLoading(true);
+    await sendSubscribeEmail(email);
+    setLoading(false);
     setSubscribed(true);
     setTimeout(() => {
       setEmail('');
       setSubscribed(false);
-    }, 3000);
+    }, 4000);
   };
 
   return (
@@ -142,9 +147,15 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, i
 
               <button
                 type="submit"
-                className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                disabled={loading}
+                className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
-                {subscribed ? (
+                {loading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Subscribing...</span>
+                  </>
+                ) : subscribed ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Subscribed!</span>

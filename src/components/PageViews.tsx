@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavTab, Product } from '../types';
 import { CAREER_ROLES } from '../data/contentData';
+import { sendContactInquiryEmails } from '../lib/brevoService';
 import {
   Building2,
   Cpu,
@@ -18,7 +19,8 @@ import {
   Send,
   Code2,
   FileText,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 
 interface PageViewsProps {
@@ -38,6 +40,19 @@ export const PageViews: React.FC<PageViewsProps> = ({
 }) => {
   const [appliedRole, setAppliedRole] = useState<string | null>(null);
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactMsg, setContactMsg] = useState('');
+  const [contactLoading, setContactLoading] = useState(false);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactEmail || !contactName) return;
+    setContactLoading(true);
+    await sendContactInquiryEmails(contactName, contactEmail, contactMsg);
+    setContactLoading(false);
+    setContactSubmitted(true);
+  };
 
   if (activeTab === 'home' || activeTab === 'products') return null;
 
@@ -345,36 +360,49 @@ export const PageViews: React.FC<PageViewsProps> = ({
                   </div>
                 ) : (
                   <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      setContactSubmitted(true);
-                    }}
+                    onSubmit={handleContactSubmit}
                     className="space-y-3"
                   >
                     <input
                       type="text"
                       required
+                      value={contactName}
+                      onChange={(e) => setContactName(e.target.value)}
                       placeholder="Your Name"
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500"
                     />
                     <input
                       type="email"
                       required
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
                       placeholder="Work Email"
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500"
                     />
                     <textarea
                       rows={4}
                       required
+                      value={contactMsg}
+                      onChange={(e) => setContactMsg(e.target.value)}
                       placeholder="How can VTab Square assist your organization?"
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"
                     />
                     <button
                       type="submit"
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                      disabled={contactLoading}
+                      className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg"
                     >
-                      <Send className="w-4 h-4" />
-                      <span>Send Inquiry</span>
+                      {contactLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Sending Inquiry...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Send Inquiry</span>
+                        </>
+                      )}
                     </button>
                   </form>
                 )}
