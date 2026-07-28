@@ -3,6 +3,7 @@ import { Bot, Mail, Check, ArrowRight, Shield, Globe, Loader2 } from 'lucide-rea
 import { NavTab, Product } from '../types';
 import { PRODUCTS_DATA } from '../data/contentData';
 import { sendSubscribeEmail } from '../lib/brevoService';
+import { supabase } from '../lib/supabaseClient';
 
 interface FooterProps {
   setActiveTab: (tab: NavTab) => void;
@@ -33,7 +34,17 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
     e.preventDefault();
     if (!email) return;
     setLoading(true);
+    
+    // Save to Supabase for Admin Dashboard
+    try {
+      await supabase.from('subscribers').insert([{ email }]);
+    } catch (dbError) {
+      console.error("Error saving subscriber:", dbError);
+    }
+
+    // Send welcome email via Brevo
     await sendSubscribeEmail(email);
+    
     setLoading(false);
     setSubscribed(true);
     setTimeout(() => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Calendar, CheckCircle2, Briefcase, Loader2 } from 'lucide-react';
 import { DemoFormState } from '../types';
 import { sendDemoRequestEmails } from '../lib/brevoService';
+import { supabase } from '../lib/supabaseClient';
 
 interface DemoModalProps {
   isOpen: boolean;
@@ -38,7 +39,25 @@ export const DemoModal: React.FC<DemoModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Save to Supabase for the Admin Dashboard
+    try {
+      await supabase.from('demo_requests').insert([{
+        full_name: form.fullName,
+        work_email: form.workEmail,
+        company_name: form.companyName,
+        team_size: form.teamSize,
+        interest_area: form.interestArea,
+        preferred_date: form.preferredDate,
+        message: form.message
+      }]);
+    } catch (dbError) {
+      console.error("Error saving to database:", dbError);
+    }
+
+    // Send emails via Brevo
     await sendDemoRequestEmails(form);
+    
     setLoading(false);
     setSubmitted(true);
   };
