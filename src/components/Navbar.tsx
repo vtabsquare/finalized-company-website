@@ -117,16 +117,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               <img src="/logo.png" alt="Logo" className="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
             </div>
             
-            <div className="flex items-center gap-2">
-              <span className={`text-[22px] font-heading font-extrabold tracking-tight leading-none transition-colors ${
-                isLightMode ? 'text-slate-900' : 'text-slate-50'
-              }`} style={{ textShadow: isLightMode ? 'none' : '0 2px 10px rgba(255,255,255,0.1)' }}>
+            <div className="flex items-center gap-2.5">
+              <span 
+                className={`text-[23px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${
+                  isLightMode 
+                    ? 'text-slate-900' 
+                    : 'text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300'
+                }`} 
+                style={{ 
+                  fontFamily: "'Outfit', 'Inter', sans-serif", 
+                  textShadow: isLightMode ? 'none' : '0 2px 15px rgba(255, 255, 255, 0.15)' 
+                }}
+              >
                 VTAB SQUARE
               </span>
-              <span className={`px-1.5 py-0.5 text-[9px] font-bold tracking-widest rounded leading-none flex items-center ${
+              <span className={`px-2 py-0.5 text-[10px] font-black tracking-[0.25em] uppercase rounded-md shadow-inner transition-all flex items-center ${
                 isLightMode
-                  ? 'text-blue-700 bg-blue-100/50 border border-blue-200'
-                  : 'text-blue-300 bg-blue-500/10 border border-blue-500/30'
+                  ? 'text-blue-700 bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-300/80 shadow-blue-500/10'
+                  : 'text-cyan-300 bg-gradient-to-br from-blue-500/20 via-blue-600/10 to-cyan-500/20 border border-cyan-400/30 shadow-[0_0_15px_rgba(6,182,212,0.25)]'
               }`}>
                 AI
               </span>
@@ -232,15 +240,28 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Action CTAs */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3.5">
+            {/* Enterprise Trust Indicator / Contact Sales */}
+            <button
+              onClick={() => handleNavClick('contact')}
+              className={`hidden xl:flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                isLightMode
+                  ? 'bg-slate-100/80 border-slate-300 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
+                  : 'bg-white/[0.03] border-white/10 text-slate-300 hover:bg-white/[0.08] hover:text-white hover:border-white/20 shadow-inner'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <span>Contact Architects</span>
+            </button>
+
             {/* Dark/Light Mode Switch */}
             {onToggleTheme && (
               <button
                 onClick={onToggleTheme}
-                className={`p-2 rounded-full transition-colors cursor-pointer flex items-center justify-center ${
+                className={`p-2.5 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center border ${
                   isLightMode
-                    ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
-                    : 'text-slate-400 hover:bg-white/10 hover:text-white'
+                    ? 'text-slate-600 bg-slate-100/70 border-slate-200 hover:bg-slate-200 hover:text-slate-900 shadow-sm'
+                    : 'text-slate-300 bg-white/[0.03] border-white/10 hover:bg-white/[0.1] hover:text-white hover:border-white/20 shadow-inner'
                 }`}
                 title={isLightMode ? "Switch to Dark Mode" : "Switch to Light Mode"}
                 id="theme-toggle-btn"
@@ -250,25 +271,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
 
             <button
-              onClick={onOpenSandboxModal}
-              className={`px-5 py-2 text-sm font-medium rounded-full transition-all flex items-center gap-2 cursor-pointer border shadow-sm hover:shadow-md ${
-                isLightMode
-                  ? 'text-blue-700 bg-white hover:bg-blue-50/50 border-blue-200'
-                  : 'text-slate-300 hover:text-white bg-[#030712] hover:bg-white/5 border-white/10'
-              }`}
-              id="sandbox-header-btn"
-            >
-              <Sparkles className="w-4 h-4 text-blue-500" />
-              <span>AI Sandbox</span>
-            </button>
-
-            <button
               onClick={() => onOpenDemoModal()}
-              className="px-6 py-2.5 text-sm font-bold rounded-full transition-all shadow-lg shadow-blue-600/25 hover:shadow-blue-500/40 flex items-center gap-2 cursor-pointer bg-gradient-to-r from-blue-700 via-blue-600 to-cyan-600 hover:from-blue-600 hover:via-blue-500 hover:to-cyan-500 text-white border border-white/20 hover:scale-105 active:scale-95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]"
+              className={`group relative px-6 py-2.5 text-xs font-extrabold uppercase tracking-[0.15em] rounded-full transition-all duration-300 flex items-center gap-2.5 cursor-pointer shadow-xl ${
+                isLightMode
+                  ? 'bg-slate-900 text-white hover:bg-blue-600 shadow-slate-900/10 hover:shadow-blue-600/20 border border-slate-800'
+                  : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:via-indigo-500 hover:to-cyan-400 text-white shadow-blue-500/25 hover:shadow-cyan-500/40 border border-cyan-400/30 hover:border-cyan-300 hover:scale-[1.03] active:scale-[0.98]'
+              }`}
               id="book-demo-header-btn"
             >
-              <span>Schedule Demo</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="relative z-10 flex items-center gap-2">
+                <span>Schedule Demo</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
             </button>
           </div>
 
@@ -341,14 +355,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenSandboxModal();
+                handleNavClick('contact');
               }}
               className={`w-full py-2.5 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 ${
-                isLightMode ? 'bg-slate-100 text-slate-900 border border-slate-300' : 'bg-slate-900 text-slate-200 border border-slate-700'
+                isLightMode ? 'bg-slate-100 text-slate-700 border border-slate-300' : 'bg-white/5 text-slate-300 border border-white/10'
               }`}
             >
-              <Sparkles className="w-4 h-4 text-cyan-500" />
-              <span>Try AI Assistant Sandbox</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Contact Architects</span>
             </button>
 
             <button
@@ -356,10 +370,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenDemoModal();
               }}
-              className="w-full py-2.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
+              className="w-full py-2.5 text-xs font-extrabold uppercase tracking-widest text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
             >
               <Calendar className="w-4 h-4" />
-              <span>Schedule a Demo</span>
+              <span>Schedule Demo</span>
             </button>
           </div>
         </div>
