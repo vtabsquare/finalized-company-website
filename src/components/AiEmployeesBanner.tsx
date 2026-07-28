@@ -197,23 +197,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
                   <div className={`lg:w-[320px] p-8 flex flex-col justify-between ${
                     isActive ? (isLightMode ? 'bg-[#fcfcfd]' : 'bg-slate-950/80') : (isLightMode ? 'bg-slate-50/60' : 'bg-slate-950/40')
                   }`}>
-                    <div>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); onScheduleDemo(employee.title); }}
-                        className={`w-full py-3.5 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                          isActive 
-                            ? isLightMode
-                              ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:via-indigo-500 hover:to-blue-600 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)] hover:shadow-[0_0_35px_rgba(37,99,235,0.65)] hover:scale-[1.02] active:scale-[0.98]'
-                              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:scale-[1.02] active:scale-[0.98]'
-                            : isLightMode ? 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-                        }`}
-                      >
-                        <Play className="w-4 h-4 fill-current" />
-                        Deploy Employee
-                      </button>
-                    </div>
-
-                    <div className="mt-8">
+                    <div className="mt-2">
                       <div className="flex items-center gap-2 mb-3 px-1">
                         <Terminal className={`w-4 h-4 ${isActive ? (isLightMode ? 'text-blue-600' : 'text-slate-400') : 'text-slate-400'}`} />
                         <span className={`text-[10px] font-bold uppercase tracking-widest ${isLightMode && isActive ? 'text-slate-600' : 'text-slate-500'}`}>Agent Sandbox</span>
