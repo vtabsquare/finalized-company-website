@@ -237,45 +237,47 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
         </div>
 
         {/* Carousel Navigation Controls */}
-        <div className="relative mt-6 lg:absolute lg:-bottom-8 flex items-center justify-center gap-6 z-30 left-1/2 lg:-translate-x-1/2">
-          <button 
-            onClick={() => setSelectedIndex(prev => Math.max(0, prev - 1))}
-            disabled={selectedIndex === 0 || loading}
-            className={`p-3 rounded-full border shadow-lg backdrop-blur-md transition-all ${
-              selectedIndex === 0 || loading
-                ? (isLightMode ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-600') 
-                : (isLightMode ? 'bg-white border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50 cursor-pointer' : 'bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-400 hover:text-white cursor-pointer')
-            }`}
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+        <div className="w-full flex items-center justify-center mt-8 lg:mt-0 lg:absolute lg:-bottom-8 lg:left-1/2 lg:-translate-x-1/2 z-30">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => setSelectedIndex(prev => Math.max(0, prev - 1))}
+              disabled={selectedIndex === 0 || loading}
+              className={`p-3 rounded-full border shadow-lg backdrop-blur-md transition-all ${
+                selectedIndex === 0 || loading
+                  ? (isLightMode ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-600') 
+                  : (isLightMode ? 'bg-white border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50 cursor-pointer' : 'bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-400 hover:text-white cursor-pointer')
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
 
-          {/* Dot Indicators */}
-          <div className="flex items-center gap-2">
-            {employees.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedIndex(idx)}
-                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                  idx === selectedIndex 
-                    ? (isLightMode ? 'w-8 h-2 bg-blue-500' : 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]') 
-                    : (isLightMode ? 'w-2 h-2 bg-slate-300 hover:bg-blue-300' : 'w-2 h-2 bg-slate-700 hover:bg-slate-500')
-                }`}
-              />
-            ))}
+            {/* Dot Indicators */}
+            <div className="flex items-center gap-2">
+              {employees.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedIndex(idx)}
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    idx === selectedIndex 
+                      ? (isLightMode ? 'w-8 h-2 bg-blue-500' : 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]') 
+                      : (isLightMode ? 'w-2 h-2 bg-slate-300 hover:bg-blue-300' : 'w-2 h-2 bg-slate-700 hover:bg-slate-500')
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button 
+              onClick={() => setSelectedIndex(prev => Math.min(employees.length - 1, prev + 1))}
+              disabled={selectedIndex === employees.length - 1 || loading}
+              className={`p-3 rounded-full border shadow-lg backdrop-blur-md transition-all ${
+                selectedIndex === employees.length - 1 || loading
+                  ? (isLightMode ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-600') 
+                  : (isLightMode ? 'bg-white border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50 cursor-pointer' : 'bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-400 hover:text-white cursor-pointer')
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
-
-          <button 
-            onClick={() => setSelectedIndex(prev => Math.min(employees.length - 1, prev + 1))}
-            disabled={selectedIndex === employees.length - 1 || loading}
-            className={`p-3 rounded-full border shadow-lg backdrop-blur-md transition-all ${
-              selectedIndex === employees.length - 1 || loading
-                ? (isLightMode ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-600') 
-                : (isLightMode ? 'bg-white border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50 cursor-pointer' : 'bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-400 hover:text-white cursor-pointer')
-            }`}
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
         </div>
 
       </div>

@@ -257,7 +257,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
           title={isCinematic ? 'Exit Full View (Show Text)' : 'Expand Video (Hide Text)'}
         >
           {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-blue-600" />}
-          <span className="text-sm font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
+          <span className="hidden sm:inline text-sm font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
         </button>
 
         <button
@@ -268,7 +268,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
           title={isPlaying ? 'Pause Slideshow' : 'Autoplay Slideshow'}
         >
           {isPlaying ? <Pause className={`w-4 h-4 ${isLightMode ? 'text-amber-600' : 'text-amber-400'}`} /> : <Play className={`w-4 h-4 ${isLightMode ? 'text-emerald-600' : 'text-emerald-400'}`} />}
-          <span className="text-sm font-semibold">{isPlaying ? 'Pause' : 'Play'}</span>
+          <span className="hidden sm:inline text-sm font-semibold">{isPlaying ? 'Pause' : 'Play'}</span>
         </button>
 
         <button onClick={handlePrev} className={`w-11 h-11 shrink-0 rounded-2xl border flex items-center justify-center transition-colors cursor-pointer shadow-xl backdrop-blur-md ${
