@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabaseService as supabase } from './supabaseClient';
 import type { DemoFormState } from '../types';
 
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';

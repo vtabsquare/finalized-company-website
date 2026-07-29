@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Calendar, CheckCircle2, Briefcase, Loader2 } from 'lucide-react';
 import { DemoFormState } from '../types';
 import { sendDemoRequestEmails } from '../lib/brevoService';
-import { supabase } from '../lib/supabaseClient';
+import { supabaseService } from '../lib/supabaseClient';
 
 interface DemoModalProps {
   isOpen: boolean;
@@ -42,7 +42,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
     
     // Save to Supabase for the Admin Dashboard
     try {
-      await supabase.from('demo_requests').insert([{
+      await supabaseService.from('demo_requests').insert([{
         full_name: form.fullName,
         work_email: form.workEmail,
         company_name: form.companyName,
