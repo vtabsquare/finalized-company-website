@@ -82,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
               Building next-generation AI applications, autonomous agents, and enterprise BI platforms that automate operations and redefine business productivity.
             </p>
 
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-2">
               <span className={`px-2.5 py-1 rounded-md border text-[10px] flex items-center gap-1 ${isLightMode ? 'bg-white border-slate-300 text-slate-600' : 'bg-slate-900 border-slate-800 text-slate-300'}`}>
                 <Shield className={`w-3 h-3 ${isLightMode ? 'text-emerald-600' : 'text-emerald-400'}`} /> SOC2 Compliant
               </span>
@@ -92,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-3 pt-4">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-4">
               <a href="https://api.whatsapp.com/send/?phone=%2B919962597975&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-green-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-green-500 hover:text-white text-slate-400'}`} title="WhatsApp">
                 <MessageCircle className="w-4 h-4" />
               </a>
@@ -245,7 +245,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
         {/* Bottom Bar */}
         <div className={`pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] ${isLightMode ? 'border-slate-300 text-slate-500' : 'border-slate-900 text-slate-500'}`}>
           <p>© {new Date().getFullYear()} VTab Square. All rights reserved. Building Practical AI for the Enterprise.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6">
             <a href="#privacy" className="hover:text-slate-300">Privacy Policy</a>
             <a href="#terms" className="hover:text-slate-300">Terms of Service</a>
             <a href="#security" className="hover:text-slate-300">Security Architecture</a>

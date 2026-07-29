@@ -103,7 +103,7 @@ export const FutureInnovations: React.FC<FutureInnovationsProps> = ({
                 <ScrollReveal key={innovation.id} animation="fade-right" delay={0.05 * (idx % 3)}>
                   <button
                     onClick={() => setActiveIndex(idx)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center gap-4 group cursor-pointer ${
+                    className={`w-full text-left p-3 sm:p-4 rounded-2xl border transition-all duration-300 flex items-center gap-3 sm:gap-4 group cursor-pointer ${
                       isActive 
                         ? (isLightMode ? 'bg-purple-50 border-purple-200 shadow-[0_0_30px_rgba(168,85,247,0.1)]' : 'bg-purple-500/10 border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.1)]')
                         : (isLightMode ? 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm' : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.06] hover:border-white/10')
@@ -154,7 +154,7 @@ export const FutureInnovations: React.FC<FutureInnovationsProps> = ({
             </div>
 
             {/* Content area with instant smooth fade on change */}
-            <div className="relative z-10 p-8 lg:p-12 pt-20 h-full flex flex-col justify-center">
+            <div className="relative z-10 p-4 sm:p-8 lg:p-12 pt-16 lg:pt-20 h-full flex flex-col justify-center">
               <div key={activeIndex} className="animate-in fade-in zoom-in-[0.98] duration-300 ease-out fill-mode-both">
                 
                 <h2 className={`text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight ${isLightMode ? 'text-slate-900' : 'text-white'}`}>

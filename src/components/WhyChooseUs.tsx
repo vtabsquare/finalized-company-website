@@ -105,7 +105,7 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ onScheduleDemo, isLigh
           {WHY_CHOOSE_US.map((item, idx) => (
             <ScrollReveal key={idx} animation="fade-up" delay={0.05 * idx} className={getBentoClasses(idx)}>
               <div
-                className={`group relative overflow-hidden rounded-3xl border backdrop-blur-2xl p-8 shadow-2xl transition-all duration-500 h-full w-full flex ${
+                className={`group relative overflow-hidden rounded-3xl border backdrop-blur-2xl p-5 sm:p-8 shadow-2xl transition-all duration-500 h-full w-full flex ${
                   idx === 0 ? `flex-col sm:flex-row items-start sm:items-center gap-6 ${isLightMode ? 'bg-gradient-to-br from-blue-50 to-white hover:border-blue-300 border-slate-200 shadow-sm' : 'bg-gradient-to-br from-blue-900/20 to-black/40 hover:border-blue-500/30 border-white/5'}` :
                   idx === 1 ? `flex-col justify-between ${isLightMode ? 'bg-gradient-to-b from-emerald-50 to-white hover:border-emerald-300 border-slate-200 shadow-sm' : 'bg-gradient-to-b from-emerald-900/20 to-black/40 hover:border-blue-500/30 border-white/5'}` :
                   idx === 4 ? `flex-col ${isLightMode ? 'bg-gradient-to-tr from-purple-50 to-white hover:border-purple-300 border-slate-200 shadow-sm' : 'bg-gradient-to-tr from-purple-900/20 to-black/40 hover:border-blue-500/30 border-white/5'}` :
@@ -157,7 +157,7 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ onScheduleDemo, isLigh
         {/* Timeline Bento Card */}
         {/* Timeline Bento Card */}
         <ScrollReveal animation="fade-up" delay={0.2}>
-          <div className={`w-full border backdrop-blur-2xl rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden group transition-all duration-500 ${
+          <div className={`w-full border backdrop-blur-2xl rounded-3xl p-5 sm:p-8 lg:p-12 shadow-2xl relative overflow-hidden group transition-all duration-500 ${
             isLightMode ? 'bg-gradient-to-br from-slate-50 via-white to-blue-50/50 border-slate-200' : 'bg-gradient-to-br from-slate-900/40 via-black/40 to-blue-900/10 border-white/5'
           }`}>
             {/* Background Accents */}

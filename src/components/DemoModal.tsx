@@ -63,11 +63,11 @@ export const DemoModal: React.FC<DemoModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative w-full max-w-2xl bg-white dark:bg-[#0b1120] rounded-2xl border border-slate-200 dark:border-slate-800/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col max-h-[95vh]">
         
         {/* Header Section */}
-        <div className="flex items-start justify-between px-8 pt-8 pb-5">
+        <div className="flex items-start justify-between px-4 sm:px-8 pt-6 sm:pt-8 pb-5">
           <div className="flex flex-col gap-4">
             <div className="w-12 h-12 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-center bg-slate-50 dark:bg-slate-800/50 shadow-sm">
               <Briefcase className="w-5 h-5 text-slate-700 dark:text-slate-300" />
@@ -86,7 +86,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
         </div>
 
         {/* Form Body - Scrollable */}
-        <div className="px-8 pb-8 overflow-y-auto custom-scrollbar">
+        <div className="px-4 sm:px-8 pb-6 sm:pb-8 overflow-y-auto custom-scrollbar">
           {!submitted ? (
             <form id="demo-modal-form" onSubmit={handleSubmit} className="space-y-5 mt-2">
               
@@ -229,7 +229,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="px-8 py-5 border-t border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/20 flex justify-end gap-3 items-center">
+        <div className="px-4 sm:px-8 py-4 sm:py-5 border-t border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/20 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 items-stretch sm:items-center">
           {submitted ? (
             <button
               onClick={() => {

@@ -116,7 +116,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             <ScrollReveal animation="fade-up" delay={0.2}>
               {/* Main Animated Headline */}
-              <div className="min-h-[140px] md:min-h-[160px] flex items-center justify-center lg:justify-start">
+              <div className="min-h-[180px] sm:min-h-[140px] md:min-h-[160px] flex items-center justify-center lg:justify-start">
                 <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] ${
                   isLightMode ? 'text-slate-900' : 'text-white'
                 }`}>
@@ -157,7 +157,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-700 via-blue-600 to-cyan-600 hover:from-blue-600 hover:via-blue-500 hover:to-cyan-500 text-white font-bold rounded-xl shadow-xl shadow-blue-600/25 border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2.5 group cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]"
                 id="hero-explore-products-btn"
               >
-                <span className="tracking-wide">Explore AI Products</span>
+                <span className="tracking-wide">Explore AI Accelerators</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -248,7 +248,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     <Sparkles className="w-3 h-3 text-blue-500" />
                     Select a sample AI workload to test:
                   </label>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-1.5">
                     {PRESET_QUERIES.map((preset, idx) => (
                       <button
                         key={idx}
@@ -284,7 +284,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     />
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
                     <button
                       onClick={onOpenSandbox}
                       className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer font-medium"

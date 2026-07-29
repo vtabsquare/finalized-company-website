@@ -32,11 +32,11 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ isLightMode = false })
         </ScrollReveal>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
           {IMPACT_NUMBERS.map((stat, idx) => (
             <ScrollReveal key={idx} animation="fade-up" delay={0.1 * idx}>
               <div
-                className={`backdrop-blur-xl border rounded-2xl p-6 text-center shadow-2xl relative group overflow-hidden transition-all h-full ${
+                className={`backdrop-blur-xl border rounded-2xl p-4 sm:p-6 text-center shadow-2xl relative group overflow-hidden transition-all h-full ${
                   isLightMode ? 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'bg-white/[0.03] border-white/10 hover:border-blue-500/40'
                 }`}
               >

@@ -107,7 +107,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-[650px] lg:h-[700px] overflow-hidden flex flex-col justify-center border-y transition-colors duration-300 ${isLightMode ? 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 border-slate-200/80 shadow-xl' : 'bg-[#030712] border-white/5'}`}>
+    <div className={`relative w-full min-h-[700px] lg:h-[700px] overflow-hidden flex flex-col justify-center border-y transition-colors duration-300 ${isLightMode ? 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 border-slate-200/80 shadow-xl' : 'bg-[#030712] border-white/5'}`}>
       
       {/* Luminous Ambient Background Glows for Light Mode */}
       {isLightMode && (
@@ -179,7 +179,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
               <span className={`text-[10px] uppercase font-bold tracking-[0.2em] block mb-1 ${isLightMode ? 'text-blue-600' : 'text-cyan-400'}`}>
                 {currentProduct.category}
               </span>
-              <h3 className={`text-4xl sm:text-5xl lg:text-5xl font-heading font-extrabold tracking-tight leading-tight line-clamp-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
+              <h3 className={`text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight leading-tight line-clamp-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
                 {currentProduct.title}
               </h3>
             </div>
@@ -244,7 +244,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
       </div>
 
       {/* Top Right Controls (Play/Pause, Expand Video & Nav Arrows) */}
-      <div className="absolute top-8 right-8 lg:right-12 z-30 flex items-center gap-3">
+      <div className="absolute top-3 right-3 sm:top-8 sm:right-8 lg:right-12 z-30 flex flex-wrap items-center gap-2 max-w-[calc(100%-1.5rem)] justify-end">
         <button
           onClick={() => setIsCinematic(!isCinematic)}
           className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
@@ -285,7 +285,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
       </div>
 
       {/* Apple-Style Minimalist Dot Navigation */}
-      <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 p-2.5 rounded-full border backdrop-blur-xl shadow-2xl ${
+      <div className={`absolute bottom-3 sm:bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 p-2.5 rounded-full border backdrop-blur-xl shadow-2xl ${
         isLightMode ? 'bg-white/80 border-slate-300' : 'bg-black/40 border-white/10'
       }`}>
         {featuredProducts.map((p, idx) => {

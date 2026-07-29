@@ -59,7 +59,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
 
     // Scaling and positioning
     const scale = 1 - absDiff * 0.15;
-    const translateX = diff * 50; // percentage shift
+    const translateX = diff * (window.innerWidth < 640 ? 100 : 50); // percentage shift
     const zIndex = 50 - absDiff * 10;
     
     // Smooth opacity fade out
@@ -120,7 +120,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
         </div>
 
         {/* 3D Floating Carousel Stage */}
-        <div className="relative h-[650px] lg:h-[550px] w-full flex items-center justify-center mt-12 mb-8" style={{ perspective: '2000px' }}>
+        <div className="relative min-h-[700px] lg:h-[550px] w-full flex items-center justify-center mt-12 mb-8" style={{ perspective: '2000px' }}>
           
           {loading ? (
             <div className={`p-8 text-center text-sm animate-pulse ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Loading AI Workforce...</div>
@@ -237,7 +237,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
         </div>
 
         {/* Carousel Navigation Controls */}
-        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 z-30">
+        <div className="relative mt-6 lg:absolute lg:-bottom-8 flex items-center justify-center gap-6 z-30 left-1/2 lg:-translate-x-1/2">
           <button 
             onClick={() => setSelectedIndex(prev => Math.max(0, prev - 1))}
             disabled={selectedIndex === 0 || loading}

@@ -92,15 +92,15 @@ export const VisionMission: React.FC<VisionMissionProps> = ({ isLightMode = fals
                 </div>
 
                 {/* Orbiting Rings */}
-                <div className={`absolute w-[280px] h-[280px] rounded-full border border-dashed transition-all duration-1000 animate-[spin_30s_linear_infinite] ${
+                <div className={`absolute w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] rounded-full border border-dashed transition-all duration-1000 animate-[spin_30s_linear_infinite] ${
                   isLightMode ? 'border-slate-300' : 'border-slate-700'
                 }`} />
-                <div className={`absolute w-[380px] h-[380px] rounded-full border border-dotted transition-all duration-1000 animate-[spin_45s_linear_infinite_reverse] ${
+                <div className={`absolute w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full border border-dotted transition-all duration-1000 animate-[spin_45s_linear_infinite_reverse] ${
                   isLightMode ? 'border-slate-200' : 'border-slate-800'
                 }`} />
                 
                 {/* Floating Nodes */}
-                <div className="absolute w-[280px] h-[280px] animate-[spin_30s_linear_infinite]">
+                <div className="absolute w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] animate-[spin_30s_linear_infinite]">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
                 </div>
                 <div className="absolute w-[380px] h-[380px] animate-[spin_45s_linear_infinite_reverse]">
