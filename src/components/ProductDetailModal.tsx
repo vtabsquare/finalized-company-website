@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Product } from '../types';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 import { getValidImageUrl, handleImageError } from '../utils/imageFallback';
-import { X, Sparkles, CheckCircle2, Cpu, Layers, ArrowRight, ShieldCheck, Play, Terminal, Radio, Eye } from 'lucide-react';
+import { X, Sparkles, CheckCircle2, Cpu, Layers, ArrowRight, ShieldCheck, Play, Terminal, Radio, Eye, Download } from 'lucide-react';
 
 interface ProductDetailModalProps {
   product: Product | null;

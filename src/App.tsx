@@ -86,6 +86,7 @@ export default function App() {
           onOpenSandboxModal={() => setIsSandboxModalOpen(true)}
           isLightMode={isLightMode}
           onToggleTheme={toggleTheme}
+          isOverHero={(activeTab === 'home' || activeTab === 'products') && !selectedProduct}
         />
       )}
 

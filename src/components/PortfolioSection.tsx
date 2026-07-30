@@ -15,7 +15,8 @@ import {
   DatabaseZap, 
   Search, 
   Sparkles, 
-  ArrowRight
+  ArrowRight,
+  ChevronDown
 } from 'lucide-react';
 
 interface PortfolioSectionProps {
@@ -30,25 +31,30 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
   isLightMode = false
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { projects: products, loading } = useProjects();
 
-  const categories = [
-    'All',
-    'Analytics & BI',
-    'Enterprise Automation',
-    'Database & Migration',
-    'AI Vision & Construction',
-    'Logistics'
-  ];
+  const categoriesMap = new Map<string, Set<string>>();
+  products.forEach(p => {
+    if (!categoriesMap.has(p.category)) {
+      categoriesMap.set(p.category, new Set());
+    }
+    if (p.subcategory) {
+      categoriesMap.get(p.category)!.add(p.subcategory);
+    }
+  });
+  
+  const mainCategories = ['All', ...Array.from(categoriesMap.keys()).sort()];
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    const matchesSub = !selectedSubcategory || product.subcategory === selectedSubcategory;
     const matchesSearch =
       product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.shortDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesSub && matchesSearch;
   });
 
   const renderIcon = (iconName: string) => {
@@ -135,27 +141,63 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
         </ScrollReveal>
 
         {/* Filters and Search Bar */}
-        <ScrollReveal animation="fade-up">
+        <ScrollReveal animation="fade-up" className="relative z-50">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-16 lg:mt-24 mb-8 bg-slate-900/60 p-3 rounded-2xl border border-white/10 backdrop-blur-md">
             
             {/* Category Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 border border-blue-400/30'
-                      : isLightMode
-                        ? 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 shadow-sm'
-                        : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
-                  }`}
-                  id={`filter-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className="flex items-center gap-1.5 overflow-visible w-full md:w-auto pb-1 md:pb-0 scrollbar-none z-30">
+              {mainCategories.map((cat) => {
+                const subcats = cat !== 'All' ? Array.from(categoriesMap.get(cat) || []) : [];
+                const hasSubcats = subcats.length > 0;
+                const isSelected = selectedCategory === cat;
+                
+                return (
+                  <div key={cat} className="relative group">
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setSelectedSubcategory(null);
+                      }}
+                      className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                        isSelected
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 border border-blue-400/30'
+                          : isLightMode
+                            ? 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 shadow-sm'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                      }`}
+                      id={`filter-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      {cat}
+                      {hasSubcats && <ChevronDown className="w-3 h-3 opacity-70" />}
+                    </button>
+                    
+                    {hasSubcats && (
+                      <div className="absolute left-0 top-full mt-1 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <div className={`p-1 rounded-xl shadow-xl border backdrop-blur-md ${isLightMode ? 'bg-white/95 border-slate-200' : 'bg-slate-900/95 border-slate-700'}`}>
+                          {subcats.map(sub => (
+                            <button
+                              key={sub}
+                              onClick={() => {
+                                setSelectedCategory(cat);
+                                setSelectedSubcategory(sub);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                                selectedSubcategory === sub 
+                                  ? 'bg-blue-600/10 text-blue-600'
+                                  : isLightMode 
+                                    ? 'hover:bg-slate-100 text-slate-700' 
+                                    : 'hover:bg-slate-800 text-slate-300'
+                              }`}
+                            >
+                              {sub}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Search Input */}
@@ -229,7 +271,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
                       <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${
                         isLightMode ? 'text-blue-700' : 'text-cyan-400'
                       }`}>
-                        {product.category}
+                        {product.category}{product.subcategory ? ` • ${product.subcategory}` : ''}
                       </span>
 
                       {/* Title */}

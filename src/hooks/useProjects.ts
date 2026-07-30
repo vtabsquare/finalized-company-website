@@ -51,6 +51,7 @@ export function useProjects() {
               shortDescription: item.short_description || item.shortDescription || '',
               fullDescription: item.full_description || item.fullDescription || '',
               category: item.category,
+              subcategory: item.subcategory,
               tags: typeof item.tags === 'string' ? JSON.parse(item.tags) : item.tags || [],
               impactMetric: item.impact_metric || item.impactMetric || '',
               keyFeatures: typeof item.key_features === 'string' ? JSON.parse(item.key_features) : item.keyFeatures || item.key_features || [],

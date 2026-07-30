@@ -88,7 +88,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="text-center max-w-4xl mx-auto mb-20 space-y-6">
+        <div className="text-center max-w-4xl mx-auto mb-10 space-y-6">
           <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg ${
             isLightMode 
               ? 'border-blue-300 bg-blue-100/90 text-blue-800 shadow-blue-500/10' 
@@ -120,7 +120,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
         </div>
 
         {/* 3D Floating Carousel Stage */}
-        <div className="relative min-h-[700px] lg:h-[550px] w-full flex items-center justify-center mt-12 mb-8" style={{ perspective: '2000px' }}>
+        <div className="relative min-h-[700px] lg:h-[550px] w-full flex items-center justify-center mt-6 mb-8" style={{ perspective: '2000px' }}>
           
           {loading ? (
             <div className={`p-8 text-center text-sm animate-pulse ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Loading AI Workforce...</div>

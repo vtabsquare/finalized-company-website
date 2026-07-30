@@ -1,6 +1,7 @@
 import React from 'react';
-import { Eye, Target, CheckCircle2, User, Building2, ShieldCheck, Lightbulb, RefreshCw, Cpu } from 'lucide-react';
+import { Eye, Target, CheckCircle2, ArrowRight, User, Building2, ShieldCheck, Lightbulb, RefreshCw } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
+import { NeuralNetworkAnimation } from './animations/NeuralNetworkAnimation';
 
 interface VisionMissionProps {
   isLightMode?: boolean;
@@ -9,14 +10,14 @@ interface VisionMissionProps {
 export const VisionMission: React.FC<VisionMissionProps> = ({ isLightMode = false }) => {
 
   return (
-    <section className={`py-16 lg:py-20 relative overflow-hidden transition-colors duration-300 ${
+    <section className={`py-16 lg:py-24 relative overflow-hidden transition-colors duration-300 ${
       isLightMode ? 'bg-slate-50 border-y border-slate-200' : 'bg-slate-950/60 border-y border-slate-800/80'
     }`}>
       {/* Background Ambience */}
       <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-8 relative z-10 space-y-12">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-8 relative z-10 space-y-16">
         
         {/* Editorial Header */}
         <ScrollReveal animation="fade-up">
@@ -41,117 +42,115 @@ export const VisionMission: React.FC<VisionMissionProps> = ({ isLightMode = fals
           </div>
         </ScrollReveal>
 
-        {/* Asymmetric Core Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
-          
-          {/* Vision Card (Cols 1-4) */}
-          <div className="lg:col-span-4 h-full">
-            <ScrollReveal animation="fade-right" delay={0.1} className="h-full">
-              <div className={`h-full rounded-3xl p-8 group border backdrop-blur-2xl relative overflow-hidden shadow-xl hover:-translate-y-2 transition-transform duration-500 ${
+        {/* AI Network Layout — one connected system */}
+        <div className="relative flex items-center justify-center min-h-[720px] lg:min-h-[560px]">
+
+          {/* Far plane: distant, defocused network running behind the cards */}
+          <div className="absolute inset-0 -mx-6 lg:-mx-8 z-0">
+            <NeuralNetworkAnimation isLightMode={isLightMode} layer="far" />
+          </div>
+
+          <div className="relative z-10 w-full flex flex-col lg:flex-row items-center justify-center lg:gap-[240px]">
+
+          {/* Vision Card */}
+          <div className="w-full lg:w-[420px] shrink-0">
+            <ScrollReveal animation="fade-right" delay={0.1}>
+              <div className={`rounded-[28px] p-8 group border backdrop-blur-3xl shadow-[0_20px_60px_rgba(37,99,235,0.08)] relative overflow-hidden transition-transform duration-500 hover:-translate-y-2 ${
                 isLightMode 
-                  ? 'bg-white/80 border-slate-200/80 hover:border-blue-400/50 hover:shadow-blue-500/10 shadow-slate-200/50' 
-                  : 'bg-white/[0.02] border-white/10 hover:border-blue-500/40 hover:shadow-blue-500/20 shadow-black/50'
+                  ? 'bg-white/80 border-slate-200/80 hover:border-blue-400/50' 
+                  : 'bg-white/[0.03] border-white/10 hover:border-blue-500/40 shadow-black/50'
               }`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
-                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shadow-inner mb-8 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shadow-inner mb-6 group-hover:scale-110 transition-transform duration-500">
                   <Eye className="w-7 h-7" />
                 </div>
                 
-                <h3 className={`text-2xl font-bold mb-3 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
+                <h3 className={`text-2xl font-bold mb-4 tracking-tight ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
                   Empowering People Through AI
                 </h3>
                 
-                <div className={`text-sm leading-relaxed mb-8 space-y-4 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                  <p>We believe Artificial Intelligence should not replace people—it should empower them.</p>
-                  <p>Our vision is to build intelligent systems that eliminate repetitive work, improve decision making, and allow organizations to focus on innovation instead of operations. We envision a future where every business, regardless of size, has access to enterprise-grade AI solutions that are simple, scalable, and affordable.</p>
-                </div>
+                <p className={`text-[13px] leading-relaxed mb-7 font-medium ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Intelligent systems that remove repetitive work and sharpen decision making—so teams focus on innovation, not operations.
+                </p>
 
-                <div className="flex flex-wrap gap-4 mb-2">
+                <div className={`h-px w-full mb-6 ${isLightMode ? 'bg-slate-200/80' : 'bg-white/10'}`} />
+
+                <div className="flex flex-col gap-3">
                   {['Zero Job Displacement', 'Scalable & Affordable'].map((bullet, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-blue-500" />
-                      <span className={`text-xs font-semibold ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>{bullet}</span>
+                    <div key={i} className="flex items-center gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                      <span className={`text-[13px] font-semibold ${isLightMode ? 'text-slate-800' : 'text-slate-200'}`}>{bullet}</span>
                     </div>
                   ))}
                 </div>
+
+                <a href="#ai-portfolio" className={`mt-7 inline-flex items-center gap-2 text-[13px] font-bold tracking-tight transition-colors ${
+                  isLightMode ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300'
+                }`}>
+                  Our approach
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </a>
               </div>
             </ScrollReveal>
           </div>
           
-          {/* AI Core Visualization (Cols 5-8) */}
-          <div className="lg:col-span-4 flex items-center justify-center py-8 lg:py-0 relative min-h-[300px]">
-            <ScrollReveal animation="scale-up" delay={0.2}>
-              <div className="relative flex items-center justify-center w-full h-full group">
-                {/* Central Glowing Core */}
-                <div className="absolute z-20 w-24 h-24 bg-blue-600/20 rounded-full blur-xl animate-pulse" />
-                <div className={`absolute z-30 w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl border backdrop-blur-md transition-all duration-700 group-hover:rotate-180 ${
-                  isLightMode ? 'bg-white/90 border-blue-200' : 'bg-slate-900/90 border-blue-500/30'
-                }`}>
-                  <Cpu className="w-8 h-8 text-blue-500" />
-                </div>
+          {/* Vertical breathing room for the AI Core on mobile */}
+          <div className="h-[300px] lg:hidden" aria-hidden="true" />
 
-                {/* Orbiting Rings */}
-                <div className={`absolute w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] rounded-full border border-dashed transition-all duration-1000 animate-[spin_30s_linear_infinite] ${
-                  isLightMode ? 'border-slate-300' : 'border-slate-700'
-                }`} />
-                <div className={`absolute w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full border border-dotted transition-all duration-1000 animate-[spin_45s_linear_infinite_reverse] ${
-                  isLightMode ? 'border-slate-200' : 'border-slate-800'
-                }`} />
-                
-                {/* Floating Nodes */}
-                <div className="absolute w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] animate-[spin_30s_linear_infinite]">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
-                </div>
-                <div className="absolute w-[380px] h-[380px] animate-[spin_45s_linear_infinite_reverse]">
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.8)] flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                  </div>
-                  <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-
-          {/* Mission Card (Cols 9-12) */}
-          <div className="lg:col-span-4 h-full">
-            <ScrollReveal animation="fade-left" delay={0.3} className="h-full">
-              <div className={`h-full rounded-3xl p-8 group border backdrop-blur-2xl relative overflow-hidden shadow-xl hover:-translate-y-2 transition-transform duration-500 ${
+          {/* Mission Card */}
+          <div className="w-full lg:w-[420px] shrink-0">
+            <ScrollReveal animation="fade-left" delay={0.3}>
+              <div className={`rounded-[28px] p-8 group border backdrop-blur-3xl shadow-[0_20px_60px_rgba(99,102,241,0.08)] relative overflow-hidden transition-transform duration-500 hover:-translate-y-2 ${
                 isLightMode 
-                  ? 'bg-white/80 border-slate-200/80 hover:border-indigo-400/50 hover:shadow-indigo-500/10 shadow-slate-200/50' 
-                  : 'bg-white/[0.02] border-white/10 hover:border-indigo-500/40 hover:shadow-indigo-500/20 shadow-black/50'
+                  ? 'bg-white/80 border-slate-200/80 hover:border-indigo-400/50' 
+                  : 'bg-white/[0.03] border-white/10 hover:border-indigo-500/40 shadow-black/50'
               }`}>
                 <div className="absolute inset-0 bg-gradient-to-bl from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
-                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 shadow-inner mb-8 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 shadow-inner mb-6 group-hover:scale-110 transition-transform duration-500">
                   <Target className="w-7 h-7" />
                 </div>
                 
-                <h3 className={`text-2xl font-bold mb-3 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
+                <h3 className={`text-2xl font-bold mb-4 tracking-tight ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
                   Practical AI, Not Experimental
                 </h3>
                 
-                <div className={`text-sm leading-relaxed mb-8 space-y-4 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                  <p>At VTab Square, we are building practical AI—not experimental AI.</p>
-                  <p>Our mission is to create intelligent applications that solve real-world business challenges through automation, machine learning, natural language processing, and data intelligence. We convert complex enterprise data and manual bottlenecks into seamless automated pipelines.</p>
-                </div>
+                <p className={`text-[13px] leading-relaxed mb-7 font-medium ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Production-ready applications built on automation, machine learning and data intelligence—solving real business problems, not demos.
+                </p>
 
-                <div className="flex flex-wrap gap-4 mb-2">
+                <div className={`h-px w-full mb-6 ${isLightMode ? 'bg-slate-200/80' : 'bg-white/10'}`} />
+
+                <div className="flex flex-col gap-3">
                   {['Real-world Problem Solving', 'Production-grade ROI'].map((bullet, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-indigo-500" />
-                      <span className={`text-xs font-semibold ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>{bullet}</span>
+                    <div key={i} className="flex items-center gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0" />
+                      <span className={`text-[13px] font-semibold ${isLightMode ? 'text-slate-800' : 'text-slate-200'}`}>{bullet}</span>
                     </div>
                   ))}
                 </div>
+
+                <a href="#ai-portfolio" className={`mt-7 inline-flex items-center gap-2 text-[13px] font-bold tracking-tight transition-colors ${
+                  isLightMode ? 'text-indigo-600 hover:text-indigo-700' : 'text-indigo-400 hover:text-indigo-300'
+                }`}>
+                  See it in production
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </a>
               </div>
             </ScrollReveal>
           </div>
 
+          </div>
+
+          {/* Near plane: cluster, packets, energy pulse and the AI Core sit above the cards */}
+          <div className="absolute inset-0 -mx-6 lg:-mx-8 z-20 pointer-events-none">
+            <NeuralNetworkAnimation isLightMode={isLightMode} layer="near" />
+          </div>
         </div>
 
         {/* Enterprise Values Row */}
-        <div className="pt-8">
+        <div className="pt-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               { 
@@ -188,8 +187,8 @@ export const VisionMission: React.FC<VisionMissionProps> = ({ isLightMode = fals
               const Icon = value.icon;
               return (
                 <ScrollReveal key={idx} animation="fade-up" delay={0.1 * idx} className="h-full">
-                  <div className={`group h-full relative overflow-hidden rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 ${
-                    isLightMode ? 'bg-white shadow-sm hover:shadow-md border-slate-200' : 'bg-slate-950 border-slate-800'
+                  <div className={`group h-full relative overflow-hidden rounded-[24px] border p-6 transition-all duration-500 hover:-translate-y-2 ${
+                    isLightMode ? 'bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] border-slate-200/80' : 'bg-white/[0.02] shadow-black/50 hover:shadow-black/70 border-white/10'
                   }`}>
                     {/* Hover Glow */}
                     <div className={`absolute -inset-x-0 -bottom-10 h-24 bg-gradient-to-t ${value.innerGlow} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -200,13 +199,13 @@ export const VisionMission: React.FC<VisionMissionProps> = ({ isLightMode = fals
                       <Icon className="w-6 h-6" />
                     </div>
                     
-                    <h4 className={`text-lg font-bold mb-2 transition-colors ${
+                    <h4 className={`text-lg font-bold mb-3 tracking-tight transition-colors ${
                       isLightMode ? 'text-slate-900' : 'text-slate-200 group-hover:text-white'
                     }`}>
                       {value.title}
                     </h4>
                     
-                    <p className={`text-sm leading-relaxed ${
+                    <p className={`text-sm font-medium leading-relaxed ${
                       isLightMode ? 'text-slate-600' : 'text-slate-400'
                     }`}>
                       {value.desc}

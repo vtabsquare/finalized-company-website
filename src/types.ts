@@ -3,7 +3,8 @@ export interface Product {
   title: string;
   shortDescription: string;
   fullDescription: string;
-  category: 'Analytics & BI' | 'Enterprise Automation' | 'Database & Migration' | 'AI Vision & Construction' | 'Logistics';
+  category: string;
+  subcategory?: string;
   tags: string[];
   impactMetric: string;
   keyFeatures: string[];
@@ -22,6 +23,7 @@ export interface Product {
     features: { title: string; emoji: string; description: string }[];
     impact: string[];
     videoUrl?: string;
+    pptUrl?: string;
   };
 }
 

@@ -20,7 +20,8 @@ import {
   CheckCircle2,
   Activity,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Download
 } from 'lucide-react';
 
 interface ProductSlideshowProps {
@@ -177,7 +178,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             </div>
             <div>
               <span className={`text-[10px] uppercase font-bold tracking-[0.2em] block mb-1 ${isLightMode ? 'text-blue-600' : 'text-cyan-400'}`}>
-                {currentProduct.category}
+                {currentProduct.category}{currentProduct.subcategory ? ` • ${currentProduct.subcategory}` : ''}
               </span>
               <h3 className={`text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight leading-tight line-clamp-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
                 {currentProduct.title}

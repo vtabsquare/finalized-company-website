@@ -9,6 +9,7 @@ interface NavbarProps {
   onOpenSandboxModal: () => void;
   isLightMode?: boolean;
   onToggleTheme?: () => void;
+  isOverHero?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -17,12 +18,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenDemoModal,
   onOpenSandboxModal,
   isLightMode = false,
-  onToggleTheme
+  onToggleTheme,
+  isOverHero = false
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const useHeroNav = isOverHero && !scrolled;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,14 +93,51 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isSecondaryActive = secondaryNavItems.some(item => item.id === activeTab);
 
+  const navActiveClass = useHeroNav
+    ? 'text-white'
+    : isLightMode ? 'text-slate-950' : 'text-white';
+
+  const navInactiveClass = useHeroNav
+    ? 'text-slate-300 hover:text-white'
+    : isLightMode ? 'text-slate-500 hover:text-slate-950' : 'text-slate-400 hover:text-white';
+
+  const navUnderlineClass = useHeroNav || !isLightMode ? 'bg-white' : 'bg-slate-950';
+
+  const logoTitleClass = useHeroNav
+    ? 'text-white group-hover:text-cyan-100'
+    : isLightMode ? 'text-slate-900 group-hover:text-blue-700' : 'text-white group-hover:text-amber-300';
+
+  const logoAccentClass = useHeroNav
+    ? 'text-cyan-400 font-extrabold'
+    : isLightMode ? 'text-blue-700 font-extrabold' : 'text-amber-400 font-extrabold';
+
+  const themeToggleClass = useHeroNav
+    ? 'text-slate-300 hover:text-white'
+    : isLightMode ? 'text-slate-400 hover:text-slate-950' : 'text-slate-500 hover:text-white';
+
+  const headerCtaClass = useHeroNav
+    ? 'bg-white/95 text-slate-950 hover:bg-white border border-white/20'
+    : isLightMode ? 'bg-slate-950 text-white hover:bg-slate-700' : 'bg-white text-slate-950 hover:bg-slate-200';
+
+  const mobileMenuBtnClass = useHeroNav
+    ? 'text-white hover:bg-white/10'
+    : isLightMode ? 'text-slate-700 hover:bg-slate-100' : 'text-slate-300 hover:bg-white/[0.06]';
+
+  const mobileThemeClass = useHeroNav
+    ? 'text-slate-300 hover:bg-white/10'
+    : isLightMode ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/[0.06]';
+
   return (
     <header
+      data-hero-nav={useHeroNav ? 'true' : undefined}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? isLightMode
             ? 'bg-white/70 backdrop-blur-2xl border-b border-slate-900/[0.06] py-3'
             : 'bg-[#05070d]/70 backdrop-blur-2xl border-b border-white/[0.06] py-3'
-          : 'bg-transparent border-b border-transparent py-6'
+          : useHeroNav
+            ? 'bg-gradient-to-b from-slate-950/60 via-slate-950/20 to-transparent border-b border-transparent py-5 md:py-6'
+            : 'bg-transparent border-b border-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -114,17 +155,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex flex-col justify-center">
               <div className="flex items-center gap-2">
                 <span 
-                  className={`text-[22px] font-bold tracking-[0.1em] leading-none transition-colors ${
-                    isLightMode 
-                      ? 'text-slate-900 group-hover:text-blue-700' 
-                      : 'text-white group-hover:text-amber-300'
-                  }`} 
+                  className={`text-[22px] font-bold tracking-[0.1em] leading-none transition-colors ${logoTitleClass}`}
                   style={{ fontFamily: "'Cinzel', serif" }}
                 >
-                  VTAB <span className={isLightMode ? 'text-blue-700 font-extrabold' : 'text-amber-400 font-extrabold'}>SQUARE</span>
+                  VTAB <span className={logoAccentClass}>SQUARE</span>
                 </span>
               </div>
-              <span className="text-[9px] tracking-[0.25em] font-semibold uppercase text-slate-400 dark:text-slate-400 leading-none mt-1.5">
+              <span className={`text-[9px] tracking-[0.25em] font-semibold uppercase leading-none mt-1.5 ${useHeroNav ? 'text-slate-400' : 'text-slate-400'}`}>
                 Enterprise Intelligence
               </span>
             </div>
@@ -139,11 +176,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   className={`group relative py-2 text-[13px] font-medium tracking-[0.02em] transition-colors duration-300 cursor-pointer flex items-baseline gap-1 ${
-                    isActive
-                      ? isLightMode ? 'text-slate-950' : 'text-white'
-                      : isLightMode
-                        ? 'text-slate-500 hover:text-slate-950'
-                        : 'text-slate-400 hover:text-white'
+                    isActive ? navActiveClass : navInactiveClass
                   }`}
                   id={`nav-link-${item.id}`}
                 >
@@ -153,9 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {item.badge.replace(' Live', '')}
                     </span>
                   )}
-                  <span className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${
-                    isLightMode ? 'bg-slate-950' : 'bg-white'
-                  } ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                  <span className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${navUnderlineClass} ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                 </button>
               );
             })}
@@ -165,19 +196,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
                 className={`group relative py-2 text-[13px] font-medium tracking-[0.02em] transition-colors duration-300 cursor-pointer flex items-center gap-1.5 ${
-                  isSecondaryActive || moreDropdownOpen
-                    ? isLightMode ? 'text-slate-950' : 'text-white'
-                    : isLightMode
-                      ? 'text-slate-500 hover:text-slate-950'
-                      : 'text-slate-400 hover:text-white'
+                  isSecondaryActive || moreDropdownOpen ? navActiveClass : navInactiveClass
                 }`}
                 id="more-dropdown-btn"
               >
                 <span>More</span>
                 <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform duration-300 ${moreDropdownOpen ? 'rotate-180' : ''}`} />
-                <span className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${
-                  isLightMode ? 'bg-slate-950' : 'bg-white'
-                } ${isSecondaryActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                <span className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${navUnderlineClass} ${isSecondaryActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
               </button>
 
               {/* Dropdown Card */}
@@ -229,11 +254,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onToggleTheme && (
               <button
                 onClick={onToggleTheme}
-                className={`transition-colors duration-300 cursor-pointer ${
-                  isLightMode
-                    ? 'text-slate-400 hover:text-slate-950'
-                    : 'text-slate-500 hover:text-white'
-                }`}
+                className={`transition-colors duration-300 cursor-pointer ${themeToggleClass}`}
                 title={isLightMode ? "Switch to Dark Mode" : "Switch to Light Mode"}
                 id="theme-toggle-btn"
               >
@@ -244,11 +265,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Primary CTA — solid monochrome */}
             <button
               onClick={() => onOpenDemoModal()}
-              className={`group inline-flex items-center gap-2 pl-5 pr-4 py-2.5 rounded-full text-[12px] font-semibold tracking-[0.08em] uppercase transition-colors duration-300 cursor-pointer ${
-                isLightMode
-                  ? 'bg-slate-950 text-white hover:bg-slate-700'
-                  : 'bg-white text-slate-950 hover:bg-slate-200'
-              }`}
+              className={`group inline-flex items-center gap-2 pl-5 pr-4 py-2.5 rounded-full text-[12px] font-semibold tracking-[0.08em] uppercase transition-colors duration-300 cursor-pointer ${headerCtaClass}`}
               id="book-demo-header-btn"
             >
               <span>Contact for Demo</span>
@@ -261,9 +278,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onToggleTheme && (
               <button
                 onClick={onToggleTheme}
-                className={`p-2 rounded-full transition-colors ${
-                  isLightMode ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/[0.06]'
-                }`}
+                className={`p-2 rounded-full transition-colors ${mobileThemeClass}`}
                 id="theme-toggle-mobile-btn"
               >
                 {isLightMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -273,7 +288,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => onOpenDemoModal()}
               className={`px-4 py-2 text-[11px] font-semibold uppercase tracking-wider rounded-full transition-colors ${
-                isLightMode ? 'bg-slate-950 text-white' : 'bg-white text-slate-950'
+                useHeroNav ? 'bg-white/95 text-slate-950' : isLightMode ? 'bg-slate-950 text-white' : 'bg-white text-slate-950'
               }`}
             >
               Demo
@@ -281,11 +296,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 rounded-full transition-colors ${
-                isLightMode 
-                  ? 'text-slate-700 hover:bg-slate-100' 
-                  : 'text-slate-300 hover:bg-white/[0.06]'
-              }`}
+              className={`p-2 rounded-full transition-colors ${mobileMenuBtnClass}`}
               aria-label="Toggle menu"
               id="mobile-menu-toggle"
             >

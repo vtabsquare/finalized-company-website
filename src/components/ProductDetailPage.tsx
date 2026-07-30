@@ -8,7 +8,8 @@ import {
   ShieldCheck,
   Sparkles,
   ArrowRight,
-  ChevronDown
+  ChevronDown,
+  Download
 } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
@@ -196,6 +197,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     <span>Schedule Technical Demo</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
+                  
+                  {product.detailContent?.pptUrl && (
+                    <a 
+                      href={product.detailContent.pptUrl}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full py-3.5 px-6 mt-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
+                        isLightMode 
+                          ? 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm'
+                          : 'bg-slate-800/60 hover:bg-slate-700/80 text-slate-200 border border-slate-600/50'
+                      }`}
+                    >
+                      <span>Download Presentation</span>
+                      <Download className="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
               </div>
 

@@ -6,7 +6,8 @@ export const PRODUCTS_DATA: Product[] = [
     title: 'AI Reporting Platform',
     shortDescription: 'Transform raw data into interactive dashboards with AI-powered insights, natural language queries, automated analytics, and enterprise-grade reporting.',
     fullDescription: 'Our flagship AI Reporting Platform connects seamlessly with your enterprise data warehouses, streaming systems, and databases. Powered by LLMs and domain-trained statistical engines, it allows business leaders to query complex datasets using natural language, auto-generate real-time Power BI and web dashboards, and receive proactive anomaly alerts before KPIs drift.',
-    category: 'Analytics & BI',
+    category: 'BI dashboards',
+    subcategory: 'Analytics',
     tags: ['Power BI', 'Python', 'AI Analytics', 'Data Warehouse'],
     impactMetric: '10x Faster Executive Reporting',
     keyFeatures: [
