@@ -211,7 +211,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Sound Toggle Button */}
       <button
         onClick={() => setIsMuted(!isMuted)}
-        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-30 w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl"
+        className="absolute top-28 right-6 sm:top-32 sm:right-8 z-30 w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl"
         aria-label={isMuted ? 'Unmute video' : 'Mute video'}
       >
         {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
