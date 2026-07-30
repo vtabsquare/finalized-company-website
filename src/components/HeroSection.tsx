@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Zap, ArrowRight, Layers, User, ShieldCheck, BarChart2, Triangle, Cloud } from 'lucide-react';
+import { Zap, ArrowRight, Layers, User, ShieldCheck, BarChart2, Triangle, Cloud, Volume2, VolumeX } from 'lucide-react';
 
 interface HeroSectionProps {
   onExploreProducts: () => void;
@@ -138,6 +138,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreProducts,
   onScheduleDemo,
 }) => {
+  const [isMuted, setIsMuted] = useState(true);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -197,7 +198,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           className="hero-video-bg hero-ken-burns absolute inset-0 w-full h-full object-cover"
           src={HERO_VIDEO_SRC}
           autoPlay
-          muted
+          muted={isMuted}
           loop
           playsInline
           preload="auto"
@@ -206,6 +207,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="hero-film-grain absolute inset-0" />
         <div className="hero-vignette absolute inset-0" />
       </div>
+
+      {/* Sound Toggle Button */}
+      <button
+        onClick={() => setIsMuted(!isMuted)}
+        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-30 w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl"
+        aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+      >
+        {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+      </button>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-8 sm:pt-32 sm:pb-12 md:pt-36 md:pb-16 lg:pb-20">
         <div className="max-w-xl sm:max-w-2xl lg:max-w-[42rem] space-y-5 sm:space-y-6 md:space-y-7 text-left">
