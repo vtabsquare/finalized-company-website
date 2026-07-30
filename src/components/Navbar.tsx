@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const primaryNavItems: { id: NavTab; label: string; badge?: string }[] = [
     { id: 'home', label: 'Home' },
-    { id: 'products', label: 'Products' },
+    { id: 'products', label: 'Accelerators' },
     { id: 'solutions', label: 'Solutions' },
   ];
 
@@ -246,7 +246,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onOpenDemoModal()}
               className={`group inline-flex items-center gap-2 pl-5 pr-4 py-2.5 rounded-full text-[12px] font-semibold tracking-[0.08em] uppercase transition-colors duration-300 cursor-pointer ${
                 isLightMode
-                  ? 'bg-slate-950 text-white hover:bg-slate-800'
+                  ? 'bg-slate-950 text-white hover:bg-slate-700'
                   : 'bg-white text-slate-950 hover:bg-slate-200'
               }`}
               id="book-demo-header-btn"
@@ -331,8 +331,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenDemoModal();
               }}
+              id="book-demo-mobile-btn"
               className={`w-full py-3 text-[12px] font-semibold uppercase tracking-[0.1em] rounded-xl flex items-center justify-center gap-2 transition-colors ${
-                isLightMode ? 'bg-slate-950 text-white hover:bg-slate-800' : 'bg-white text-slate-950 hover:bg-slate-200'
+                isLightMode ? 'bg-slate-950 text-white hover:bg-slate-700' : 'bg-white text-slate-950 hover:bg-slate-200'
               }`}
             >
               <span>Contact for Demo</span>

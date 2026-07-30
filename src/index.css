@@ -49,8 +49,8 @@
   box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
 }
 
-.light-mode .bg-slate-900,
-.light-mode .bg-slate-950,
+.light-mode .bg-slate-900:not(#book-demo-header-btn):not([data-keep-dark]),
+.light-mode .bg-slate-950:not(#book-demo-header-btn):not([data-keep-dark]),
 .light-mode .bg-[#02040a],
 .light-mode .bg-[#030712],
 .light-mode .bg-[#020612],
@@ -60,6 +60,18 @@
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #e2e8f0 !important;
+}
+
+/* Keep demo button dark in light mode */
+.light-mode #book-demo-header-btn,
+.light-mode #book-demo-mobile-btn {
+  background-color: #020617 !important;
+  color: #ffffff !important;
+}
+.light-mode #book-demo-header-btn:hover,
+.light-mode #book-demo-mobile-btn:hover {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
 }
 
 .light-mode .bg-slate-900\/80,
