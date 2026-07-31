@@ -145,7 +145,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-16 lg:mt-24 mb-8 bg-slate-900/60 p-3 rounded-2xl border border-white/10 backdrop-blur-md">
             
             {/* Category Tabs */}
-            <div className="flex items-center gap-1.5 overflow-visible w-full md:w-auto pb-1 md:pb-0 scrollbar-none z-30">
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pb-1 md:pb-0 z-30">
               {mainCategories.map((cat) => {
                 const subcats = cat !== 'All' ? Array.from(categoriesMap.get(cat) || []) : [];
                 const hasSubcats = subcats.length > 0;
@@ -250,25 +250,31 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#02040a] via-black/30 to-transparent" />
                     </div>
-
-                    {/* Top Overlay Badges */}
-                    <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 z-10 pointer-events-none">
-                      <div className="p-1.5 rounded-lg bg-black/75 backdrop-blur-md border border-white/20 shadow-lg pointer-events-auto group-hover:scale-110 transition-transform">
-                        {renderIcon(product.iconName)}
-                      </div>
-
-                      <span className="text-[9px] text-cyan-300 uppercase font-extrabold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md border border-cyan-500/40 rounded-full flex items-center gap-1 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-                        <Sparkles className="w-3 h-3 text-cyan-400" />
-                        {product.impactMetric}
-                      </span>
-                    </div>
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-6 pt-4 flex-1 flex flex-col justify-between relative z-10">
+                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between relative z-10">
                     <div>
+                      {/* Top Badges (Moved from image overlay) */}
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className={`p-1.5 rounded-lg border shadow-sm ${
+                          isLightMode ? 'bg-white border-slate-200' : 'bg-black/50 border-white/10'
+                        }`}>
+                          {renderIcon(product.iconName)}
+                        </div>
+
+                        <span className={`text-[9px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full flex items-center gap-1 border ${
+                          isLightMode 
+                            ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                            : 'bg-black/50 text-cyan-300 border-cyan-500/30'
+                        }`}>
+                          <Sparkles className={`w-3 h-3 ${isLightMode ? 'text-blue-500' : 'text-cyan-400'}`} />
+                          {product.impactMetric}
+                        </span>
+                      </div>
+
                       {/* Category Pill */}
-                      <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${
+                      <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${
                         isLightMode ? 'text-blue-700' : 'text-cyan-400'
                       }`}>
                         {product.category}{product.subcategory ? ` • ${product.subcategory}` : ''}

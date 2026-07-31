@@ -193,9 +193,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       aria-label="Hero"
     >
       <div className="absolute inset-0 z-0" aria-hidden="true">
+        {/* Mobile Gradient Fallback */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#030712] via-slate-900 to-black sm:hidden" />
+        
+        {/* Desktop Video */}
         <video
           ref={videoRef}
-          className="hero-video-bg hero-ken-burns absolute inset-0 w-full h-full object-cover"
+          className="hero-video-bg hero-ken-burns absolute inset-0 w-full h-full object-cover hidden sm:block"
           src={HERO_VIDEO_SRC}
           autoPlay
           muted={isMuted}
@@ -203,7 +207,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           playsInline
           preload="auto"
         />
-        <div className="hero-cinematic-overlay absolute inset-0" />
+        <div className="hero-cinematic-overlay absolute inset-0 hidden sm:block" />
         <div className="hero-film-grain absolute inset-0" />
         <div className="hero-vignette absolute inset-0" />
       </div>
@@ -262,6 +266,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           >
             We build next-generation AI applications that automate work, accelerate decision-making, and transform businesses through intelligent software.
           </motion.p>
+
+          {/* Mobile Video Container */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.48, ease: easeOut }}
+            className="sm:hidden w-full aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl relative my-4"
+          >
+            <video
+              className="w-full h-full object-cover"
+              src={HERO_VIDEO_SRC}
+              autoPlay
+              muted={isMuted}
+              loop
+              playsInline
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}

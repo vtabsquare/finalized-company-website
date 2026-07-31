@@ -120,10 +120,10 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
         </div>
 
         {/* 3D Floating Carousel Stage */}
-        <div className="relative min-h-[700px] lg:h-[550px] w-full flex items-center justify-center mt-6 mb-8" style={{ perspective: '2000px' }}>
+        <div className="grid grid-cols-1 grid-rows-1 w-full max-w-[850px] mx-auto mt-6 mb-4 lg:mb-8" style={{ perspective: '2000px' }}>
           
           {loading ? (
-            <div className={`p-8 text-center text-sm animate-pulse ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Loading AI Workforce...</div>
+            <div className={`col-start-1 row-start-1 p-8 text-center text-sm animate-pulse ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Loading AI Workforce...</div>
           ) : employees.map((employee, index) => {
             const isActive = index === selectedIndex;
             const style = getCardStyle(index);
@@ -132,7 +132,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
               <div
                 key={employee.id}
                 onClick={() => setSelectedIndex(index)}
-                className={`absolute w-full max-w-[850px] transition-all duration-700 ease-out cursor-pointer rounded-3xl overflow-hidden border backdrop-blur-2xl ${
+                className={`col-start-1 row-start-1 w-full transition-all duration-700 ease-out cursor-pointer rounded-3xl overflow-hidden border backdrop-blur-2xl ${
                   isActive 
                     ? isLightMode ? 'border-blue-300/80 bg-white/95 shadow-[0_20px_70px_-10px_rgba(37,99,235,0.25),0_0_40px_-5px_rgba(6,182,212,0.2),0_10px_30px_-5px_rgba(168,85,247,0.15)] hover:border-blue-400 hover:shadow-[0_25px_80px_-10px_rgba(37,99,235,0.35),0_0_50px_-5px_rgba(6,182,212,0.3)]' : 'border-blue-500/40 bg-slate-900/80 shadow-[0_20px_70px_-10px_rgba(59,130,246,0.2)] hover:border-blue-400/60' 
                     : isLightMode ? 'border-slate-100 bg-white/70 shadow-lg shadow-slate-200/50 hover:bg-white hover:border-slate-200' : 'border-white/10 bg-slate-900/40 shadow-2xl shadow-black/80 hover:bg-slate-900/60'
@@ -236,31 +236,33 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
           })}
         </div>
 
-        {/* Carousel Navigation Controls */}
-        <div className="w-full flex items-center justify-center mt-8 lg:mt-0 lg:absolute lg:-bottom-8 lg:left-1/2 lg:-translate-x-1/2 z-30">
-          <div className="flex items-center gap-6">
+        {/* Carousel Navigation Controls (Pill Style) */}
+        <div className="w-full flex items-center justify-center mt-4 lg:mt-0 lg:absolute lg:-bottom-12 lg:left-1/2 lg:-translate-x-1/2 z-30">
+          <div className={`flex items-center gap-4 px-4 py-2.5 rounded-full border backdrop-blur-xl shadow-lg transition-all ${
+            isLightMode ? 'bg-white border-slate-200' : 'bg-black/60 border-white/10'
+          }`}>
             <button 
               onClick={() => setSelectedIndex(prev => Math.max(0, prev - 1))}
               disabled={selectedIndex === 0 || loading}
-              className={`p-3 rounded-full border shadow-lg backdrop-blur-md transition-all ${
+              className={`p-1.5 rounded-full transition-colors ${
                 selectedIndex === 0 || loading
-                  ? (isLightMode ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-600') 
-                  : (isLightMode ? 'bg-white border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50 cursor-pointer' : 'bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-400 hover:text-white cursor-pointer')
+                  ? (isLightMode ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 cursor-not-allowed') 
+                  : (isLightMode ? 'text-slate-700 hover:bg-slate-100 cursor-pointer' : 'text-slate-300 hover:bg-white/10 cursor-pointer')
               }`}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
 
             {/* Dot Indicators */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-2">
               {employees.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedIndex(idx)}
                   className={`transition-all duration-300 rounded-full cursor-pointer ${
                     idx === selectedIndex 
-                      ? (isLightMode ? 'w-8 h-2 bg-blue-500' : 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]') 
-                      : (isLightMode ? 'w-2 h-2 bg-slate-300 hover:bg-blue-300' : 'w-2 h-2 bg-slate-700 hover:bg-slate-500')
+                      ? (isLightMode ? 'w-8 h-2 bg-blue-600 shadow-sm' : 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]') 
+                      : (isLightMode ? 'w-2 h-2 bg-slate-300 hover:bg-slate-400' : 'w-2 h-2 bg-slate-600 hover:bg-slate-400')
                   }`}
                 />
               ))}
@@ -269,10 +271,10 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
             <button 
               onClick={() => setSelectedIndex(prev => Math.min(employees.length - 1, prev + 1))}
               disabled={selectedIndex === employees.length - 1 || loading}
-              className={`p-3 rounded-full border shadow-lg backdrop-blur-md transition-all ${
+              className={`p-1.5 rounded-full transition-colors ${
                 selectedIndex === employees.length - 1 || loading
-                  ? (isLightMode ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-900 border-slate-800 text-slate-600') 
-                  : (isLightMode ? 'bg-white border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50 cursor-pointer' : 'bg-blue-900/40 border-blue-500/30 hover:bg-blue-800/60 text-blue-400 hover:text-white cursor-pointer')
+                  ? (isLightMode ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 cursor-not-allowed') 
+                  : (isLightMode ? 'text-slate-700 hover:bg-slate-100 cursor-pointer' : 'text-slate-300 hover:bg-white/10 cursor-pointer')
               }`}
             >
               <ChevronRight className="w-5 h-5" />
