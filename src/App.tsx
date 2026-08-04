@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { NavTab, Product } from './types';
 import { NeuralBackground } from './components/NeuralBackground';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
-import { VisionMission } from './components/VisionMission';
-import { AiEmployeesBanner } from './components/AiEmployeesBanner';
-import { PortfolioSection } from './components/PortfolioSection';
-import { FutureInnovations } from './components/FutureInnovations';
-import { WhyChooseUs } from './components/WhyChooseUs';
-import { ImpactStats } from './components/ImpactStats';
-import { ClosingBanner } from './components/ClosingBanner';
-import { Footer } from './components/Footer';
 import { DemoModal } from './components/DemoModal';
-import { ProductDetailPage } from './components/ProductDetailPage';
 import { InteractiveAiSandboxModal } from './components/InteractiveAiSandboxModal';
-import { PageViews } from './components/PageViews';
 import { AiChatBot } from './components/AiChatBot';
+
+const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
+const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
+const PortfolioSection = lazy(() => import('./components/PortfolioSection').then(m => ({ default: m.PortfolioSection })));
+const FutureInnovations = lazy(() => import('./components/FutureInnovations').then(m => ({ default: m.FutureInnovations })));
+const WhyChooseUs = lazy(() => import('./components/WhyChooseUs').then(m => ({ default: m.WhyChooseUs })));
+const ImpactStats = lazy(() => import('./components/ImpactStats').then(m => ({ default: m.ImpactStats })));
+const ClosingBanner = lazy(() => import('./components/ClosingBanner').then(m => ({ default: m.ClosingBanner })));
+const Footer = lazy(() => import('./components/Footer').then(m => ({ default: m.Footer })));
+const ProductDetailPage = lazy(() => import('./components/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const PageViews = lazy(() => import('./components/PageViews').then(m => ({ default: m.PageViews })));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
@@ -95,20 +96,24 @@ export default function App() {
         
         {/* Full-page detail view for all selected products */}
         {selectedProduct ? (
-          <ProductDetailPage
-            product={selectedProduct}
-            onBack={handleBackFromDetail}
-            onScheduleDemo={handleOpenDemoModal}
-            isLightMode={isLightMode}
-          />
+          <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-white">Loading...</div>}>
+            <ProductDetailPage
+              product={selectedProduct}
+              onBack={handleBackFromDetail}
+              onScheduleDemo={handleOpenDemoModal}
+              isLightMode={isLightMode}
+            />
+          </Suspense>
         ) : activeTab !== 'home' && activeTab !== 'products' ? (
-          <PageViews
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            onScheduleDemo={handleOpenDemoModal}
-            onOpenSandbox={() => setIsSandboxModalOpen(true)}
-            onSelectProduct={handleSelectProduct}
-          />
+          <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-white">Loading...</div>}>
+            <PageViews
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              onScheduleDemo={handleOpenDemoModal}
+              onOpenSandbox={() => setIsSandboxModalOpen(true)}
+              onSelectProduct={handleSelectProduct}
+            />
+          </Suspense>
         ) : (
           <>
             {/* Hero Section */}
@@ -119,38 +124,39 @@ export default function App() {
               isLightMode={isLightMode}
             />
 
-            {/* Vision & Mission */}
-            <VisionMission isLightMode={isLightMode} />
-
-            {/* AI Employees Banner */}
-            <AiEmployeesBanner
-              onScheduleDemo={handleOpenDemoModal}
-              onOpenSandbox={() => setIsSandboxModalOpen(true)}
-              isLightMode={isLightMode}
-            />
-
-            {/* AI Portfolio */}
-            <PortfolioSection
-              onSelectProduct={handleSelectProduct}
-              onScheduleDemo={handleOpenDemoModal}
-              isLightMode={isLightMode}
-            />
-
-            {/* Future Innovations (Coming Soon) */}
-            <FutureInnovations onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
-
-            {/* Why Choose Us */}
-            <WhyChooseUs onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
-
-            {/* Impact Numbers */}
-            <ImpactStats isLightMode={isLightMode} />
-
-            {/* Closing Banner */}
-            <ClosingBanner
-              onScheduleDemo={handleOpenDemoModal}
-              onOpenSandbox={() => setIsSandboxModalOpen(true)}
-              isLightMode={isLightMode}
-            />
+            <Suspense fallback={<div className="min-h-screen"></div>}>
+              <VisionMission isLightMode={isLightMode} />
+  
+              {/* AI Employees Banner */}
+              <AiEmployeesBanner
+                onScheduleDemo={handleOpenDemoModal}
+                onOpenSandbox={() => setIsSandboxModalOpen(true)}
+                isLightMode={isLightMode}
+              />
+  
+              {/* AI Portfolio */}
+              <PortfolioSection
+                onSelectProduct={handleSelectProduct}
+                onScheduleDemo={handleOpenDemoModal}
+                isLightMode={isLightMode}
+              />
+  
+              {/* Future Innovations (Coming Soon) */}
+              <FutureInnovations onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
+  
+              {/* Why Choose Us */}
+              <WhyChooseUs onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
+  
+              {/* Impact Statistics */}
+              <ImpactStats isLightMode={isLightMode} />
+  
+              {/* Closing Call to Action */}
+              <ClosingBanner
+                onScheduleDemo={handleOpenDemoModal}
+                onOpenSandbox={() => setIsSandboxModalOpen(true)}
+                isLightMode={isLightMode}
+              />
+            </Suspense>
           </>
         )}
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 import { getValidImageUrl } from '../utils/imageFallback';
+import { useIsMobile } from '../hooks/useIsMobile';
 import { 
   BarChart3, 
   ArrowLeftRight, 
@@ -37,17 +38,8 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   onScheduleDemo,
   isLightMode = false
 }) => {
-  // Only one of the mobile/desktop video players should ever be active at once —
-  // both are mounted in the DOM (toggled via CSS breakpoints), so without this,
-  // the same video streams twice simultaneously and causes buffering.
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const apply = () => setIsDesktop(mq.matches);
-    apply();
-    mq.addEventListener('change', apply);
-    return () => mq.removeEventListener('change', apply);
-  }, []);
+  const isMobile = useIsMobile(1024);
+  const isDesktop = !isMobile;
 
   const featuredProducts = products.filter(p => p.featured === true);
   const [currentIndex, setCurrentIndex] = useState(() => {
@@ -123,7 +115,8 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
     <div className={`relative w-full overflow-hidden flex flex-col border-y transition-colors duration-300 ${isLightMode ? 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 border-slate-200/80 shadow-xl' : 'bg-[#030712] border-white/5'}`}>
       
       {/* ─── MOBILE / TABLET LAYOUT (< lg) ─── */}
-      <div className="flex flex-col lg:hidden">
+      {!isDesktop && (
+      <div className="flex flex-col">
         {/* Video on top */}
         <div className="relative w-full aspect-video overflow-hidden">
           <ProductVideoStreamingPlayer
@@ -225,9 +218,11 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
           </button>
         </div>
       </div>
+      )}
 
       {/* ─── DESKTOP LAYOUT (lg+) ─── */}
-      <div className="hidden lg:block relative min-h-[700px]">
+      {isDesktop && (
+      <div className="relative min-h-[700px]">
       {/* Luminous Ambient Background Glows for Light Mode */}
       {isLightMode && (
         <>
@@ -429,7 +424,8 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
         })}
       </div>
 
-      </div>{/* end desktop layout */}
+      </div>
+      )}
     </div>
   );
 };

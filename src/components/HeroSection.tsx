@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Zap, ArrowRight, Layers, User, ShieldCheck, BarChart2, Triangle, Cloud, Volume2, VolumeX } from 'lucide-react';
+import { useIsMobile } from '../hooks/useIsMobile';
+import TypewriterHeadline from './TypewriterHeadline';
 
 interface HeroSectionProps {
   onExploreProducts: () => void;
@@ -139,53 +141,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onScheduleDemo,
 }) => {
   const [isMuted, setIsMuted] = useState(true);
-  const [headlineIndex, setHeadlineIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const currentHeadline = HEADLINES[headlineIndex];
-  const fullText = currentHeadline.lines.join('\n');
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isDeleting) {
-      if (charIndex > 0) {
-        timeout = setTimeout(() => setCharIndex(prev => prev - 1), 18);
-      } else {
-        setIsDeleting(false);
-        setHeadlineIndex(prev => (prev + 1) % HEADLINES.length);
-      }
-    } else if (charIndex < fullText.length) {
-      timeout = setTimeout(() => setCharIndex(prev => prev + 1), Math.random() * 35 + 18);
-    } else {
-      timeout = setTimeout(() => setIsDeleting(true), 3200);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, headlineIndex, fullText.length]);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    video.play().catch(() => {});
-  }, []);
+    
+    video.defaultMuted = isMuted;
+    video.muted = isMuted;
+    
+    if (isMuted) {
+      video.play().catch(() => {});
+    }
+  }, [isMuted]);
 
   useEffect(() => {
     const timer = setTimeout(() => setStatsVisible(true), 900);
     return () => clearTimeout(timer);
   }, []);
 
-  const displayedLines = currentHeadline.lines.map((line, lineIdx) => {
-    const lineStart = lineIdx === 0 ? 0 : currentHeadline.lines[0].length + 1;
-    const charsIntoLine = Math.max(0, charIndex - lineStart);
-    return line.slice(0, Math.min(charsIntoLine, line.length));
-  });
 
-  const activeLineIndex = charIndex <= currentHeadline.lines[0].length ? 0 : 1;
 
   return (
     <section
@@ -197,19 +175,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="absolute inset-0 bg-gradient-to-br from-[#030712] via-slate-900 to-black sm:hidden" />
         
         {/* Desktop Video */}
-        <video
-          ref={videoRef}
-          className="hero-video-bg hero-ken-burns absolute inset-0 w-full h-full object-cover hidden sm:block"
-          src={HERO_VIDEO_SRC}
-          autoPlay
-          muted={isMuted}
-          loop
-          playsInline
-          preload="metadata"
-        />
+        {!isMobile && (
+          <video
+            ref={videoRef}
+            className="hero-video-bg absolute inset-0 w-full h-full object-cover hero-ken-burns"
+            src={HERO_VIDEO_SRC}
+            autoPlay
+            loop
+            playsInline
+            preload="metadata"
+          />
+        )}
         <div className="hero-cinematic-overlay absolute inset-0 hidden sm:block" />
         <div className="hero-film-grain absolute inset-0" />
-        <div className="hero-vignette absolute inset-0" />
+        <div className="hero-vignette absolute inset-0 hidden sm:block" />
       </div>
 
       {/* Sound Toggle Button */}
@@ -243,19 +222,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             transition={{ duration: 0.85, delay: 0.28, ease: easeOut }}
             className="hero-headline-block"
           >
-            <h1 className="text-[1.85rem] sm:text-[2.65rem] md:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] font-black tracking-[-0.03em] leading-[1.12] sm:leading-[1.1] text-white">
-              {displayedLines.map((line, lineIdx) => (
-                <span key={`${headlineIndex}-line-${lineIdx}`} className="block">
-                  {line.length > 0 && renderLineWords(line, currentHeadline.gradientWords)}
-                  {lineIdx === activeLineIndex && (
-                    <span
-                      className="hero-cursor inline-block w-[3px] h-[0.82em] bg-cyan-400 ml-1 align-[-0.08em]"
-                      aria-hidden="true"
-                    />
-                  )}
-                </span>
-              ))}
-            </h1>
+            <TypewriterHeadline headlines={HEADLINES} renderLineWords={renderLineWords} />
           </motion.div>
 
           <motion.p
@@ -268,23 +235,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </motion.p>
 
           {/* Mobile Video Container */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.48, ease: easeOut }}
-            className="sm:hidden w-full aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl relative my-4"
-          >
-            <video
-              className="w-full h-full object-cover"
-              src={HERO_VIDEO_SRC}
-              autoPlay
-              muted={isMuted}
-              loop
-              playsInline
-              preload="metadata"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
-          </motion.div>
+          {isMobile && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.48, ease: easeOut }}
+              className="sm:hidden w-full aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl relative my-4"
+            >
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                src={HERO_VIDEO_SRC}
+                autoPlay
+                muted={isMuted}
+                loop
+                playsInline
+                preload="metadata"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
+            </motion.div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}

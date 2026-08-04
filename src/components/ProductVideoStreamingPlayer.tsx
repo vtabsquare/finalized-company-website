@@ -111,11 +111,13 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(isActive);
   const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [timecode, setTimecode] = useState<number>(0);
   const [duration, setDuration] = useState<number>(30); // 30 second video demo loop
   const [streamLatency, setStreamLatency] = useState<number>(14);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const ambientVideoRef = useRef<HTMLVideoElement | null>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const timecodeRef = useRef<HTMLSpanElement>(null);
+  const rafRef = useRef<number>();
 
   // Play/pause based on isActive prop
   useEffect(() => {
@@ -135,21 +137,29 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     }
   }, [isMuted]);
 
-  // Sync actual video duration and timecode from video element
+  // High-performance DOM update loop for progress bar
   useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
+    if (!isPlaying) return;
 
-    const handleTimeUpdate = () => {
-      setTimecode(vid.currentTime);
-      if (vid.duration && !isNaN(vid.duration)) {
-        setDuration(vid.duration);
+    const updateProgress = () => {
+      const vid = videoRef.current;
+      if (vid && progressRef.current && timecodeRef.current) {
+        const current = vid.currentTime;
+        const dur = Math.max(vid.duration && !isNaN(vid.duration) && isFinite(vid.duration) ? vid.duration : duration, 1);
+        
+        // Mutate DOM directly to prevent React re-renders 60x/sec
+        progressRef.current.style.width = `${(current / dur) * 100}%`;
+        timecodeRef.current.textContent = `${formatTime(current)} / ${formatTime(dur)}`;
       }
+      rafRef.current = requestAnimationFrame(updateProgress);
     };
 
-    vid.addEventListener('timeupdate', handleTimeUpdate);
-    return () => vid.removeEventListener('timeupdate', handleTimeUpdate);
-  }, []);
+    rafRef.current = requestAnimationFrame(updateProgress);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isPlaying, duration]);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -185,7 +195,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
-      setTimecode(0);
+      if (progressRef.current) progressRef.current.style.width = '0%';
+      if (timecodeRef.current) timecodeRef.current.textContent = `00:00 / ${formatTime(duration)}`;
       setIsPlaying(true);
     }
   };
@@ -203,7 +214,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       {/* Ambient Blurred Background Image to eliminate black bars without GPU overload */}
       <img
         src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-        className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none scale-110"
+        className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110"
         alt="Ambient background"
       />
 
@@ -217,12 +228,12 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         muted={isMuted}
         playsInline
         preload={isActive ? "metadata" : "none"}
-        onTimeUpdate={() => {
-          if (videoRef.current && videoRef.current.duration) {
+        onLoadedMetadata={() => {
+          if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration) && isFinite(videoRef.current.duration)) {
             setDuration(Math.min(30, videoRef.current.duration));
           }
         }}
-        className="relative z-10 w-full h-full object-contain opacity-95 group-hover/video:opacity-100 transition-opacity drop-shadow-2xl"
+        className="relative z-10 w-full h-full object-contain opacity-100 transition-opacity"
       />
 
 
@@ -247,7 +258,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
       {/* Bottom Floating Glass Control HUD — Premium Design */}
       <div className="absolute bottom-4 inset-x-4 z-40 opacity-0 group-hover/video:opacity-100 transition-opacity duration-500">
-        <div className="bg-black/70 backdrop-blur-3xl border border-white/[0.08] rounded-2xl px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col gap-2">
+        <div className="bg-black/70 backdrop-blur-md border border-white/[0.08] rounded-2xl px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col gap-2">
           
           {/* Interactive Seeking Progress Bar */}
           <div 
@@ -256,14 +267,17 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
                 const rect = e.currentTarget.getBoundingClientRect();
                 const pos = (e.clientX - rect.left) / rect.width;
                 videoRef.current.currentTime = pos * videoRef.current.duration;
-                setTimecode(pos * videoRef.current.duration);
+                // Force an immediate DOM update for responsiveness
+                if (progressRef.current) progressRef.current.style.width = `${pos * 100}%`;
+                if (timecodeRef.current) timecodeRef.current.textContent = `${formatTime(pos * videoRef.current.duration)} / ${formatTime(duration)}`;
               }
             }}
             className="w-full bg-white/[0.08] h-1 rounded-full overflow-visible cursor-pointer relative group/progress hover:h-1.5 transition-all"
           >
             <div 
+              ref={progressRef}
               className="bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 h-full rounded-full transition-all duration-100 relative"
-              style={{ width: `${(timecode / Math.max(duration, 1)) * 100}%` }}
+              style={{ width: '0%' }}
             >
               {/* Scrub dot */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_8px_rgba(34,211,238,0.6)] opacity-0 group-hover/progress:opacity-100 transition-opacity scale-75 group-hover/progress:scale-100" />
@@ -308,8 +322,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
               <div className="w-px h-4 bg-white/[0.08] mx-0.5" />
 
               {/* Timecode */}
-              <span className="text-[11px] text-slate-400 font-mono tabular-nums tracking-wide">
-                {formatTime(timecode)} <span className="text-white/20">/</span> {formatTime(duration)}
+              <span ref={timecodeRef} className="text-[11px] text-slate-400 font-mono tabular-nums tracking-wide">
+                00:00 <span className="text-white/20">/</span> {formatTime(duration)}
               </span>
             </div>
 
