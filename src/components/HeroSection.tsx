@@ -205,7 +205,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           muted={isMuted}
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
         />
         <div className="hero-cinematic-overlay absolute inset-0 hidden sm:block" />
         <div className="hero-film-grain absolute inset-0" />
@@ -281,6 +281,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               muted={isMuted}
               loop
               playsInline
+              preload="metadata"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
           </motion.div>

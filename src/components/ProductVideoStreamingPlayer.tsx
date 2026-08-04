@@ -24,6 +24,7 @@ interface ProductVideoStreamingPlayerProps {
   isCinematic?: boolean;
   onToggleCinematic?: () => void;
   videoUrl?: string;
+  isActive?: boolean;
 }
 
 // High quality tech/AI video loops
@@ -105,14 +106,29 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   onVideoEnd,
   isCinematic = false,
   onToggleCinematic,
-  videoUrl
+  videoUrl,
+  isActive = true
 }) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(isActive);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [timecode, setTimecode] = useState<number>(0);
   const [duration, setDuration] = useState<number>(30); // 30 second video demo loop
   const [streamLatency, setStreamLatency] = useState<number>(14);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const ambientVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Play/pause based on isActive prop
+  useEffect(() => {
+    if (isActive) {
+      setIsPlaying(true);
+      videoRef.current?.play().catch(() => {});
+      ambientVideoRef.current?.play().catch(() => {});
+    } else {
+      setIsPlaying(false);
+      videoRef.current?.pause();
+      ambientVideoRef.current?.pause();
+    }
+  }, [isActive]);
 
   // Sync HTML5 video element muted state with React isMuted state
   useEffect(() => {
@@ -141,8 +157,10 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        ambientVideoRef.current?.pause();
       } else {
         videoRef.current.play().catch(() => {});
+        ambientVideoRef.current?.play().catch(() => {});
       }
       setIsPlaying(!isPlaying);
     }
@@ -188,11 +206,13 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
       {/* Ambient Blurred Background Video to eliminate black bars without cropping main content */}
       <video
+        ref={ambientVideoRef}
         src={videoSource}
-        autoPlay
+        autoPlay={isActive}
         loop
         muted={true}
         playsInline
+        preload={isActive ? "metadata" : "none"}
         className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 pointer-events-none scale-110"
       />
 
@@ -201,10 +221,11 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         ref={videoRef}
         src={videoSource}
         poster={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-        autoPlay
+        autoPlay={isActive}
         loop
         muted={isMuted}
         playsInline
+        preload={isActive ? "metadata" : "none"}
         onTimeUpdate={() => {
           if (videoRef.current && videoRef.current.duration) {
             setDuration(Math.min(30, videoRef.current.duration));

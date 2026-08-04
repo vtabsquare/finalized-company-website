@@ -251,6 +251,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}
+            isActive={true}
           />
         </div>
       </div>
