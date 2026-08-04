@@ -122,11 +122,9 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     if (isActive) {
       setIsPlaying(true);
       videoRef.current?.play().catch(() => {});
-      ambientVideoRef.current?.play().catch(() => {});
     } else {
       setIsPlaying(false);
       videoRef.current?.pause();
-      ambientVideoRef.current?.pause();
     }
   }, [isActive]);
 
@@ -157,10 +155,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
-        ambientVideoRef.current?.pause();
       } else {
         videoRef.current.play().catch(() => {});
-        ambientVideoRef.current?.play().catch(() => {});
       }
       setIsPlaying(!isPlaying);
     }
@@ -204,16 +200,11 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
-      {/* Ambient Blurred Background Video to eliminate black bars without cropping main content */}
-      <video
-        ref={ambientVideoRef}
-        src={videoSource}
-        autoPlay={isActive}
-        loop
-        muted={true}
-        playsInline
-        preload={isActive ? "metadata" : "none"}
-        className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 pointer-events-none scale-110"
+      {/* Ambient Blurred Background Image to eliminate black bars without GPU overload */}
+      <img
+        src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
+        className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none scale-110"
+        alt="Ambient background"
       />
 
       {/* Main Video Stream Element - Uncropped */}
