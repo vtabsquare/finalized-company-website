@@ -37,6 +37,18 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   onScheduleDemo,
   isLightMode = false
 }) => {
+  // Only one of the mobile/desktop video players should ever be active at once —
+  // both are mounted in the DOM (toggled via CSS breakpoints), so without this,
+  // the same video streams twice simultaneously and causes buffering.
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const apply = () => setIsDesktop(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
+
   const featuredProducts = products.filter(p => p.featured === true);
   const [currentIndex, setCurrentIndex] = useState(() => {
     const savedId = sessionStorage.getItem('last_selected_product_id');
@@ -123,6 +135,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             compactMode={false}
             isCinematic={false}
             onToggleCinematic={() => {}}
+            isActive={!isDesktop}
           />
           {/* Gradient overlay bottom */}
           <div className={`absolute inset-x-0 bottom-0 h-16 ${isLightMode ? 'bg-gradient-to-t from-slate-50' : 'bg-gradient-to-t from-[#030712]'}`} />
@@ -251,7 +264,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}
-            isActive={true}
+            isActive={isDesktop}
           />
         </div>
       </div>
