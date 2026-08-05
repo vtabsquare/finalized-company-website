@@ -161,163 +161,198 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <section
-      className="dark-hero-canvas relative min-h-[100svh] flex flex-col justify-end sm:justify-center overflow-hidden text-white"
+      className="dark-hero-canvas relative min-h-[100svh] flex flex-col overflow-hidden text-white bg-[#030712]"
       aria-label="Hero"
     >
-      <div className="absolute inset-0 z-0" aria-hidden="true">
-        {/* Mobile Gradient Fallback */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#030712] via-slate-900 to-black sm:hidden" />
-        
-        {/* Desktop Video */}
-        {!isMobile && (
-          <>
-            {/* Static poster shown until video is fully buffered */}
-            <img
-              src="/media/videos/company-overview-poster.jpg"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                isVideoReady ? 'opacity-0' : 'opacity-60'
-              }`}
-              alt=""
-            />
-            {/* Ken-burns wrapper — keeps animation off the video compositor layer */}
-            <div className={`absolute inset-0 transition-opacity duration-1000 ${
-              isVideoReady ? 'opacity-100' : 'opacity-0'
-            }`}>
-              <video
-                ref={videoRef}
-                className="hero-video-bg absolute inset-0 w-full h-full object-cover"
-                src={HERO_VIDEO_SRC}
-                loop
-                muted
-                playsInline
-                preload="auto"
-                onCanPlay={() => {
-                  setIsVideoReady(true);
-                  videoRef.current?.play().catch(() => {});
-                }}
-                style={{
-                  willChange: 'transform',
-                  transform: 'translateZ(0)',
-                  backfaceVisibility: 'hidden'
-                }}
-              />
-            </div>
-          </>
-        )}
-        {/* Single lightweight gradient overlay for text readability — no film-grain or blend modes */}
-        <div className="absolute inset-0 hidden sm:block pointer-events-none"
-          style={{
-            background: 'linear-gradient(105deg, rgba(2,6,23,0.88) 0%, rgba(2,6,23,0.65) 35%, rgba(2,6,23,0.25) 60%, transparent 85%), linear-gradient(to top, rgba(2,6,23,0.7) 0%, transparent 50%)'
-          }}
-        />
+      {/* Premium Ambient Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[120px] opacity-60" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[100px] opacity-40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#030712_80%)]" />
       </div>
 
-      {/* Sound Toggle Button */}
-      <button
-        onClick={() => setIsMuted(!isMuted)}
-        className="absolute top-28 right-6 sm:top-32 sm:right-8 z-30 w-12 h-12 rounded-full bg-slate-900/70 hover:bg-slate-900/90 border border-white/10 flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl"
-        aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-      >
-        {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-      </button>
-
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-8 sm:pt-32 sm:pb-12 md:pt-36 md:pb-16 lg:pb-20">
-        <div className="max-w-xl sm:max-w-2xl lg:max-w-[42rem] space-y-5 sm:space-y-6 md:space-y-7 text-left">
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: easeOut }}
-          >
-            <div className="hero-badge inline-flex items-center gap-2.5 px-3.5 sm:px-4 py-1.5 rounded-full">
-              <span className="hero-badge-dot" />
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.24em] font-bold text-slate-200">
-                Innovating Beyond Software
-              </span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.28, ease: easeOut }}
-            className="hero-headline-block"
-          >
-            <TypewriterHeadline headlines={HEADLINES} renderLineWords={renderLineWords} />
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.42, ease: easeOut }}
-            className="text-[0.95rem] sm:text-base md:text-lg text-slate-300/90 max-w-md sm:max-w-lg leading-relaxed"
-          >
-            We build next-generation AI applications that automate work, accelerate decision-making, and transform businesses through intelligent software.
-          </motion.p>
-
-          {/* Mobile Video Container */}
-          {isMobile && (
+      {/* Main Content Area */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-8 sm:pt-32 sm:pb-12 md:pt-36">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          
+          {/* LEFT COLUMN: Text Content */}
+          <div className="w-full lg:w-[55%] space-y-6 sm:space-y-7 text-left">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.48, ease: easeOut }}
-              className="sm:hidden w-full aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl relative my-4"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: easeOut }}
             >
-              <img 
-                src="/media/videos/company-overview-poster.jpg" 
-                className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 scale-110"
-                alt="" 
-              />
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover relative z-10"
-                src={HERO_VIDEO_SRC}
-                poster="/media/videos/company-overview-poster.jpg"
-                autoPlay
-                muted={isMuted}
-                loop
-                playsInline
-                preload="auto"
-              />
-              <div className="absolute inset-0 z-20 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
+              <div className="hero-badge inline-flex items-center gap-2.5 px-3.5 sm:px-4 py-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 backdrop-blur-md">
+                <span className="hero-badge-dot bg-blue-400" />
+                <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.24em] font-bold text-blue-100">
+                  Innovating Beyond Software
+                </span>
+              </div>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.28, ease: easeOut }}
+              className="hero-headline-block"
+            >
+              <TypewriterHeadline headlines={HEADLINES} renderLineWords={renderLineWords} />
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.42, ease: easeOut }}
+              className="text-[0.95rem] sm:text-base md:text-lg text-slate-300/90 max-w-md sm:max-w-xl leading-relaxed"
+            >
+              We build next-generation AI applications that automate work, accelerate decision-making, and transform businesses through intelligent software.
+            </motion.p>
+
+            {/* Mobile Video Container (shown only on small screens) */}
+            {isMobile && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.48, ease: easeOut }}
+                className="w-full aspect-[16/10] sm:aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative my-6"
+              >
+                <img 
+                  src="/media/videos/company-overview-poster.jpg" 
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                    isVideoReady ? 'opacity-0' : 'opacity-60'
+                  }`}
+                  alt="" 
+                />
+                <div className={`absolute inset-0 transition-opacity duration-1000 ${
+                  isVideoReady ? 'opacity-100' : 'opacity-0'
+                }`}>
+                  <video
+                    ref={videoRef}
+                    className="w-full h-full object-cover"
+                    src={HERO_VIDEO_SRC}
+                    autoPlay
+                    muted={isMuted}
+                    loop
+                    playsInline
+                    preload="auto"
+                    onCanPlay={() => {
+                      setIsVideoReady(true);
+                      videoRef.current?.play().catch(() => {});
+                    }}
+                  />
+                </div>
+                {/* Sound Toggle Button (Mobile) */}
+                <button
+                  onClick={() => setIsMuted(!isMuted)}
+                  className="absolute bottom-4 right-4 z-30 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 border border-white/15 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all shadow-xl"
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                >
+                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+              </motion.div>
+            )}
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.55, ease: easeOut }}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2"
+            >
+              <button
+                onClick={onExploreProducts}
+                className="hero-btn-primary group w-full sm:w-auto justify-center"
+                id="hero-explore-products-btn"
+              >
+                <span className="relative z-10 tracking-wide">Explore AI Accelerators</span>
+                <ArrowRight className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+
+              <button
+                onClick={() => onScheduleDemo()}
+                className="hero-btn-secondary group w-full sm:w-auto justify-center"
+                id="hero-schedule-demo-btn"
+              >
+                <Zap className="w-4 h-4 text-amber-400 fill-amber-400/20 group-hover:scale-110 transition-transform duration-300" />
+                <span className="tracking-wide">Schedule a Demo</span>
+              </button>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-white/5 mt-8"
+            >
+              {STATS.map((stat, idx) => (
+                <HeroStatCard key={stat.label} stat={stat} index={idx} animate={statsVisible} />
+              ))}
+            </motion.div>
+          </div>
+
+          {/* RIGHT COLUMN: Desktop Video Card */}
+          {!isMobile && (
+            <div className="hidden lg:block w-[45%]">
+              <motion.div
+                initial={{ opacity: 0, x: 30, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ duration: 1, delay: 0.3, ease: easeOut }}
+                className="relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group"
+              >
+                {/* Decorative border glow */}
+                <div className="absolute inset-0 rounded-[2rem] border border-blue-500/20 pointer-events-none group-hover:border-blue-400/40 transition-colors duration-500 z-20" />
+                
+                {/* Static poster shown until video is fully buffered */}
+                <img
+                  src="/media/videos/company-overview-poster.jpg"
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                    isVideoReady ? 'opacity-0' : 'opacity-60'
+                  }`}
+                  alt=""
+                />
+                
+                {/* Video Container */}
+                <div className={`absolute inset-0 transition-opacity duration-1000 ${
+                  isVideoReady ? 'opacity-100' : 'opacity-0'
+                }`}>
+                  <video
+                    ref={videoRef}
+                    className="w-full h-full object-cover"
+                    src={HERO_VIDEO_SRC}
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    preload="auto"
+                    onCanPlay={() => {
+                      setIsVideoReady(true);
+                      videoRef.current?.play().catch(() => {});
+                    }}
+                    style={{
+                      willChange: 'transform',
+                      transform: 'translateZ(0)',
+                      backfaceVisibility: 'hidden'
+                    }}
+                  />
+                  {/* Subtle inner shadow for depth */}
+                  <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.6)] pointer-events-none" />
+                </div>
+
+                {/* Sound Toggle Button (Desktop) */}
+                <button
+                  onClick={() => setIsMuted(!isMuted)}
+                  className="absolute bottom-6 right-6 z-30 w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-2xl opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0"
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                >
+                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </button>
+              </motion.div>
+            </div>
           )}
 
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.55, ease: easeOut }}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1"
-          >
-            <button
-              onClick={onExploreProducts}
-              className="hero-btn-primary group"
-              id="hero-explore-products-btn"
-            >
-              <span className="relative z-10 tracking-wide">Explore AI Accelerators</span>
-              <ArrowRight className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-            </button>
-
-            <button
-              onClick={() => onScheduleDemo()}
-              className="hero-btn-secondary group"
-              id="hero-schedule-demo-btn"
-            >
-              <Zap className="w-4 h-4 text-amber-400 fill-amber-400/20 group-hover:scale-110 transition-transform duration-300" />
-              <span className="tracking-wide">Schedule a Demo</span>
-            </button>
-          </motion.div>
-
-          <div className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-3 sm:gap-4 pt-2 sm:pt-4">
-            {STATS.map((stat, idx) => (
-              <HeroStatCard key={stat.label} stat={stat} index={idx} animate={statsVisible} />
-            ))}
-          </div>
         </div>
       </div>
 
-      <div className="relative z-10 w-full pb-6 sm:pb-8 md:pb-10 mt-auto overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 sm:mb-5">
+      <div className="relative z-10 w-full pb-6 sm:pb-8 md:pb-10 mt-auto overflow-hidden border-t border-white/5 bg-black/20 pt-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -331,7 +366,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="hero-logo-marquee relative">
           <div className="hero-logo-track">
             {[...TRUSTED_LOGOS, ...TRUSTED_LOGOS].map((logo, idx) => (
-              <div key={`${logo.id}-${idx}`} className="hero-logo-item">
+              <div key={`${logo.id}-${idx}`} className="hero-logo-item opacity-60 hover:opacity-100 transition-opacity">
                 {logo.icon}
                 <span className={logo.id === 'aws' ? 'text-xl font-black tracking-tighter' : ''}>{logo.label}</span>
               </div>
