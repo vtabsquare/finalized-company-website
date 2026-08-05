@@ -136,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             ? 'bg-white/70 backdrop-blur-2xl border-b border-slate-900/[0.06] py-3'
             : 'bg-[#05070d]/70 backdrop-blur-2xl border-b border-white/[0.06] py-3'
           : useHeroNav
-            ? 'bg-gradient-to-b from-slate-950/60 via-slate-950/20 to-transparent border-b border-transparent py-5 md:py-6'
+            ? 'bg-[#05070d]/40 backdrop-blur-md border-b border-white/[0.04] py-5 md:py-6'
             : 'bg-transparent border-b border-transparent py-6'
       }`}
     >
