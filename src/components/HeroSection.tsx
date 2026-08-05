@@ -338,7 +338,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     preload="auto"
                     onCanPlay={() => {
                       setIsVideoReady(true);
-                      videoRef.current?.play().catch(() => {});
+                      if (videoRef.current) {
+                        const playPromise = videoRef.current.play();
+                        if (playPromise !== undefined) {
+                          playPromise.catch((error) => {
+                            console.log("Mobile autoplay unmuted blocked, falling back to muted", error);
+                            setIsMuted(true);
+                            if (videoRef.current) {
+                              videoRef.current.muted = true;
+                              videoRef.current.play().catch(() => {});
+                            }
+                          });
+                        }
+                      }
                     }}
                   />
                 </div>
