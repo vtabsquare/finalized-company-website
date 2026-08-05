@@ -43,18 +43,26 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   return (
     <div className={`relative w-full min-h-screen font-sans animate-in fade-in duration-700 ${bgClass}`}>
       
-      {/* Absolute Back Button (Top Left) */}
-      <div className="absolute top-8 left-8 z-50">
+      {/* Prominent Fixed Back Button */}
+      <div className="fixed top-6 left-4 sm:left-8 z-[100]">
         <button
           onClick={onBack}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all hover:-translate-x-1 cursor-pointer ${
+          className={`group flex items-center gap-3 px-5 py-2.5 rounded-full transition-all duration-300 cursor-pointer backdrop-blur-xl shadow-2xl ${
             isLightMode 
-              ? 'bg-white/90 text-slate-900 hover:bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)]' 
-              : 'bg-black/50 text-white hover:bg-black/80 border border-white/10 shadow-xl'
+              ? 'bg-white/90 border border-slate-200 text-slate-800 hover:bg-white hover:text-blue-600 hover:border-blue-300 hover:shadow-blue-500/20 hover:-translate-x-1' 
+              : 'bg-slate-900/80 border border-cyan-500/30 text-cyan-50 hover:bg-slate-800 hover:border-cyan-400 hover:shadow-[0_0_25px_rgba(34,211,238,0.25)] hover:-translate-x-1'
           }`}
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-semibold tracking-wide">Back</span>
+          <div className={`p-1.5 rounded-full transition-colors ${
+            isLightMode 
+              ? 'bg-slate-100 group-hover:bg-blue-50 text-slate-500 group-hover:text-blue-600' 
+              : 'bg-cyan-950/50 text-cyan-400 group-hover:bg-cyan-900 group-hover:text-cyan-300'
+          }`}>
+            <ArrowLeft className="w-4 h-4" />
+          </div>
+          <span className="text-[13px] font-extrabold tracking-widest uppercase">
+            Back to Portfolio
+          </span>
         </button>
       </div>
 
@@ -400,13 +408,25 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           </ScrollReveal>
 
           <ScrollReveal animation="fade-up" delay={0.2}>
-            <div className="max-w-sm mx-auto pt-4">
+            <div className="max-w-sm mx-auto pt-4 space-y-4">
               <button 
                 onClick={() => onScheduleDemo(product.title)}
                 className="w-full py-4 rounded-full font-bold text-base flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] border border-cyan-400/30"
               >
                 <span>Schedule a Demo</span>
                 <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={onBack}
+                className={`w-full py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                  isLightMode 
+                    ? 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800' 
+                    : 'bg-transparent border border-white/20 text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Portfolio</span>
               </button>
             </div>
           </ScrollReveal>
