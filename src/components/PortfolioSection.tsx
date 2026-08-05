@@ -142,18 +142,17 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
 
         {/* Filters and Search Bar */}
         <ScrollReveal animation="fade-up" className="relative z-50">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-16 lg:mt-24 mb-8 bg-slate-900/60 p-3 rounded-2xl border border-white/10 backdrop-blur-md">
+          <div className="flex flex-col gap-3 mt-16 lg:mt-24 mb-8 bg-slate-900/60 p-3 rounded-2xl border border-white/10 backdrop-blur-md">
             
-            {/* Category Tabs */}
-            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pb-1 md:pb-0 z-30">
-              {mainCategories.map((cat) => {
-                const subcats = cat !== 'All' ? Array.from(categoriesMap.get(cat) || []) : [];
-                const hasSubcats = subcats.length > 0;
-                const isSelected = selectedCategory === cat;
-                
-                return (
-                  <div key={cat} className="relative group">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+              {/* Category Tabs */}
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pb-1 md:pb-0 z-30">
+                {mainCategories.map((cat) => {
+                  const isSelected = selectedCategory === cat;
+                  
+                  return (
                     <button
+                      key={cat}
                       onClick={() => {
                         setSelectedCategory(cat);
                         setSelectedSubcategory(null);
@@ -168,56 +167,59 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
                       id={`filter-category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
                     >
                       {cat}
-                      {hasSubcats && <ChevronDown className="w-3 h-3 opacity-70" />}
                     </button>
-                    
-                    {hasSubcats && (
-                      <div className="absolute left-0 top-full mt-1 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <div className={`p-1 rounded-xl shadow-xl border backdrop-blur-md ${isLightMode ? 'bg-white/95 border-slate-200' : 'bg-slate-900/95 border-slate-700'}`}>
-                          {subcats.map(sub => (
-                            <button
-                              key={sub}
-                              onClick={() => {
-                                setSelectedCategory(cat);
-                                setSelectedSubcategory(sub);
-                              }}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                                selectedSubcategory === sub 
-                                  ? 'bg-blue-600/10 text-blue-600'
-                                  : isLightMode 
-                                    ? 'hover:bg-slate-100 text-slate-700' 
-                                    : 'hover:bg-slate-800 text-slate-300'
-                              }`}
-                            >
-                              {sub}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              {/* Search Input */}
+              <div className="relative w-full md:w-72 shrink-0">
+                <Search className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 ${
+                  isLightMode ? 'text-slate-400' : 'text-slate-400'
+                }`} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products or tags..."
+                  className={`w-full pl-10 pr-4 py-1.5 rounded-xl text-xs transition-all ${
+                    isLightMode
+                      ? 'bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none shadow-sm'
+                      : 'bg-slate-900/90 border border-slate-800 focus:border-blue-500 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+                  }`}
+                />
+              </div>
             </div>
 
-            {/* Search Input */}
-            <div className="relative w-full md:w-72">
-              <Search className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 ${
-                isLightMode ? 'text-slate-400' : 'text-slate-400'
-              }`} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products or tags..."
-                className={`w-full pl-10 pr-4 py-1.5 rounded-xl text-xs transition-all ${
-                  isLightMode
-                    ? 'bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none shadow-sm'
-                    : 'bg-slate-900/90 border border-slate-800 focus:border-blue-500 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                }`}
-              />
-            </div>
-
+            {/* Subcategory Row */}
+            {selectedCategory !== 'All' && categoriesMap.get(selectedCategory) && categoriesMap.get(selectedCategory)!.size > 0 && (
+              <div className={`flex flex-wrap items-center gap-2 pt-3 mt-1 border-t ${isLightMode ? 'border-slate-200' : 'border-white/10'}`}>
+                <span className={`text-[11px] font-bold uppercase tracking-wider mr-2 ${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>Filters:</span>
+                <button
+                  onClick={() => setSelectedSubcategory(null)}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                    !selectedSubcategory 
+                      ? (isLightMode ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-blue-600/20 text-blue-400 border border-blue-500/30')
+                      : (isLightMode ? 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100' : 'bg-transparent text-slate-400 hover:text-slate-300 hover:bg-slate-800')
+                  }`}
+                >
+                  All {selectedCategory}
+                </button>
+                {Array.from(categoriesMap.get(selectedCategory)!).map(sub => (
+                  <button
+                    key={sub}
+                    onClick={() => setSelectedSubcategory(sub)}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                      selectedSubcategory === sub 
+                        ? (isLightMode ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-blue-600/20 text-blue-400 border border-blue-500/30')
+                        : (isLightMode ? 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100' : 'bg-transparent text-slate-400 hover:text-slate-300 hover:bg-slate-800')
+                    }`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </ScrollReveal>
 
