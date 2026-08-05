@@ -101,26 +101,39 @@ const getVideoForProduct = (id: string, title?: string, customUrl?: string): str
   return DEFAULT_VIDEO_POOL[index];
 };
 
-export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerProps> = React.memo(({
-  productId,
-  productTitle,
+interface ProductVideoStreamingPlayerProps {
+  productId: string;
+  productTitle: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  compactMode?: boolean;
+  isCinematic?: boolean;
+  onToggleCinematic?: () => void;
+  isActive?: boolean; // When false, stops playback (useful in slideshows)
+  onVideoEnded?: () => void; // If provided, the video will not loop and will call this when ended
+}
+
+export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerProps> = ({ 
+  productId, 
+  productTitle, 
   imageUrl,
+  videoUrl,
   compactMode = false,
-  onVideoEnd,
   isCinematic = false,
   onToggleCinematic,
-  videoUrl,
-  isActive = true
+  isActive = true,
+  onVideoEnded
 }) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(isActive);
-  const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [duration, setDuration] = useState<number>(30);
-  const [isBuffered, setIsBuffered] = useState<boolean>(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isBuffered, setIsBuffered] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const timecodeRef = useRef<HTMLSpanElement>(null);
   const rafRef = useRef<number>();
   const containerRef = useRef<HTMLDivElement>(null);
+  const userPausedRef = useRef(false);
 
   // Sync HTML5 video element muted state with React isMuted state
   useEffect(() => {
@@ -132,9 +145,13 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   // Auto-mute/unmute when scrolling in and out of view
   useEffect(() => {
     if (!isActive) {
-      // If the slide is inactive, make sure it's muted
+      // If the slide is inactive, make sure it's muted and paused
       setIsMuted(true);
-      if (videoRef.current) videoRef.current.muted = true;
+      if (videoRef.current) {
+        videoRef.current.muted = true;
+        videoRef.current.pause();
+      }
+      setIsPlaying(false);
       return;
     }
 
@@ -148,20 +165,24 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         setIsMuted(false);
         video.muted = false;
         
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((e) => {
-            // Browser autoplay policy blocked unmuted playback, fallback to muted
-            console.log("Product video unmuted playback blocked, falling back to muted.", e);
-            setIsMuted(true);
-            video.muted = true;
-            video.play().catch(() => {});
-          });
+        if (!userPausedRef.current) {
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => setIsPlaying(true)).catch((e) => {
+              // Browser autoplay policy blocked unmuted playback, fallback to muted
+              console.log("Product video unmuted playback blocked, falling back to muted.", e);
+              setIsMuted(true);
+              video.muted = true;
+              video.play().then(() => setIsPlaying(true)).catch(() => {});
+            });
+          }
         }
       } else {
-        // Scrolled out of view -> mute
+        // Scrolled out of view -> mute and pause to save resources
         setIsMuted(true);
         video.muted = true;
+        video.pause();
+        setIsPlaying(false);
       }
     }, { threshold: 0.5 }); // Trigger when 50% of the video is visible
 
@@ -303,7 +324,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         ref={videoRef}
         src={videoSource}
         autoPlay={isActive}
-        loop
+        loop={!onVideoEnded}
+        onEnded={onVideoEnded}
         muted={isMuted}
         playsInline
         preload={isActive ? "auto" : "none"}
@@ -314,8 +336,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         }}
         onCanPlay={() => {
           setIsBuffered(true);
-          if (isActive && videoRef.current) {
-            videoRef.current.play().catch(() => {});
+          if (isActive && videoRef.current && !userPausedRef.current) {
+            videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
           }
         }}
         style={{
@@ -448,6 +470,6 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       </div>
     </div>
   );
-});
+};
 
 export default ProductVideoStreamingPlayer;

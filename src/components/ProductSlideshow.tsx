@@ -72,16 +72,9 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   // Restart animation key when slide changes
   const [animationKey, setAnimationKey] = useState(0);
 
-  // Auto-advance timer
-  useEffect(() => {
-    if (!isPlaying) return;
-    
-    const timer = setTimeout(() => {
-      handleNext();
-    }, 8000); // 8 seconds per slide
-
-    return () => clearTimeout(timer);
-  }, [isPlaying, currentIndex, featuredProducts.length, animationKey]);
+  // Removed fixed-time setTimeout auto-advance.
+  // The slideshow will now naturally advance when the video finishes playing 
+  // via the onVideoEnded callback passed to ProductVideoStreamingPlayer.
 
   if (featuredProducts.length === 0) return null;
 
@@ -129,6 +122,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             isCinematic={false}
             onToggleCinematic={() => {}}
             isActive={!isDesktop}
+            onVideoEnded={() => { if (isPlaying) handleNext(); }}
           />
           {/* Gradient overlay bottom */}
           <div className={`absolute inset-x-0 bottom-0 h-16 ${isLightMode ? 'bg-gradient-to-t from-slate-50' : 'bg-gradient-to-t from-[#030712]'}`} />
@@ -260,6 +254,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}
             isActive={isDesktop}
+            onVideoEnded={() => { if (isPlaying) handleNext(); }}
           />
         </div>
       </div>
