@@ -120,6 +120,57 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   const progressRef = useRef<HTMLDivElement>(null);
   const timecodeRef = useRef<HTMLSpanElement>(null);
   const rafRef = useRef<number>();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Sync HTML5 video element muted state with React isMuted state
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
+  // Auto-mute/unmute when scrolling in and out of view
+  useEffect(() => {
+    if (!isActive) {
+      // If the slide is inactive, make sure it's muted
+      setIsMuted(true);
+      if (videoRef.current) videoRef.current.muted = true;
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      const video = videoRef.current;
+      if (!video) return;
+
+      if (entry.isIntersecting) {
+        // Scrolled into view -> attempt to unmute and play
+        setIsMuted(false);
+        video.muted = false;
+        
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((e) => {
+            // Browser autoplay policy blocked unmuted playback, fallback to muted
+            console.log("Product video unmuted playback blocked, falling back to muted.", e);
+            setIsMuted(true);
+            video.muted = true;
+            video.play().catch(() => {});
+          });
+        }
+      } else {
+        // Scrolled out of view -> mute
+        setIsMuted(true);
+        video.muted = true;
+      }
+    }, { threshold: 0.5 }); // Trigger when 50% of the video is visible
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isActive]);
 
   // Reset buffered state whenever the video source changes (slide switch)
   useEffect(() => {
@@ -217,7 +268,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   const videoSource = getVideoForProduct(productId, productTitle, videoUrl);
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
+    <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
       {/* Poster shown while buffering - instant image, no flicker */}
       <img
         src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}

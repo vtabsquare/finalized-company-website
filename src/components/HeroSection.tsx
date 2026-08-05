@@ -153,12 +153,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     video.muted = isMuted;
   }, [isMuted]);
 
-  // Handle scroll auto-mute
+  // Handle scroll auto-mute and auto-unmute
   useEffect(() => {
     const handleScroll = () => {
+      const video = videoRef.current;
+      if (!video) return;
+
       // Auto-mute when scrolling down (e.g., approaching Vision/Mission section)
       if (window.scrollY > window.innerHeight * 0.8 && !isMuted) {
         setIsMuted(true);
+      } 
+      // Auto-unmute when scrolling back to the top
+      else if (window.scrollY < window.innerHeight * 0.4 && isMuted) {
+        setIsMuted(false);
+        video.muted = false;
+        
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // Browser still blocked it (e.g. no interaction yet)
+            setIsMuted(true);
+            video.muted = true;
+          });
+        }
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
