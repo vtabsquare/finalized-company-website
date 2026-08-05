@@ -11,7 +11,7 @@ interface HeroSectionProps {
   isLightMode?: boolean;
 }
 
-const HERO_VIDEO_SRC = '/media/videos/company-overview-web.mp4';
+const HERO_VIDEO_SRC = '/media/videos/company-overview-web.mp4?v=2';
 
 interface Headline {
   lines: [string, string];
