@@ -30,35 +30,38 @@ interface ProductVideoStreamingPlayerProps {
 // High quality tech/AI video loops
 const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
 
+// All entries point at the -web variants: <=1280 wide, 24fps, CRF 28 capped at
+// 1000k with +faststart. The un-suffixed originals run 4.6-7.9 Mbps and stall
+// for anyone without a fast connection.
 const STREAMING_VIDEOS: Record<string, string> = {
-  'ai-reporting-platform': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
-  'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
+  'ai-reporting-platform': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
+  'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
   'gbti-smart-home-builder': '/media/videos/ai_smart_home_web.mp4',
-  'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart.mp4`,
-  'faceauth': `${SUPABASE_MEDIA}/faceauth.mp4`,
+  'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
+  'faceauth': `${SUPABASE_MEDIA}/faceauth-web.mp4`,
   'packaging-optimization-platform': '/media/videos/ai_logistics_web.mp4',
-  'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent.mp4`,
-  'postgresql-to-sqlserver-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
+  'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent-web.mp4`,
+  'postgresql-to-sqlserver-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
   'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard-web.mp4',
-  'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
-  'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard.mp4`,
-  'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`,
-  'hva-score-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard.mp4`,
-  'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`,
-  'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard.mp4`,
-  'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard.mp4`,
-  'hr-analytics-dashboard': '/media/videos/powerbi/hr-analytics-dashboard.mp4',
+  'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
+  'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
+  'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`,
+  'hva-score-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`,
+  'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`,
+  'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard-web.mp4`,
+  'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard-web.mp4`,
+  'hr-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/hr-analytics-dashboard-web.mp4`,
 };
 
 const DEFAULT_VIDEO_POOL = [
-  `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard.mp4`,
-  `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
-  `${SUPABASE_MEDIA}/buildsmart.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard-web.mp4`,
+  `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard-web.mp4`,
+  `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
+  `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
   '/media/videos/ai_logistics_web.mp4',
   '/media/videos/ai_smart_home_web.mp4',
 ];
@@ -71,22 +74,22 @@ const getVideoForProduct = (id: string, title?: string, customUrl?: string): str
 
   const text = `${cleanId} ${title || ''}`.toLowerCase();
   if (text.includes('sql') || text.includes('db') || text.includes('database') || text.includes('migration')) {
-    return `${SUPABASE_MEDIA}/qlik2powerbi.mp4`;
+    return `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`;
   }
   if (text.includes('home') || text.includes('energy') || text.includes('builder') || text.includes('smart')) {
-    return '/media/videos/ai_smart_home.mp4';
+    return '/media/videos/ai_smart_home_web.mp4';
   }
   if (text.includes('packaging') || text.includes('logistics') || text.includes('shipping') || text.includes('supply')) {
-    return '/media/videos/ai_logistics.mp4';
+    return '/media/videos/ai_logistics_web.mp4';
   }
   if (text.includes('inspection') || text.includes('quality') || text.includes('food')) {
-    return `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard.mp4`;
+    return `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`;
   }
   if (text.includes('analytics') || text.includes('marketing') || text.includes('sales') || text.includes('customer') || text.includes('sample')) {
-    return `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`;
+    return `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`;
   }
   if (text.includes('score') || text.includes('hr') || text.includes('employee') || text.includes('support')) {
-    return `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard.mp4`;
+    return `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`;
   }
 
   let hash = 0;
@@ -234,7 +237,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       {/* Loading pulse indicator - only while buffering */}
       {!isBuffered && (
         <div className="absolute inset-0 z-30 flex items-end justify-start p-4 pointer-events-none">
-          <div className="flex items-center gap-2 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
+          <div className="flex items-center gap-2 bg-slate-950/75 px-3 py-1.5 rounded-full">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
@@ -258,7 +261,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
             setDuration(Math.min(30, videoRef.current.duration));
           }
         }}
-        onCanPlayThrough={() => {
+        onCanPlay={() => {
           setIsBuffered(true);
           if (isActive && videoRef.current) {
             videoRef.current.play().catch(() => {});
@@ -278,7 +281,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
       {/* Expanded Cinematic Title Badge Overlay */}
       {isCinematic && (
-        <div className="absolute top-6 left-6 z-40 flex items-center gap-3 bg-slate-950/85 backdrop-blur-sm border border-white/15 px-4 py-2.5 rounded-2xl shadow-2xl">
+        <div className="absolute top-6 left-6 z-40 flex items-center gap-3 bg-slate-950/90 border border-white/15 px-4 py-2.5 rounded-2xl shadow-2xl">
           <span className="relative flex h-3 w-3">
             <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
@@ -296,7 +299,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
       {/* Bottom Floating Glass Control HUD — Premium Design */}
       <div className="absolute bottom-4 inset-x-4 z-40 opacity-0 group-hover/video:opacity-100 transition-opacity duration-500">
-        <div className="bg-black/70 backdrop-blur-md border border-white/[0.08] rounded-2xl px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col gap-2">
+        <div className="bg-slate-950/85 border border-white/[0.08] rounded-2xl px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col gap-2">
           
           {/* Interactive Seeking Progress Bar */}
           <div 
