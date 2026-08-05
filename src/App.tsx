@@ -24,7 +24,7 @@ export default function App() {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [demoInterest, setDemoInterest] = useState('');
   const [isSandboxModalOpen, setIsSandboxModalOpen] = useState(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const isLightMode = theme === 'light';
 
