@@ -88,6 +88,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
           ? 'bg-gradient-to-b from-slate-50 via-blue-50/50 to-indigo-50/30 text-slate-900' 
           : 'bg-slate-950/80 text-white'
       }`}
+      style={{ overflowAnchor: 'none' }}
     >
       {/* Background orbs */}
       <div className="glow-orb-purple top-20 right-10 opacity-30" />
