@@ -72,13 +72,13 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
   // Restart animation key when slide changes
   const [animationKey, setAnimationKey] = useState(0);
 
-  // 30 second timer per slide
+  // Auto-advance timer
   useEffect(() => {
     if (!isPlaying) return;
     
     const timer = setTimeout(() => {
       handleNext();
-    }, 30000); // 30 seconds
+    }, 8000); // 8 seconds per slide
 
     return () => clearTimeout(timer);
   }, [isPlaying, currentIndex, featuredProducts.length, animationKey]);

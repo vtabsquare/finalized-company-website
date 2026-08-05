@@ -140,16 +140,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreProducts,
   onScheduleDemo,
 }) => {
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isMobile = useIsMobile();
 
+  // Handle muting logic
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = isMuted;
+  }, [isMuted]);
+
+  // Handle scroll auto-mute
+  useEffect(() => {
+    const handleScroll = () => {
+      // Auto-mute when scrolling down (e.g., approaching Vision/Mission section)
+      if (window.scrollY > window.innerHeight * 0.8 && !isMuted) {
+        setIsMuted(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isMuted]);
 
   useEffect(() => {
@@ -209,7 +222,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 preload="auto"
                 onCanPlay={() => {
                   setIsVideoReady(true);
-                  videoRef.current?.play().catch(() => {});
+                  if (videoRef.current) {
+                    const playPromise = videoRef.current.play();
+                    if (playPromise !== undefined) {
+                      playPromise.catch((error) => {
+                        // Browser autoplay policy blocked unmuted playback
+                        console.log("Autoplay unmuted blocked, falling back to muted", error);
+                        setIsMuted(true);
+                        // The effect hook will update video.muted, but we can also set it immediately
+                        if (videoRef.current) {
+                          videoRef.current.muted = true;
+                          videoRef.current.play().catch(() => {});
+                        }
+                      });
+                    }
+                  }
                 }}
                 style={{
                   willChange: 'transform',
