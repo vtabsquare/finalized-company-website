@@ -237,10 +237,10 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
                   <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20" />
 
                   {/* Product Picture Header */}
-                  <div className={`relative h-48 w-full overflow-hidden ${
-                    isLightMode ? 'bg-slate-900 text-white' : 'bg-black/80'
+                  <div className={`relative h-48 w-full overflow-hidden shrink-0 transform-gpu ${
+                    isLightMode ? 'bg-slate-900 text-white' : 'bg-[#02040a]'
                   }`}>
-                    <div className="relative w-full h-full">
+                    <div className="relative w-full h-full transform-gpu">
                       <img
                         src={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
                         onError={handleImageError(product.category, product.title, product.id)}
@@ -251,6 +251,9 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
                       <div className="absolute inset-0 bg-gradient-to-t from-[#02040a] via-black/30 to-transparent" />
                     </div>
                   </div>
+                  
+                  {/* Subpixel Gap Bridge */}
+                  <div className={`h-[2px] w-full -mt-[1px] relative z-20 ${isLightMode ? 'bg-slate-900' : 'bg-[#02040a]'}`} />
 
                   {/* Card Body */}
                   <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between relative z-10">
