@@ -1,17 +1,12 @@
 import { supabaseService as supabase } from './supabaseClient';
 import type { DemoFormState } from '../types';
 
-const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
-
-const getBrevoConfig = () => ({
-  apiKey: import.meta.env.VITE_BREVO_API_KEY || '',
-  senderEmail: import.meta.env.VITE_BREVO_SENDER_EMAIL || 'vitabsquare@gmail.com',
-  senderName: import.meta.env.VITE_BREVO_SENDER_NAME || 'VTab Square AI Team',
-  adminEmails: (import.meta.env.VITE_ADMIN_EMAILS || 'vitabsquare@gmail.com,vigneshrajas.vtab@gmail.com,balamuraleee@gmail.com,meenakumarik.vtab@gmail.com')
+const getAdminEmails = () => {
+  return (import.meta.env.VITE_ADMIN_EMAILS || 'vitabsquare@gmail.com,vigneshrajas.vtab@gmail.com,balamuraleee@gmail.com,meenakumarik.vtab@gmail.com')
     .split(',')
     .map(e => ({ email: e.trim() }))
-    .filter(e => e.email)
-});
+    .filter(e => e.email);
+};
 
 interface SendEmailParams {
   to: { email: string; name?: string }[];
@@ -21,21 +16,10 @@ interface SendEmailParams {
 }
 
 /**
- * Low-level helper to call Brevo API
+ * Low-level helper to call the Supabase Edge Function for Brevo
  */
 async function sendBrevoEmail({ to, subject, htmlContent, replyTo }: SendEmailParams): Promise<boolean> {
-  const config = getBrevoConfig();
-
-  if (!config.apiKey) {
-    console.error('Brevo API key is missing. Please check VITE_BREVO_API_KEY in .env');
-    return false;
-  }
-
   const payload = {
-    sender: {
-      email: config.senderEmail,
-      name: config.senderName,
-    },
     to,
     subject,
     htmlContent,
@@ -43,25 +27,23 @@ async function sendBrevoEmail({ to, subject, htmlContent, replyTo }: SendEmailPa
   };
 
   try {
-    const response = await fetch(BREVO_API_URL, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': config.apiKey,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(payload),
+    const { data, error } = await supabase.functions.invoke('send-email', {
+      body: payload
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('Brevo API Error:', response.status, errorData);
+    if (error) {
+      console.error('Edge Function Error:', error);
+      return false;
+    }
+
+    if (!data?.success) {
+      console.error('Email sending failed:', data);
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('Failed to send email via Brevo:', error);
+    console.error('Failed to send email via Edge Function:', error);
     return false;
   }
 }
@@ -70,7 +52,7 @@ async function sendBrevoEmail({ to, subject, htmlContent, replyTo }: SendEmailPa
  * 1. Book a Demo Functionality
  */
 export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ success: boolean }> {
-  const config = getBrevoConfig();
+  const adminEmails = getAdminEmails();
   
   // Save to Supabase
   const { error: dbError } = await supabase.from('demo_requests').insert([{
@@ -183,7 +165,7 @@ export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ 
 
   // Send admin notification
   const adminSent = await sendBrevoEmail({
-    to: config.adminEmails,
+    to: adminEmails,
     subject: `🚀 New Demo Request: ${formData.fullName} (${formData.companyName}) - ${formData.interestArea}`,
     htmlContent: adminHtml,
     replyTo: { email: formData.workEmail, name: formData.fullName },
@@ -196,7 +178,7 @@ export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ 
  * 2. Contact AI Experts Functionality
  */
 export async function sendContactInquiryEmails(name: string, email: string, message: string): Promise<{ success: boolean }> {
-  const config = getBrevoConfig();
+  const adminEmails = getAdminEmails();
 
   // Save to Supabase
   try {
@@ -259,7 +241,7 @@ export async function sendContactInquiryEmails(name: string, email: string, mess
   });
 
   const adminSent = await sendBrevoEmail({
-    to: config.adminEmails,
+    to: adminEmails,
     subject: `💬 Contact Inquiry from ${name} (${email})`,
     htmlContent: adminHtml,
     replyTo: { email, name },
@@ -272,7 +254,7 @@ export async function sendContactInquiryEmails(name: string, email: string, mess
  * 3. Subscribe / AI Innovation Digest Functionality
  */
 export async function sendSubscribeEmail(email: string): Promise<{ success: boolean }> {
-  const config = getBrevoConfig();
+  const adminEmails = getAdminEmails();
 
   // Save to Supabase
   try {
@@ -328,7 +310,7 @@ export async function sendSubscribeEmail(email: string): Promise<{ success: bool
 
   // Also notify admins silently
   sendBrevoEmail({
-    to: config.adminEmails,
+    to: adminEmails,
     subject: `🎉 New Newsletter Subscriber: ${email}`,
     htmlContent: adminHtml,
   });
@@ -340,7 +322,7 @@ export async function sendSubscribeEmail(email: string): Promise<{ success: bool
  * 4. Request Early Beta Access Functionality (Future Innovations)
  */
 export async function sendEarlyAccessEmail(email: string, innovationTitle: string): Promise<{ success: boolean }> {
-  const config = getBrevoConfig();
+  const adminEmails = getAdminEmails();
 
   // Save to Supabase demo_requests table (so it shows up in Admin Leads)
   const { error: dbError } = await supabase.from('demo_requests').insert([{
@@ -416,7 +398,7 @@ export async function sendEarlyAccessEmail(email: string, innovationTitle: strin
 
   // Also notify admins silently
   sendBrevoEmail({
-    to: config.adminEmails,
+    to: adminEmails,
     subject: `⚡ New Early Beta Request: ${innovationTitle} (${email})`,
     htmlContent: adminHtml,
   });
