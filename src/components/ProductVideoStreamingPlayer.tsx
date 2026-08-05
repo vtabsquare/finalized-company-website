@@ -236,7 +236,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         <div className="absolute inset-0 z-30 flex items-end justify-start p-4 pointer-events-none">
           <div className="flex items-center gap-2 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
             </span>
             <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-wider">Buffering...</span>
@@ -278,9 +278,9 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
       {/* Expanded Cinematic Title Badge Overlay */}
       {isCinematic && (
-        <div className="absolute top-6 left-6 z-40 flex items-center gap-3 bg-slate-950/85 backdrop-blur-2xl border border-white/15 px-4 py-2.5 rounded-2xl shadow-2xl animate-in fade-in slide-in-from-top-4 duration-500">
+        <div className="absolute top-6 left-6 z-40 flex items-center gap-3 bg-slate-950/85 backdrop-blur-sm border border-white/15 px-4 py-2.5 rounded-2xl shadow-2xl">
           <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
           </span>
           <div>

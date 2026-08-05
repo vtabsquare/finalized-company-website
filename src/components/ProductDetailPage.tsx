@@ -60,12 +60,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
       {/* HERO SECTION: Obsidian Cybernetic Canvas with Radial LED Light Sources */}
       <div className="dark-hero-canvas relative w-full pt-20 pb-12 px-4 sm:px-8 bg-gradient-to-b from-[#020617] via-[#050d26] to-[#030712] overflow-hidden border-b border-white/10">
-        {/* Subtle Cybernetic Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-        
-        {/* Animated LED Backlight Glows */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[140px] pointer-events-none opacity-40" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[140px] pointer-events-none opacity-40" />
 
         <div className="relative z-10 max-w-7xl mx-auto space-y-8">
           
@@ -73,7 +67,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           <ScrollReveal animation="fade-up" delay={0.1}>
             <div className="text-center max-w-4xl mx-auto space-y-4">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-cyan-500/10 border border-cyan-500/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] backdrop-blur-xl">
-                <Sparkles className="w-4 h-4 animate-spin text-cyan-400" style={{ animationDuration: '6s' }} />
+                <Sparkles className="w-4 h-4 text-cyan-400" />
                 <span className="text-xs font-extrabold tracking-widest uppercase">Enterprise Telemetry • {product.category}</span>
               </div>
               
@@ -132,7 +126,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     <h3 className="text-xl font-extrabold text-white">Project Overview & Specs</h3>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                    <Zap className="w-5 h-5 animate-pulse" />
+                    <Zap className="w-5 h-5" />
                   </div>
                 </div>
 
@@ -140,7 +134,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <div className="flex items-center justify-between p-3 rounded-2xl bg-black/50 border border-white/10">
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40"></span>
                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
                     </span>
                     <span className="text-[11px] font-bold text-emerald-400 font-mono tracking-wide">STATUS: OPERATIONAL</span>
@@ -228,7 +222,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 const element = document.getElementById('architecture-details-section');
                 element?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="group flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900/90 hover:bg-black border border-cyan-500/30 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300 backdrop-blur-xl shadow-[0_0_25px_rgba(6,182,212,0.2)] hover:shadow-[0_0_35px_rgba(6,182,212,0.4)] transition-all duration-300 cursor-pointer animate-bounce"
+              className="group flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900/90 hover:bg-black border border-cyan-500/30 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
             >
               <span className="text-xs font-extrabold tracking-widest uppercase">Scroll for Deep-Dive Architecture Specifications</span>
               <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />

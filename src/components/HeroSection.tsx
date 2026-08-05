@@ -204,9 +204,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </>
         )}
-        <div className="hero-cinematic-overlay absolute inset-0 hidden sm:block" />
-        <div className="hero-film-grain absolute inset-0" />
-        <div className="hero-vignette absolute inset-0 hidden sm:block" />
+        {/* Single lightweight gradient overlay for text readability — no film-grain or blend modes */}
+        <div className="absolute inset-0 hidden sm:block pointer-events-none"
+          style={{
+            background: 'linear-gradient(105deg, rgba(2,6,23,0.88) 0%, rgba(2,6,23,0.65) 35%, rgba(2,6,23,0.25) 60%, transparent 85%), linear-gradient(to top, rgba(2,6,23,0.7) 0%, transparent 50%)'
+          }}
+        />
       </div>
 
       {/* Sound Toggle Button */}
