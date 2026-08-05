@@ -47,7 +47,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       <div className="absolute top-8 left-8 z-50">
         <button
           onClick={onBack}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full backdrop-blur-xl transition-all hover:-translate-x-1 cursor-pointer ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all hover:-translate-x-1 cursor-pointer ${
             isLightMode 
               ? 'bg-white/90 text-slate-900 hover:bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)]' 
               : 'bg-black/50 text-white hover:bg-black/80 border border-white/10 shadow-xl'
@@ -66,7 +66,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* AT THE TOP ONLY: PROJECT TITLE & SUMMARY */}
           <ScrollReveal animation="fade-up" delay={0.1}>
             <div className="text-center max-w-4xl mx-auto space-y-4">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-cyan-500/10 border border-cyan-500/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] backdrop-blur-xl">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-cyan-500/10 border border-cyan-500/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
                 <span className="text-xs font-extrabold tracking-widest uppercase">Enterprise Telemetry • {product.category}</span>
               </div>
@@ -81,7 +81,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                 {product.techStack.map((tech, idx) => (
-                  <span key={idx} className="px-3.5 py-1 text-xs font-bold tracking-wider uppercase rounded-full bg-gradient-to-b from-white/15 to-white/5 text-cyan-300 border border-white/20 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:border-cyan-400/50 hover:scale-105 transition-all">
+                  <span key={idx} className="px-3.5 py-1 text-xs font-bold tracking-wider uppercase rounded-full bg-gradient-to-b from-white/15 to-white/5 text-cyan-300 border border-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:border-cyan-400/50 hover:scale-105 transition-all">
                     {tech}
                   </span>
                 ))}
@@ -116,7 +116,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div className="lg:col-span-5 space-y-6">
               
               {/* Executive Cyber Console Card */}
-              <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/85 border border-white/15 backdrop-blur-sm shadow-2xl space-y-6 overflow-hidden">
+              <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/85 border border-white/15 shadow-2xl space-y-6 overflow-hidden">
                 {/* Illuminated Top Neon Line */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 via-purple-500 to-emerald-500" />
 
@@ -222,7 +222,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 const element = document.getElementById('architecture-details-section');
                 element?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="group flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900/90 hover:bg-black border border-cyan-500/30 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
+              className="group flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900/90 hover:bg-black border border-cyan-500/30 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
             >
               <span className="text-xs font-extrabold tracking-widest uppercase">Scroll for Deep-Dive Architecture Specifications</span>
               <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
@@ -240,7 +240,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Bento Card 1: The Challenge */}
-            <div className={`p-8 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(245,158,11,0.15)] hover:-translate-y-1.5 group ${isLightMode ? 'bg-amber-50/50 border-amber-200 shadow-sm' : 'bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/20 backdrop-blur-xl shadow-xl'}`}>
+            <div className={`p-8 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(245,158,11,0.15)] hover:-translate-y-1.5 group ${isLightMode ? 'bg-amber-50/50 border-amber-200 shadow-sm' : 'bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/20 shadow-xl'}`}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 opacity-80 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-amber-500/20 transition-all" />
               
@@ -278,7 +278,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Bento Card 2: The Approach */}
-            <div className={`p-8 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] hover:-translate-y-1.5 group ${isLightMode ? 'bg-blue-50/50 border-blue-200 shadow-sm' : 'bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent border-blue-500/20 backdrop-blur-xl shadow-xl'}`}>
+            <div className={`p-8 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] hover:-translate-y-1.5 group ${isLightMode ? 'bg-blue-50/50 border-blue-200 shadow-sm' : 'bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent border-blue-500/20 shadow-xl'}`}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 via-cyan-500 to-indigo-500 opacity-80 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-blue-500/20 transition-all" />
               
@@ -317,7 +317,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {detail?.features && detail.features.length > 0 ? (
                 detail.features.map((feature, idx) => (
-                  <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 backdrop-blur-xl shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
+                  <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
                     <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
@@ -331,7 +331,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 ))
               ) : (
                 product.keyFeatures.map((feat, idx) => (
-                  <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 backdrop-blur-xl shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
+                  <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
                     <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
@@ -370,7 +370,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 ];
                 const col = colors[idx % colors.length];
                 return (
-                  <div key={idx} className={`p-6 rounded-2xl border space-y-2 transition-all hover:-translate-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200 shadow-sm' : 'bg-white/5 border-white/10 backdrop-blur-xl shadow-xl'}`}>
+                  <div key={idx} className={`p-6 rounded-2xl border space-y-2 transition-all hover:-translate-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200 shadow-sm' : 'bg-white/5 border-white/10 shadow-xl'}`}>
                     <div className={`text-2xl md:text-3xl font-extrabold ${col.text} font-heading`}>{bm.val}</div>
                     <div className={`text-sm font-bold ${textPrimary}`}>{bm.label}</div>
                     <div className={`text-xs ${textMuted}`}>{bm.desc || ''}</div>

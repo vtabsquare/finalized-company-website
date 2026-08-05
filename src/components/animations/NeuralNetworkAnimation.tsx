@@ -242,10 +242,27 @@ export const NeuralNetworkAnimation: React.FC<NeuralNetworkProps> = ({ isLightMo
   const uid = layer;
   
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
+  // Only animate while the network is actually on screen. The packet loop and the
+  // parallax handler each trigger a full re-render of this SVG (hundreds of
+  // filtered elements), so leaving them running off-screen starved video
+  // playback elsewhere on the page.
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      entries => setIsVisible(entries[0]?.isIntersecting ?? false),
+      { rootMargin: '100px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Parallax state
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   useEffect(() => {
+    if (!isVisible) return;
     let frame = 0;
     const onMove = (e: MouseEvent) => {
       if (frame) return;
@@ -265,7 +282,7 @@ export const NeuralNetworkAnimation: React.FC<NeuralNetworkProps> = ({ isLightMo
       window.removeEventListener('mousemove', onMove);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [isVisible]);
 
   // Vertical composition on small screens (Vision -> AI Core -> Mission)
   const [isVertical, setIsVertical] = useState(false);
@@ -299,7 +316,7 @@ export const NeuralNetworkAnimation: React.FC<NeuralNetworkProps> = ({ isLightMo
   const requestRef = useRef<number>();
 
   useEffect(() => {
-    if (!showNear || !nearEdges.length) return;
+    if (!showNear || !nearEdges.length || !isVisible) return;
     const maxPackets = isVertical ? 5 : 9;
     let last = performance.now();
 
@@ -328,12 +345,12 @@ export const NeuralNetworkAnimation: React.FC<NeuralNetworkProps> = ({ isLightMo
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [nearEdges, isVertical, showNear]);
+  }, [nearEdges, isVertical, showNear, isVisible]);
 
   // Electricity: a pulse travels through a handful of connected edges
   const [activeEdges, setActiveEdges] = useState<string[]>([]);
   useEffect(() => {
-    if (!showNear || !nearEdges.length) return;
+    if (!showNear || !nearEdges.length || !isVisible) return;
     const pick = () => {
       const start = nearEdges[Math.floor(Math.random() * nearEdges.length)];
       const chain = [start];
@@ -352,7 +369,7 @@ export const NeuralNetworkAnimation: React.FC<NeuralNetworkProps> = ({ isLightMo
     pick();
     const interval = setInterval(pick, 5200);
     return () => clearInterval(interval);
-  }, [nearEdges, showNear]);
+  }, [nearEdges, showNear, isVisible]);
 
   // Far plane drifts more than the near plane -> parallax depth (max 10px)
   const depthFactor = showNear && !showFar ? 8 : 20;
