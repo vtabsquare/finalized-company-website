@@ -173,14 +173,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Desktop Full-Bleed Video Background (Right Aligned, below Navbar) */}
       {!isMobile && (
         <div className="absolute top-[72px] bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
-          {/* Left Gradient Mask for text readability - Narrowed to not darken the video */}
-          <div className="absolute inset-0 z-10 w-full lg:w-1/2 bg-gradient-to-r from-[#030712] via-[#030712]/90 to-transparent pointer-events-none" />
+          {/* Left Gradient Mask for text readability */}
+          <div className="absolute inset-0 z-10 w-full lg:w-[55%] bg-gradient-to-r from-[#030712] via-[#030712]/80 to-transparent pointer-events-none" />
           
-          {/* Bottom Gradient Mask - Reduced height */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 z-10 bg-gradient-to-t from-[#030712] via-[#030712]/80 to-transparent pointer-events-none" />
+          {/* Bottom Gradient Mask - Subtle */}
+          <div className="absolute bottom-0 left-0 right-0 h-48 z-10 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent pointer-events-none" />
           
           {/* Video Player pushed to the right, full opacity */}
-          <div className="relative h-full w-full lg:w-[65%] z-0 pointer-events-auto">
+          <div 
+            className="relative h-full w-full lg:w-[65%] z-0 pointer-events-auto"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent 0%, black 25%, black 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%, black 100%)'
+            }}
+          >
             {/* Static poster shown until video is fully buffered */}
             <img
               src="/media/videos/company-overview-poster.jpg"
