@@ -173,11 +173,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Desktop Full-Bleed Video Background (Right Aligned, below Navbar) */}
       {!isMobile && (
         <div className="absolute top-[72px] bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
-          {/* Left Gradient Mask for text readability */}
-          <div className="absolute inset-0 z-10 w-full lg:w-3/4 bg-gradient-to-r from-[#030712] via-[#030712]/95 to-transparent pointer-events-none" />
+          {/* Left Gradient Mask for text readability - Narrowed to not darken the video */}
+          <div className="absolute inset-0 z-10 w-full lg:w-1/2 bg-gradient-to-r from-[#030712] via-[#030712]/90 to-transparent pointer-events-none" />
           
-          {/* Bottom Gradient Mask */}
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#030712] via-[#030712]/50 to-transparent pointer-events-none" />
+          {/* Bottom Gradient Mask - Reduced height */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 z-10 bg-gradient-to-t from-[#030712] via-[#030712]/80 to-transparent pointer-events-none" />
           
           {/* Video Player pushed to the right, full opacity */}
           <div className="relative h-full w-full lg:w-[65%] z-0 pointer-events-auto">
