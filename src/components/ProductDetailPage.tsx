@@ -328,8 +328,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
-                      {feature.emoji}
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
+                      {feature.emoji ? feature.emoji : <ShieldCheck className="w-7 h-7" />}
                     </div>
                     <div className="space-y-2 relative z-10">
                       <h3 className={`text-xl font-extrabold tracking-tight ${textPrimary} group-hover:text-emerald-400 transition-colors`}>{feature.title}</h3>
