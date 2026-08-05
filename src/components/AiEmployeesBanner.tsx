@@ -17,6 +17,7 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [employees, setEmployees] = useState<AiEmployee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -79,6 +80,30 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
     };
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const currentTouch = e.touches[0].clientX;
+    const diff = touchStart - currentTouch;
+
+    if (diff > 50) {
+      // Swiped left, go to next
+      setSelectedIndex(prev => Math.min(employees.length - 1, prev + 1));
+      setTouchStart(null);
+    } else if (diff < -50) {
+      // Swiped right, go to prev
+      setSelectedIndex(prev => Math.max(0, prev - 1));
+      setTouchStart(null);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setTouchStart(null);
+  };
+
   return (
     <section className={`py-32 relative overflow-hidden transition-colors duration-300 ${isLightMode ? 'bg-slate-50 border-y border-slate-200' : 'bg-[#030712] border-y border-white/5'}`}>
       {/* Immersive Dark Background Gradients */}
@@ -120,7 +145,13 @@ export const AiEmployeesBanner: React.FC<AiEmployeesBannerProps> = ({
         </div>
 
         {/* 3D Floating Carousel Stage */}
-        <div className="grid grid-cols-1 grid-rows-1 w-full max-w-[850px] mx-auto mt-6 mb-4 lg:mb-8" style={{ perspective: '2000px' }}>
+        <div 
+          className="grid grid-cols-1 grid-rows-1 w-full max-w-[850px] mx-auto mt-6 mb-4 lg:mb-8" 
+          style={{ perspective: '2000px' }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           
           {loading ? (
             <div className={`col-start-1 row-start-1 p-8 text-center text-sm animate-pulse ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Loading AI Workforce...</div>
