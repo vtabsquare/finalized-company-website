@@ -130,14 +130,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       data-hero-nav={useHeroNav ? 'true' : undefined}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? isLightMode
-            ? 'bg-white/70 backdrop-blur-2xl border-b border-slate-900/[0.06] py-3'
-            : 'bg-[#05070d]/70 backdrop-blur-2xl border-b border-white/[0.06] py-3'
-          : useHeroNav
-            ? 'bg-[#05070d]/40 backdrop-blur-md border-b border-white/[0.04] py-5 md:py-6'
-            : 'bg-transparent border-b border-transparent py-6'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-3 ${
+        isLightMode
+          ? scrolled 
+            ? 'bg-white/80 backdrop-blur-xl border-b border-slate-200/50 shadow-sm'
+            : 'bg-white/40 backdrop-blur-md border-b border-white/50'
+          : scrolled
+            ? 'bg-[#030712]/80 backdrop-blur-xl border-b border-white/10 shadow-lg'
+            : 'bg-[#030712]/40 backdrop-blur-md border-b border-white/5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
