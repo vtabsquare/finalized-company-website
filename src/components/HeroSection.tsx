@@ -142,20 +142,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const [isMuted, setIsMuted] = useState(true);
   const [statsVisible, setStatsVisible] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isMobile = useIsMobile();
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    
-    video.defaultMuted = isMuted;
     video.muted = isMuted;
-    
-    if (isMuted) {
-      video.play().catch(() => {});
-    }
   }, [isMuted]);
 
   useEffect(() => {
@@ -177,21 +171,37 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Desktop Video */}
         {!isMobile && (
           <>
-            <img 
-              src="/media/videos/company-overview-poster.jpg" 
-              className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 scale-110"
-              alt="" 
+            {/* Static poster shown until video is fully buffered */}
+            <img
+              src="/media/videos/company-overview-poster.jpg"
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                isVideoReady ? 'opacity-0' : 'opacity-60'
+              }`}
+              alt=""
             />
-            <video
-              ref={videoRef}
-              className="hero-video-bg absolute inset-0 w-full h-full object-cover hero-ken-burns"
-              src={HERO_VIDEO_SRC}
-              poster="/media/videos/company-overview-poster.jpg"
-              autoPlay
-              loop
-              playsInline
-              preload="auto"
-            />
+            {/* Ken-burns wrapper — keeps animation off the video compositor layer */}
+            <div className={`absolute inset-0 transition-opacity duration-1000 ${
+              isVideoReady ? 'opacity-100' : 'opacity-0'
+            }`}>
+              <video
+                ref={videoRef}
+                className="hero-video-bg absolute inset-0 w-full h-full object-cover"
+                src={HERO_VIDEO_SRC}
+                loop
+                muted
+                playsInline
+                preload="auto"
+                onCanPlayThrough={() => {
+                  setIsVideoReady(true);
+                  videoRef.current?.play().catch(() => {});
+                }}
+                style={{
+                  willChange: 'transform',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden'
+                }}
+              />
+            </div>
           </>
         )}
         <div className="hero-cinematic-overlay absolute inset-0 hidden sm:block" />
