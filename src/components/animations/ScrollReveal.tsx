@@ -1,5 +1,4 @@
-import React, { ReactNode } from 'react';
-import { motion } from 'motion/react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -18,39 +17,65 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   className = '',
   width = '100%' 
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-  const variants = {
-    hidden: { 
-      opacity: 0, 
-      y: animation === 'fade-up' ? 16 : 0,
-      x: animation === 'fade-left' ? 16 : animation === 'fade-right' ? -16 : 0,
-      scale: animation === 'scale-up' ? 0.96 : 1
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      x: 0, 
-      scale: 1,
-      transition: { 
-        duration: duration, 
-        delay: delay, 
-        ease: [0.16, 1, 0.3, 1] // Ultra smooth Apple exponential ease-out
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(el);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: '-30px',
+        threshold: 0.1
       }
-    },
+    );
+
+    observer.observe(el);
+
+    return () => {
+      if (el) observer.unobserve(el);
+      observer.disconnect();
+    };
+  }, []);
+
+  const getInitialStyle = (): React.CSSProperties => {
+    switch (animation) {
+      case 'fade-up': return { opacity: 0, transform: 'translateY(16px)' };
+      case 'fade-left': return { opacity: 0, transform: 'translateX(16px)' };
+      case 'fade-right': return { opacity: 0, transform: 'translateX(-16px)' };
+      case 'scale-up': return { opacity: 0, transform: 'scale(0.96)' };
+      case 'fade-in': default: return { opacity: 0 };
+    }
+  };
+
+  const getVisibleStyle = (): React.CSSProperties => {
+    return {
+      opacity: 1,
+      transform: 'translate(0px, 0px) scale(1)'
+    };
   };
 
   return (
     <div style={{ width }} className={className}>
-      <motion.div
-        variants={variants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-30px" }}
-        style={{ willChange: 'opacity, transform' }}
+      <div
+        ref={ref}
+        style={{
+          ...(isVisible ? getVisibleStyle() : getInitialStyle()),
+          transition: `all ${duration}s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
+          willChange: isVisible ? 'auto' : 'opacity, transform'
+        }}
         className="w-full h-full transform-gpu"
       >
         {children}
-      </motion.div>
+      </div>
     </div>
   );
 };

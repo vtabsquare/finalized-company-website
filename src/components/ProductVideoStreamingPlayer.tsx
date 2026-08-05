@@ -33,13 +33,13 @@ const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/obje
 const STREAMING_VIDEOS: Record<string, string> = {
   'ai-reporting-platform': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
   'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
-  'gbti-smart-home-builder': '/media/videos/ai_smart_home.mp4',
+  'gbti-smart-home-builder': '/media/videos/ai_smart_home_web.mp4',
   'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart.mp4`,
   'faceauth': `${SUPABASE_MEDIA}/faceauth.mp4`,
-  'packaging-optimization-platform': '/media/videos/ai_logistics.mp4',
+  'packaging-optimization-platform': '/media/videos/ai_logistics_web.mp4',
   'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent.mp4`,
   'postgresql-to-sqlserver-migration': `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
-  'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard.mp4',
+  'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard-web.mp4',
   'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report.mp4`,
   'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard.mp4`,
   'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard.mp4`,
@@ -59,8 +59,8 @@ const DEFAULT_VIDEO_POOL = [
   `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard.mp4`,
   `${SUPABASE_MEDIA}/qlik2powerbi.mp4`,
   `${SUPABASE_MEDIA}/buildsmart.mp4`,
-  '/media/videos/ai_logistics.mp4',
-  '/media/videos/ai_smart_home.mp4',
+  '/media/videos/ai_logistics_web.mp4',
+  '/media/videos/ai_smart_home_web.mp4',
 ];
 
 const getVideoForProduct = (id: string, title?: string, customUrl?: string): string => {
@@ -98,7 +98,7 @@ const getVideoForProduct = (id: string, title?: string, customUrl?: string): str
   return DEFAULT_VIDEO_POOL[index];
 };
 
-export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerProps> = ({
+export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerProps> = React.memo(({
   productId,
   productTitle,
   imageUrl,
@@ -111,13 +111,17 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(isActive);
   const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [duration, setDuration] = useState<number>(30); // 30 second video demo loop
-  const [streamLatency, setStreamLatency] = useState<number>(14);
+  const [duration, setDuration] = useState<number>(30);
+  const [isBuffered, setIsBuffered] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const ambientVideoRef = useRef<HTMLVideoElement | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const timecodeRef = useRef<HTMLSpanElement>(null);
   const rafRef = useRef<number>();
+
+  // Reset buffered state whenever the video source changes (slide switch)
+  useEffect(() => {
+    setIsBuffered(false);
+  }, [productId, videoUrl]);
 
   // Play/pause based on isActive prop
   useEffect(() => {
@@ -211,29 +215,63 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
-      {/* Ambient Blurred Background Image to eliminate black bars without GPU overload */}
+      {/* Poster shown while buffering - instant image, no flicker */}
+      <img
+        src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
+        className={`absolute inset-0 w-full h-full object-cover pointer-events-none z-20 transition-opacity duration-700 ${
+          isBuffered ? 'opacity-0' : 'opacity-100'
+        }`}
+        alt=""
+      />
+
+      {/* Ambient Blurred Background */}
       <img
         src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
         className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110"
         alt="Ambient background"
       />
 
-      {/* Main Video Stream Element - Uncropped */}
+      {/* Loading pulse indicator - only while buffering */}
+      {!isBuffered && (
+        <div className="absolute inset-0 z-30 flex items-end justify-start p-4 pointer-events-none">
+          <div className="flex items-center gap-2 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+            </span>
+            <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-wider">Buffering...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Video Stream Element */}
       <video
         ref={videoRef}
         src={videoSource}
-        poster={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
         autoPlay={isActive}
         loop
         muted={isMuted}
         playsInline
-        preload={isActive ? "metadata" : "none"}
+        preload={isActive ? "auto" : "none"}
         onLoadedMetadata={() => {
           if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration) && isFinite(videoRef.current.duration)) {
             setDuration(Math.min(30, videoRef.current.duration));
           }
         }}
-        className="relative z-10 w-full h-full object-contain opacity-100 transition-opacity"
+        onCanPlayThrough={() => {
+          setIsBuffered(true);
+          if (isActive && videoRef.current) {
+            videoRef.current.play().catch(() => {});
+          }
+        }}
+        style={{
+          willChange: 'transform',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden'
+        }}
+        className={`relative z-10 w-full h-full object-contain transition-opacity duration-700 ${
+          isBuffered ? 'opacity-100' : 'opacity-0'
+        }`}
       />
 
 
@@ -356,5 +394,6 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       </div>
     </div>
   );
-};
+});
 
+export default ProductVideoStreamingPlayer;

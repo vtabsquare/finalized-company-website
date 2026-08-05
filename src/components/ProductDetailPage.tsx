@@ -64,8 +64,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
         
         {/* Animated LED Backlight Glows */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[140px] pointer-events-none animate-pulse" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[140px] pointer-events-none animate-pulse" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[140px] pointer-events-none opacity-40" />
+        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[140px] pointer-events-none opacity-40" />
 
         <div className="relative z-10 max-w-7xl mx-auto space-y-8">
           
@@ -100,7 +100,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             
             {/* Left Column (7 cols): Floating Video Frame */}
             <div className="lg:col-span-7 space-y-4">
-              <div className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden border border-white/20 bg-slate-950/80 backdrop-blur-2xl shadow-[0_0_80px_rgba(6,182,212,0.15),0_0_40px_rgba(168,85,247,0.15)] transition-all duration-700 hover:shadow-[0_0_120px_rgba(6,182,212,0.25),0_0_60px_rgba(168,85,247,0.25)] group">
+              <div className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden border border-white/20 bg-slate-950/80 shadow-xl transition-all duration-700 group">
                 
                 {/* Video Stream Viewport */}
                 <div className="relative w-full aspect-video bg-slate-950 overflow-hidden">
@@ -122,7 +122,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div className="lg:col-span-5 space-y-6">
               
               {/* Executive Cyber Console Card */}
-              <div className="relative p-6 md:p-8 rounded-3xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/15 backdrop-blur-2xl shadow-2xl space-y-6 overflow-hidden">
+              <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/85 border border-white/15 backdrop-blur-sm shadow-2xl space-y-6 overflow-hidden">
                 {/* Illuminated Top Neon Line */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 via-purple-500 to-emerald-500" />
 

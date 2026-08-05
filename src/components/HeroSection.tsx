@@ -11,7 +11,7 @@ interface HeroSectionProps {
   isLightMode?: boolean;
 }
 
-const HERO_VIDEO_SRC = '/media/videos/company-overview.mp4';
+const HERO_VIDEO_SRC = '/media/videos/company-overview-web.mp4';
 
 interface Headline {
   lines: [string, string];
@@ -176,15 +176,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         
         {/* Desktop Video */}
         {!isMobile && (
-          <video
-            ref={videoRef}
-            className="hero-video-bg absolute inset-0 w-full h-full object-cover hero-ken-burns"
-            src={HERO_VIDEO_SRC}
-            autoPlay
-            loop
-            playsInline
-            preload="metadata"
-          />
+          <>
+            <img 
+              src="/media/videos/company-overview-poster.jpg" 
+              className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 scale-110"
+              alt="" 
+            />
+            <video
+              ref={videoRef}
+              className="hero-video-bg absolute inset-0 w-full h-full object-cover hero-ken-burns"
+              src={HERO_VIDEO_SRC}
+              poster="/media/videos/company-overview-poster.jpg"
+              autoPlay
+              loop
+              playsInline
+              preload="auto"
+            />
+          </>
         )}
         <div className="hero-cinematic-overlay absolute inset-0 hidden sm:block" />
         <div className="hero-film-grain absolute inset-0" />
@@ -242,17 +250,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               transition={{ duration: 0.8, delay: 0.48, ease: easeOut }}
               className="sm:hidden w-full aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl relative my-4"
             >
+              <img 
+                src="/media/videos/company-overview-poster.jpg" 
+                className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 scale-110"
+                alt="" 
+              />
               <video
                 ref={videoRef}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover relative z-10"
                 src={HERO_VIDEO_SRC}
+                poster="/media/videos/company-overview-poster.jpg"
                 autoPlay
                 muted={isMuted}
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 z-20 bg-gradient-to-t from-[#030712]/80 to-transparent pointer-events-none" />
             </motion.div>
           )}
 
