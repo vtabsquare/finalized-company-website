@@ -140,7 +140,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreProducts,
   onScheduleDemo,
 }) => {
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [statsVisible, setStatsVisible] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
