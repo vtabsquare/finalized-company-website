@@ -168,15 +168,66 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[120px] opacity-60" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[100px] opacity-40" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#030712_80%)]" />
       </div>
+
+      {/* Desktop Full-Bleed Video Background (Right Aligned) */}
+      {!isMobile && (
+        <div className="absolute inset-0 z-0 flex justify-end pointer-events-none">
+          {/* Left Gradient Mask for text readability */}
+          <div className="absolute inset-0 z-10 w-full lg:w-3/4 bg-gradient-to-r from-[#030712] via-[#030712]/95 to-transparent pointer-events-none" />
+          
+          {/* Bottom Gradient Mask */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#030712] via-[#030712]/50 to-transparent pointer-events-none" />
+          
+          {/* Video Player pushed to the right */}
+          <div className="relative h-full w-full lg:w-[65%] opacity-80 mix-blend-screen z-0 pointer-events-auto">
+            {/* Static poster shown until video is fully buffered */}
+            <img
+              src="/media/videos/company-overview-poster.jpg"
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                isVideoReady ? 'opacity-0' : 'opacity-100'
+              }`}
+              alt=""
+            />
+            
+            <div className={`absolute inset-0 transition-opacity duration-1000 ${
+              isVideoReady ? 'opacity-100' : 'opacity-0'
+            }`}>
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                src={HERO_VIDEO_SRC}
+                loop
+                muted={isMuted}
+                playsInline
+                preload="auto"
+                onCanPlay={() => {
+                  setIsVideoReady(true);
+                  videoRef.current?.play().catch(() => {});
+                }}
+                style={{
+                  willChange: 'transform',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden'
+                }}
+              />
+            </div>
+
+            {/* Sound Toggle Button (Desktop) */}
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className="absolute bottom-28 right-8 z-30 w-12 h-12 rounded-full bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl"
+              aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+            >
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <div className="relative z-10 flex-1 flex flex-col justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-8 sm:pt-32 sm:pb-12 md:pt-36">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          
-          {/* LEFT COLUMN: Text Content */}
-          <div className="w-full lg:w-[55%] space-y-6 sm:space-y-7 text-left">
+        <div className="w-full lg:w-[55%] space-y-6 sm:space-y-7 text-left">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -289,66 +340,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </motion.div>
           </div>
 
-          {/* RIGHT COLUMN: Desktop Video Card */}
-          {!isMobile && (
-            <div className="hidden lg:block w-[45%]">
-              <motion.div
-                initial={{ opacity: 0, x: 30, scale: 0.95 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                transition={{ duration: 1, delay: 0.3, ease: easeOut }}
-                className="relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group"
-              >
-                {/* Decorative border glow */}
-                <div className="absolute inset-0 rounded-[2rem] border border-blue-500/20 pointer-events-none group-hover:border-blue-400/40 transition-colors duration-500 z-20" />
-                
-                {/* Static poster shown until video is fully buffered */}
-                <img
-                  src="/media/videos/company-overview-poster.jpg"
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                    isVideoReady ? 'opacity-0' : 'opacity-60'
-                  }`}
-                  alt=""
-                />
-                
-                {/* Video Container */}
-                <div className={`absolute inset-0 transition-opacity duration-1000 ${
-                  isVideoReady ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    src={HERO_VIDEO_SRC}
-                    loop
-                    muted={isMuted}
-                    playsInline
-                    preload="auto"
-                    onCanPlay={() => {
-                      setIsVideoReady(true);
-                      videoRef.current?.play().catch(() => {});
-                    }}
-                    style={{
-                      willChange: 'transform',
-                      transform: 'translateZ(0)',
-                      backfaceVisibility: 'hidden'
-                    }}
-                  />
-                  {/* Subtle inner shadow for depth */}
-                  <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.6)] pointer-events-none" />
-                </div>
-
-                {/* Sound Toggle Button (Desktop) */}
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="absolute bottom-6 right-6 z-30 w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-2xl opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0"
-                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-                >
-                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                </button>
-              </motion.div>
-            </div>
-          )}
-
-        </div>
       </div>
 
       <div className="relative z-10 w-full pb-6 sm:pb-8 md:pb-10 mt-auto overflow-hidden border-t border-white/5 bg-black/20 pt-6">
