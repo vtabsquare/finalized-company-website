@@ -1,0 +1,23 @@
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const url = process.env.VITE_SUPABASE_URL;
+const key = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = createClient(url, key);
+
+async function checkPolicies() {
+  const { data, error } = await supabase.rpc('get_policies');
+  if (error) {
+    // If rpc doesn't exist, query pg_policies directly using postgres
+    const { data: policies, error: pgError } = await supabase.from('pg_policies').select('*');
+    if (pgError) {
+      console.error(pgError);
+    } else {
+      console.log(policies);
+    }
+  } else {
+    console.log(data);
+  }
+}
+checkPolicies();
