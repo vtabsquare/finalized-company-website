@@ -477,7 +477,7 @@ export async function sendCareerApplicationEmails(application: CareerApplication
     }),
     sendBrevoEmail({
       to: getAdminEmails(),
-      subject: `New career application: ${application.roleTitle} - ${application.fullName}`,
+      subject: `Application for ${application.roleTitle}`,
       htmlContent: adminHtml,
       replyTo: { email: application.email, name: application.fullName },
       attachment: application.resumeFile ? [application.resumeFile] : undefined,
