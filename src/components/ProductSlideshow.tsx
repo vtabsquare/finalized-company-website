@@ -122,7 +122,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             isCinematic={false}
             onToggleCinematic={() => {}}
             isActive={!isDesktop}
-            onVideoEnded={() => { if (isPlaying) handleNext(); }}
+            onVideoEnded={() => {}}
           />
           {/* Gradient overlay bottom */}
           <div className={`absolute inset-x-0 bottom-0 h-16 ${isLightMode ? 'bg-gradient-to-t from-slate-50' : 'bg-gradient-to-t from-[#030712]'}`} />
@@ -254,7 +254,7 @@ export const ProductSlideshow: React.FC<ProductSlideshowProps> = ({
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}
             isActive={isDesktop}
-            onVideoEnded={() => { if (isPlaying) handleNext(); }}
+            onVideoEnded={() => {}}
           />
         </div>
       </div>

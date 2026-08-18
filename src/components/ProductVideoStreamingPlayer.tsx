@@ -28,7 +28,7 @@ interface ProductVideoStreamingPlayerProps {
 }
 
 // High quality tech/AI video loops
-const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
+const SUPABASE_MEDIA = 'https://doazlhotvvzmsngjbfne.supabase.co/storage/v1/object/public/product-media';
 
 // All entries point at the -web variants: <=1280 wide, 24fps, CRF 28 capped at
 // 1000k with +faststart. The un-suffixed originals run 4.6-7.9 Mbps and stall
@@ -160,27 +160,8 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       const video = videoRef.current;
       if (!video) return;
 
-      if (entry.isIntersecting) {
-        // Scrolled into view -> attempt to unmute and play
-        setIsMuted(false);
-        video.muted = false;
-        
-        if (!userPausedRef.current) {
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.then(() => setIsPlaying(true)).catch((e) => {
-              // Browser autoplay policy blocked unmuted playback, fallback to muted
-              console.log("Product video unmuted playback blocked, falling back to muted.", e);
-              setIsMuted(true);
-              video.muted = true;
-              video.play().then(() => setIsPlaying(true)).catch(() => {});
-            });
-          }
-        }
-      } else {
-        // Scrolled out of view -> mute and pause to save resources
-        setIsMuted(true);
-        video.muted = true;
+      if (!entry.isIntersecting) {
+        // Scrolled out of view -> pause to save resources
         video.pause();
         setIsPlaying(false);
       }
@@ -200,10 +181,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
 
   // Play/pause based on isActive prop
   useEffect(() => {
-    if (isActive) {
-      setIsPlaying(true);
-      videoRef.current?.play().catch(() => {});
-    } else {
+    if (!isActive) {
       setIsPlaying(false);
       videoRef.current?.pause();
     }
@@ -323,12 +301,12 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       <video
         ref={videoRef}
         src={videoSource}
-        autoPlay={isActive}
+        autoPlay={false}
         loop={!onVideoEnded}
         onEnded={onVideoEnded}
         muted={isMuted}
         playsInline
-        preload={isActive ? "auto" : "none"}
+        preload="none"
         onLoadedMetadata={() => {
           if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration) && isFinite(videoRef.current.duration)) {
             setDuration(Math.min(30, videoRef.current.duration));
@@ -336,9 +314,6 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
         }}
         onCanPlay={() => {
           setIsBuffered(true);
-          if (isActive && videoRef.current && !userPausedRef.current) {
-            videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-          }
         }}
         style={{
           willChange: 'transform',
