@@ -12,11 +12,20 @@ import {
   Wifi,
 } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
+import { supabase } from '../lib/supabaseClient';
+import type { IoTContent } from '../types';
+import * as LucideIcons from 'lucide-react';
 
 interface IndustrialIoTSectionProps {
   onScheduleDemo: (interestArea?: string) => void;
   isLightMode?: boolean;
 }
+
+
+const renderIcon = (name: string, props: any) => {
+  const Icon = (LucideIcons as any)[name];
+  return Icon ? <Icon {...props} /> : <LucideIcons.Wifi {...props} />;
+};
 
 const capabilities = [
   {
@@ -51,6 +60,14 @@ export const IndustrialIoTSection: React.FC<IndustrialIoTSectionProps> = ({
   onScheduleDemo,
   isLightMode = false,
 }) => {
+  const [data, setData] = React.useState<IoTContent | null>(null);
+  
+  React.useEffect(() => {
+    supabase.from('iot_content').select('*').limit(1).single().then(({ data, error }) => {
+      if (!error && data) setData(data);
+    });
+  }, []);
+
   const heading = isLightMode ? 'text-slate-950' : 'text-white';
   const copy = isLightMode ? 'text-slate-600' : 'text-slate-300';
   const card = isLightMode
@@ -77,16 +94,16 @@ export const IndustrialIoTSection: React.FC<IndustrialIoTSectionProps> = ({
               isLightMode ? 'border-cyan-200 bg-cyan-50 text-cyan-700' : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300'
             }`}>
               <Wifi className="h-3.5 w-3.5" />
-              <span>Industrial IoT & Edge AI</span>
+              <span>{data?.header_badge || 'Industrial IoT & Edge AI'}</span>
             </div>
             <h2 id="industrial-iot-heading" className={`text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${heading}`}>
-              AI-powered IoT for{' '}
+              {data?.header_title || 'AI-powered IoT for '}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400">
-                real-time operations
+                {data?.header_highlight || 'real-time operations'}
               </span>
             </h2>
             <p className={`mx-auto mt-6 max-w-3xl text-base leading-relaxed sm:text-lg ${copy}`}>
-              VTab Square engineers intelligent IoT applications that connect physical infrastructure with AI—helping industrial teams monitor health, identify risks, and act on live operational signals.
+              {data?.header_description || 'VTab Square engineers intelligent IoT applications that connect physical infrastructure with AI—helping industrial teams monitor health, identify risks, and act on live operational signals.'}
             </p>
           </div>
         </ScrollReveal>
@@ -94,12 +111,12 @@ export const IndustrialIoTSection: React.FC<IndustrialIoTSectionProps> = ({
         <div className="grid items-stretch gap-8 lg:grid-cols-[1.08fr_0.92fr]">
           <ScrollReveal animation="fade-right">
             <div className="grid h-full gap-4 sm:grid-cols-2">
-              {capabilities.map(({ icon: Icon, title, description }) => (
+              {(data?.capabilities || capabilities).map(({ icon, title, description }) => (
                 <article key={title} className={`group rounded-3xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/40 ${card}`}>
                   <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border ${
                     isLightMode ? 'border-cyan-200 bg-cyan-50 text-cyan-700' : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300'
                   }`}>
-                    <Icon className="h-6 w-6" />
+                    {typeof icon === 'string' ? renderIcon(icon, { className: "h-6 w-6" }) : React.createElement(icon, { className: "h-6 w-6" })}
                   </div>
                   <h3 className={`text-lg font-bold ${heading}`}>{title}</h3>
                   <p className={`mt-3 text-sm leading-relaxed ${copy}`}>{description}</p>
@@ -120,8 +137,8 @@ export const IndustrialIoTSection: React.FC<IndustrialIoTSectionProps> = ({
               <div className="relative z-10 flex h-full flex-col">
                 <div className={`flex items-center justify-between border-b pb-5 ${isLightMode ? 'border-slate-100' : 'border-white/10'}`}>
                   <div>
-                    <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${isLightMode ? 'text-cyan-600' : 'text-cyan-400'}`}>Reference application</p>
-                    <h3 className="mt-1 text-xl font-bold">AI Server Health Command Center</h3>
+                    <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${isLightMode ? 'text-cyan-600' : 'text-cyan-400'}`}>{data?.reference_app_badge || 'Reference application'}</p>
+                    <h3 className="mt-1 text-xl font-bold">{data?.reference_app_title || 'AI Server Health Command Center'}</h3>
                   </div>
                   <div className={`relative flex h-11 w-11 items-center justify-center rounded-2xl border ${
                     isLightMode ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
@@ -132,14 +149,14 @@ export const IndustrialIoTSection: React.FC<IndustrialIoTSectionProps> = ({
                 </div>
 
                 <div className="my-7 space-y-3">
-                  {signals.map(({ icon: Icon, label, detail, color }) => (
+                  {(data?.signals || signals).map(({ icon, label, detail, color }) => (
                     <div key={label} className={`flex items-center gap-4 rounded-2xl border p-4 backdrop-blur-sm ${
                       isLightMode ? 'border-slate-100 bg-slate-50' : 'border-white/10 bg-white/[0.04]'
                     }`}>
                       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                         isLightMode ? 'bg-white shadow-sm ' + color.replace('400', '600') : 'bg-white/[0.05] ' + color
                       }`}>
-                        <Icon className="h-5 w-5" />
+                        {typeof icon === 'string' ? renderIcon(icon, { className: "h-5 w-5" }) : React.createElement(icon, { className: "h-5 w-5" })}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-3">
@@ -158,7 +175,7 @@ export const IndustrialIoTSection: React.FC<IndustrialIoTSectionProps> = ({
                     : 'border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 to-emerald-500/10'
                 }`}>
                   <div className="grid grid-cols-3 gap-3 text-center">
-                    {['24/7 Monitoring', 'Early Risk Alerts', 'Edge + Cloud'].map((item) => (
+                    {(data?.benefits || ['24/7 Monitoring', 'Early Risk Alerts', 'Edge + Cloud']).map((item: string) => (
                       <div key={item} className={`text-[10px] font-bold uppercase leading-relaxed tracking-wider ${
                         isLightMode ? 'text-slate-600' : 'text-slate-300'
                       }`}>{item}</div>
