@@ -20,6 +20,7 @@ const ClosingBanner = lazy(() => import('./components/ClosingBanner').then(m => 
 const Footer = lazy(() => import('./components/Footer').then(m => ({ default: m.Footer })));
 const ProductDetailPage = lazy(() => import('./components/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
 const PageViews = lazy(() => import('./components/PageViews').then(m => ({ default: m.PageViews })));
+const DemoShowcaseSection = lazy(() => import('./components/DemoShowcaseSection').then(m => ({ default: m.DemoShowcaseSection })));
 
 export default function App() {
   const tabRoutes: Partial<Record<NavTab, string>> = {
@@ -116,6 +117,7 @@ export default function App() {
       ['section-employees',   'AI Employees'],
       ['section-portfolio',   'AI Portfolio'],
       ['industrial-iot',      'Industrial IoT & Edge AI'],
+      ['section-demos',       'Live Demo Showcase'],
       ['section-innovations', 'Future Innovations'],
       ['section-why',         'Why Choose Us'],
       ['section-stats',       'Impact Stats'],
@@ -265,6 +267,11 @@ export default function App() {
 
               {/* Industrial IoT & Edge AI */}
               <IndustrialIoTSection onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
+
+              {/* Live Demo Showcase */}
+              <div id="section-demos">
+                <DemoShowcaseSection isLightMode={isLightMode} />
+              </div>
 
               {/* AI Portfolio */}
               <div id="section-portfolio">
