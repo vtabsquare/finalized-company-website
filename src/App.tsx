@@ -12,7 +12,7 @@ import { PRODUCTS_DATA } from './data/contentData';
 const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
 const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
 const PortfolioSection = lazy(() => import('./components/PortfolioSection').then(m => ({ default: m.PortfolioSection })));
-const IndustrialIoTSection = lazy(() => import('./components/IndustrialIoTSection').then(m => ({ default: m.IndustrialIoTSection })));
+const IoTSection = lazy(() => import('./components/IoTSection').then(m => ({ default: m.IoTSection })));
 const FutureInnovations = lazy(() => import('./components/FutureInnovations').then(m => ({ default: m.FutureInnovations })));
 const WhyChooseUs = lazy(() => import('./components/WhyChooseUs').then(m => ({ default: m.WhyChooseUs })));
 const ImpactStats = lazy(() => import('./components/ImpactStats').then(m => ({ default: m.ImpactStats })));
@@ -115,9 +115,9 @@ export default function App() {
       ['section-hero',        'Hero'],
       ['section-vision',      'Vision & Mission'],
       ['section-employees',   'AI Employees'],
+      ['section-iot',         'IoT & Edge AI'],
+      ['section-demos',       'Live Demos'],
       ['section-portfolio',   'AI Portfolio'],
-      ['industrial-iot',      'Industrial IoT & Edge AI'],
-      ['section-demos',       'Live Demo Showcase'],
       ['section-innovations', 'Future Innovations'],
       ['section-why',         'Why Choose Us'],
       ['section-stats',       'Impact Stats'],
@@ -182,7 +182,7 @@ export default function App() {
   };
 
   const handleNavigateTab = (tab: NavTab) => {
-    const targetPath = tab === 'iot' ? '/#industrial-iot' : (tabRoutes[tab] || '/');
+    const targetPath = tab === 'iot' ? '/#section-iot' : (tabRoutes[tab] || '/');
     const currentPath = `${window.location.pathname}${window.location.hash}`;
     if (currentPath !== targetPath || selectedProduct) {
       window.history.pushState({ view: 'tab', tab }, '', targetPath);
@@ -192,7 +192,7 @@ export default function App() {
 
     if (tab === 'iot') {
       setTimeout(() => {
-        document.getElementById('industrial-iot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('section-iot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 80);
     }
   };
@@ -265,8 +265,10 @@ export default function App() {
               />
               </div>
 
-              {/* Industrial IoT & Edge AI */}
-              <IndustrialIoTSection onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
+              {/* IoT & Edge AI */}
+              <div id="section-iot">
+              <IoTSection onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
+              </div>
 
               {/* Live Demo Showcase */}
               <div id="section-demos">
