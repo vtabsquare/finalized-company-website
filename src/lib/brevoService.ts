@@ -104,7 +104,7 @@ export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ 
         </p>
 
         <div style="margin-top: 32px; text-align: center;">
-          <a href="https://vtab-square-company-website.onrender.com" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px;">Explore Our AI Portfolio</a>
+          <a href="https://www.vtabsquare.com/" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px;">Explore Our AI Portfolio</a>
         </div>
       </div>
 
@@ -173,7 +173,8 @@ export async function sendDemoRequestEmails(formData: DemoFormState): Promise<{ 
     replyTo: { email: formData.workEmail, name: formData.fullName },
   });
 
-  return { success: clientSent || adminSent };
+  // A successful client acknowledgement alone does not mean the business received the lead.
+  return { success: adminSent };
 }
 
 /**
@@ -206,7 +207,7 @@ export async function sendContactInquiryEmails(name: string, email: string, mess
           Hi <strong style="color: #38bdf8;">${name}</strong>,
         </p>
         <p style="color: #cbd5e1; font-size: 15px; line-height: 1.6;">
-          Thank you for contacting VTab Square AI Experts. An AI architect from our team will review your inquiry and get back to you within <strong>2 business hours</strong>.
+          Thank you for contacting VTab Square AI Experts. An AI architect from our team will review your inquiry and get back to you as soon as possible.
         </p>
         <div style="background-color: #0f172a; border: 1px solid #1e293b; padding: 16px; margin: 20px 0; border-radius: 8px;">
           <p style="color: #94a3b8; font-size: 13px; margin: 0 0 6px 0;"><strong>Your Message:</strong></p>
