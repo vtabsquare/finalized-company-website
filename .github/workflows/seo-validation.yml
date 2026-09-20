@@ -1,0 +1,34 @@
+name: Website SEO validation
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: TypeScript validation
+        run: npm run lint
+      - name: Production build
+        run: npm run build
+      - name: Confirm published SEO discovery assets
+        run: |
+          test -s dist/robots.txt
+          test -s dist/sitemap.xml
+          grep -q 'https://www.vtabsquare.com/' dist/sitemap.xml
+          grep -q 'name="description"' dist/index.html
