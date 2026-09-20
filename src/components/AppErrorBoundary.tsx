@@ -5,6 +5,7 @@ interface AppErrorBoundaryState {
 }
 
 export class AppErrorBoundary extends React.Component<React.PropsWithChildren, AppErrorBoundaryState> {
+  declare readonly props: React.PropsWithChildren;
   state: AppErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError(): AppErrorBoundaryState {

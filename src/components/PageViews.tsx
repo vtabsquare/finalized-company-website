@@ -79,14 +79,26 @@ export const PageViews: React.FC<PageViewsProps> = ({
   const [contactEmail, setContactEmail] = useState('');
   const [contactMsg, setContactMsg] = useState('');
   const [contactLoading, setContactLoading] = useState(false);
+  const [contactError, setContactError] = useState('');
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactEmail || !contactName) return;
     setContactLoading(true);
-    await sendContactInquiryEmails(contactName, contactEmail, contactMsg);
-    setContactLoading(false);
-    setContactSubmitted(true);
+    setContactError('');
+    try {
+      const result = await sendContactInquiryEmails(contactName, contactEmail, contactMsg);
+      if (result.success) {
+        setContactSubmitted(true);
+      } else {
+        setContactError('We could not deliver your enquiry. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Contact inquiry failed:', error);
+      setContactError('We could not deliver your enquiry. Please try again later.');
+    } finally {
+      setContactLoading(false);
+    }
   };
 
   if (activeTab === 'home' || activeTab === 'products') return null;
@@ -162,7 +174,7 @@ export const PageViews: React.FC<PageViewsProps> = ({
     setCareerLoading(false);
 
     if (!result.success) {
-      setCareerError('We could not submit your application right now. Please try again or email contact@vtabsquare.com.');
+      setCareerError('We could not submit your application right now. Please try again later.');
       return;
     }
 
@@ -495,25 +507,10 @@ export const PageViews: React.FC<PageViewsProps> = ({
                   <Mail className="w-5 h-5 text-blue-400" />
                   <div>
                     <h4 className="text-xs font-bold text-white uppercase">Direct Email</h4>
-                    <p className="text-xs text-slate-300">contact@vtabsquare.com</p>
+                    <a href="mailto:Information@vtabsquare.com" className="text-xs text-slate-300 hover:text-blue-300">Information@vtabsquare.com</a>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-purple-400" />
-                  <div>
-                    <h4 className="text-xs font-bold text-white uppercase">Executive Line</h4>
-                    <p className="text-xs text-slate-300">+1 (800) 555-VTAB-AI</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-cyan-400" />
-                  <div>
-                    <h4 className="text-xs font-bold text-white uppercase">Innovation Center</h4>
-                    <p className="text-xs text-slate-300">VTab Square AI Labs, Tech Park Center</p>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -524,7 +521,7 @@ export const PageViews: React.FC<PageViewsProps> = ({
                 {contactSubmitted ? (
                   <div className="bg-emerald-950/40 border border-emerald-500/30 p-4 rounded-xl text-xs text-emerald-300 space-y-2">
                     <p className="font-bold">Message Delivered!</p>
-                    <p>Our AI Solutions Architect will get back to you within 2 business hours.</p>
+                    <p>Thank you. Our team will review your enquiry and respond as soon as possible.</p>
                   </div>
                 ) : (
                   <form
@@ -555,6 +552,7 @@ export const PageViews: React.FC<PageViewsProps> = ({
                       placeholder="How can VTab Square assist your organization?"
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"
                     />
+                    {contactError && <p role="alert" className="text-xs text-red-300">{contactError}</p>}
                     <button
                       type="submit"
                       disabled={contactLoading}

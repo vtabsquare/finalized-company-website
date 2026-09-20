@@ -96,7 +96,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
               <a href="https://api.whatsapp.com/send/?phone=%2B919962597975&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-green-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-green-500 hover:text-white text-slate-400'}`} title="WhatsApp">
                 <MessageCircle className="w-4 h-4" />
               </a>
-              <a href="mailto:vitabsquare@gmail.com" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400'}`} title="Email">
+              <a href="mailto:Information@vtabsquare.com" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400'}`} title="Email">
                 <Mail className="w-4 h-4" />
               </a>
               <a href="https://www.linkedin.com/company/vtab-square/" target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-blue-600 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-blue-600 hover:text-white text-slate-400'}`} title="LinkedIn">
@@ -187,7 +187,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-3.5 h-3.5 shrink-0 text-blue-500" />
-                <a href="mailto:info@vtabsquare.com" className="hover:text-blue-400 transition-colors">info@vtabsquare.com</a>
+                <a href="mailto:Information@vtabsquare.com" className="hover:text-blue-400 transition-colors">Information@vtabsquare.com</a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-3.5 h-3.5 shrink-0 text-blue-500" />
