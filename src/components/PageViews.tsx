@@ -507,7 +507,7 @@ export const PageViews: React.FC<PageViewsProps> = ({
                   <Mail className="w-5 h-5 text-blue-400" />
                   <div>
                     <h4 className="text-xs font-bold text-white uppercase">Direct Email</h4>
-                    <a href="mailto:info@vtabsquare.com" className="text-xs text-slate-300 hover:text-blue-300">info@vtabsquare.com</a>
+                    <a href="mailto:Information@vtabsquare.com" className="text-xs text-slate-300 hover:text-blue-300">Information@vtabsquare.com</a>
                   </div>
                 </div>
 
