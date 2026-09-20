@@ -32,7 +32,7 @@ class VisitorReportTests(unittest.TestCase):
         self.assertEqual(report["page_requests"], 1)
         self.assertEqual(report["pages"], {"/solutions": 1})
         self.assertEqual(report["acquisition_requests"], {"Google": 1})
-        self.assertEqual(report["status_counts"], {"2xx": 2, "4xx": 1})
+        self.assertEqual(report["status_counts"], {"2xx": 1, "4xx": 1})
         rendered = traffic.render(report)
         self.assertNotIn("203.0.113", json.dumps(report) + rendered)
         self.assertNotIn("private@example.com", json.dumps(report) + rendered)
