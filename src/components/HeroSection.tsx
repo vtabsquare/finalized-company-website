@@ -104,6 +104,7 @@ function HeroStatCard({
   stat: (typeof STATS)[number];
   index: number;
   animate: boolean;
+  key?: React.Key;
 }) {
   const count = useCountUp(stat.value, 1600 + index * 200, animate);
   const Icon = stat.icon;
