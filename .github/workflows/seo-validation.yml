@@ -26,6 +26,8 @@ jobs:
         run: npm run lint
       - name: Production build
         run: npm run build
+      - name: Privacy-safe visitor report unit tests
+        run: python3 -m unittest discover -s scripts/tests -p 'test_visitor_traffic_report.py'
       - name: Confirm published SEO discovery assets
         run: |
           test -s dist/robots.txt
