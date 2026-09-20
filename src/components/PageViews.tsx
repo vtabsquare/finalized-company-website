@@ -518,7 +518,16 @@ export const PageViews: React.FC<PageViewsProps> = ({
               <div className="backdrop-blur-xl bg-white/[0.03] p-6 sm:p-8 rounded-2xl border border-white/10 shadow-2xl space-y-4">
                 <h3 className="text-lg font-bold text-white">Send Us a Direct Message</h3>
 
-                {contactSubmitted ? (
+                {/* Temporary direct-email fallback until the production send-email Edge Function is restored. */}
+                {true ? (
+                  <div className="space-y-4 rounded-xl border border-blue-500/30 bg-blue-950/20 p-5 text-sm text-slate-200">
+                    <p>Our online enquiry form is temporarily unavailable. Please email us directly about your project; no message is submitted through this page.</p>
+                    <a href="mailto:Information@vtabsquare.com?subject=VTAB%20Square%20project%20enquiry" className="block rounded-xl bg-blue-600 px-5 py-3 text-center font-bold text-white hover:bg-blue-500">
+                      Open email to contact VTAB Square
+                    </a>
+                    <p>If your email application does not open, email <a className="underline font-semibold break-all" href="mailto:Information@vtabsquare.com">Information@vtabsquare.com</a> directly. Opening your email app does not send the message automatically.</p>
+                  </div>
+                ) : contactSubmitted ? (
                   <div className="bg-emerald-950/40 border border-emerald-500/30 p-4 rounded-xl text-xs text-emerald-300 space-y-2">
                     <p className="font-bold">Message Delivered!</p>
                     <p>Thank you. Our team will review your enquiry and respond as soon as possible.</p>
