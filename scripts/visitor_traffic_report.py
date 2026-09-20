@@ -21,7 +21,7 @@ COMBINED = re.compile(
     r'"(?P<referrer>[^"]*)" "(?P<agent>[^"]*)"'
 )
 BOT = re.compile(r'bot|crawler|spider|headless|lighthouse|curl/|wget/|uptime|monitor', re.I)
-STATIC = re.compile(r'^/(?:src/)?(?:assets|media|static)/|^/(?:favicon|logo|robots\.txt|sitemap\.xml)|\.(?:js|css|png|jpe?g|svg|gif|webp|ico|woff2?|ttf|otf|map|mp4|webm|pdf)
+STATIC = re.compile(r'^/(?:src/)?(?:assets|media|static)/|^/(?:favicon|logo|robots[.]txt|sitemap[.]xml)', re.I)
 HOSTS = {"vtabsquare.com", "www.vtabsquare.com"}
 
 
