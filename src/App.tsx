@@ -8,6 +8,7 @@ import { DemoModal } from './components/DemoModal';
 import { InteractiveAiSandboxModal } from './components/InteractiveAiSandboxModal';
 import { AiChatBot } from './components/AiChatBot';
 import { PRODUCTS_DATA } from './data/contentData';
+import { updateSeo } from './lib/seo';
 
 const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
 const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
@@ -95,11 +96,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = selectedProduct
-      ? `${selectedProduct.title} Architecture | VTab Square`
-      : activeTab === 'careers'
-        ? 'Careers | VTab Square'
-        : 'VTab Square | Enterprise Intelligence';
+    updateSeo(activeTab, selectedProduct);
   }, [activeTab, selectedProduct]);
 
   // ── Analytics: scroll depth (fires at 25/50/75/90/100%) ────────────────
