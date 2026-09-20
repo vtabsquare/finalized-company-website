@@ -18,6 +18,8 @@ class VisitorReportTests(unittest.TestCase):
             '"https://www.google.com/search?q=data" "Mozilla/5.0"\n'
             '203.0.113.4 - - [20/Sep/2026:12:02:00 +0000] '
             '"GET /assets/index.js HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
+            '203.0.113.4 - - [20/Sep/2026:12:02:30 +0000] '
+            '"GET /src/assets/images/example.jpg HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
             '203.0.113.5 - - [20/Sep/2026:12:03:00 +0000] '
             '"GET /solutions HTTP/1.1" 200 123 "-" "Googlebot/2.1"\n'
             '203.0.113.6 - - [20/Sep/2026:12:04:00 +0000] '
