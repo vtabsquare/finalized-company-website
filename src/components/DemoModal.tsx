@@ -27,6 +27,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     if (initialInterest) {
@@ -40,26 +41,21 @@ export const DemoModal: React.FC<DemoModalProps> = ({
     e.preventDefault();
     setLoading(true);
     
-    // Save to Supabase for the Admin Dashboard
+    setSubmitError('');
     try {
-      await supabaseService.from('demo_requests').insert([{
-        full_name: form.fullName,
-        work_email: form.workEmail,
-        company_name: form.companyName,
-        team_size: form.teamSize,
-        interest_area: form.interestArea,
-        preferred_date: form.preferredDate,
-        message: form.message
-      }]);
-    } catch (dbError) {
-      console.error("Error saving to database:", dbError);
+      // sendDemoRequestEmails handles both lead storage and notifications.
+      const result = await sendDemoRequestEmails(form);
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setSubmitError('We could not deliver your demo request. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Demo request failed:', error);
+      setSubmitError('We could not deliver your demo request. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-
-    // Send emails via Brevo
-    await sendDemoRequestEmails(form);
-    
-    setLoading(false);
-    setSubmitted(true);
   };
 
   return (
@@ -89,6 +85,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
         <div className="px-4 sm:px-8 pb-6 sm:pb-8 overflow-y-auto custom-scrollbar">
           {!submitted ? (
             <form id="demo-modal-form" onSubmit={handleSubmit} className="space-y-5 mt-2">
+              {submitError && <p role="alert" className="text-sm text-red-500">{submitError}</p>}
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
