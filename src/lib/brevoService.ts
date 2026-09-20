@@ -2,7 +2,7 @@ import { supabaseService as supabase } from './supabaseClient';
 import type { DemoFormState } from '../types';
 
 const getAdminEmails = () => {
-  return (import.meta.env.VITE_ADMIN_EMAILS || 'vitabsquare@gmail.com,vigneshrajas.vtab@gmail.com,balamuraleee@gmail.com,meenakumarik.vtab@gmail.com')
+  return (import.meta.env.VITE_ADMIN_EMAILS || 'Information@vtabsquare.com')
     .split(',')
     .map(e => ({ email: e.trim() }))
     .filter(e => e.email);
@@ -250,7 +250,8 @@ export async function sendContactInquiryEmails(name: string, email: string, mess
     replyTo: { email, name },
   });
 
-  return { success: clientSent || adminSent };
+  // Only confirm a lead when the business notification was accepted for delivery.
+  return { success: adminSent };
 }
 
 /**
