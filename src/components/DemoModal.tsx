@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { X, Calendar, CheckCircle2, Briefcase, Loader2 } from 'lucide-react';
 import { DemoFormState } from '../types';
 import { sendDemoRequestEmails } from '../lib/brevoService';
-import { supabaseService } from '../lib/supabaseClient';
 
 interface DemoModalProps {
   isOpen: boolean;
