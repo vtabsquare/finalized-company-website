@@ -42,11 +42,28 @@ class VisitorReportTests(unittest.TestCase):
         self.assertEqual(report["page_requests"], 1)
         self.assertEqual(report["excluded_requests"]["Security probe / non-page path"], 4)
         self.assertEqual(report["pages"], {"/solutions": 1})
+        self.assertNotIn("/phpinfo", report["pages"])
         self.assertEqual(report["acquisition_requests"], {"Google": 1})
         self.assertEqual(report["status_counts"], {"2xx": 1, "4xx": 1})
         rendered = traffic.render(report)
         self.assertNotIn("203.0.113", json.dumps(report) + rendered)
         self.assertNotIn("private@example.com", json.dumps(report) + rendered)
+
+    def test_only_published_sitemap_routes_counted(self):
+        sample = (
+            '203.0.113.3 - - [20/Sep/2026:12:00:00 +0000] '
+            '"GET / HTTP/1.1" 200 123 "-" "Mozilla/5.0"\\n'
+            '203.0.113.4 - - [20/Sep/2026:12:01:00 +0000] '
+            '"GET /phpinfo HTTP/1.1" 200 123 "-" "Mozilla/5.0"\\n'
+            '203.0.113.5 - - [20/Sep/2026:12:02:00 +0000] '
+            '"GET /technology/cloud-migration HTTP/1.1" 200 123 "-" "Mozilla/5.0"\\n'
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            file = Path(folder) / "site.log"
+            file.write_text(sample, encoding="utf-8")
+            report = traffic.summarize(file, "2026-09-20")
+        self.assertEqual(report["pages"], {"/": 1})
+        self.assertEqual(report["excluded_requests"]["Not a published sitemap page"], 2)
 
     def test_html_escape(self):
         report = {
