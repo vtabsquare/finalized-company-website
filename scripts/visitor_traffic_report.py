@@ -75,10 +75,16 @@ def summarize(log: Path, date: str) -> dict:
                 continue
             url = urlsplit(request[1])
             path = url.path or "/"
-            if PROBE.search(path) or "." in path.rsplit("/", 1)[-1]:
+            if PROBE.search(path):
                 skipped["Security probe / non-page path"] += 1
                 continue
-            if STATIC.search(path) or path in {"/", ""} and request[0] == "HEAD":
+            if STATIC.search(path):
+                skipped["Static asset"] += 1
+                continue
+            if "." in path.rsplit("/", 1)[-1]:
+                skipped["Security probe / non-page path"] += 1
+                continue
+            if path in {"/", ""} and request[0] == "HEAD":
                 # HEAD is often monitoring; avoid double-counting the homepage.
                 if STATIC.search(path):
                     skipped["Static asset"] += 1
