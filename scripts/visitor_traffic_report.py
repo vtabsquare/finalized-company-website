@@ -75,8 +75,8 @@ def summarize(log: Path, date: str) -> dict:
                 continue
             url = urlsplit(request[1])
             path = url.path or "/"
-            if PROBE.search(path):
-                skipped["Security probe"] += 1
+            if PROBE.search(path) or "." in path.rsplit("/", 1)[-1]:
+                skipped["Security probe / non-page path"] += 1
                 continue
             if STATIC.search(path) or path in {"/", ""} and request[0] == "HEAD":
                 # HEAD is often monitoring; avoid double-counting the homepage.
@@ -108,6 +108,7 @@ def summarize(log: Path, date: str) -> dict:
             "Bot filtering is approximate; browser caching/ad blockers can change counts.",
             "Use a dedicated site log; shared Nginx access logs may contain other applications.",
             "Date follows the timezone recorded by Nginx access-log timestamps.",
+            "Dot-containing filenames and suspected probe URLs are excluded; these counts are not a security incident verdict.",
         ],
     }
 
