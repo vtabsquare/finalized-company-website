@@ -39,3 +39,7 @@ jobs:
           test -s dist/power-bi-consulting-services/index.html
           test -s dist/ai-application-development/index.html
           grep -q '<h1>SQL Server to Databricks Migration Services</h1>' dist/sql-server-to-databricks-migration/index.html
+          test -s dist/case-studies/sql-server-to-databricks-migration-factory/index.html
+          grep -q 'SQL Server to Databricks AI Migration Factory' dist/case-studies/sql-server-to-databricks-migration-factory/index.html
+          grep -q 'BreadcrumbList' dist/sql-server-to-databricks-migration/index.html
+          grep -q 'Organization' dist/power-bi-consulting-services/index.html
