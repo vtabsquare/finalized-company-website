@@ -103,7 +103,7 @@ const serviceSeo = {
 
 export function updateServiceSeo(slug: keyof typeof serviceSeo): void {
   const detail = serviceSeo[slug];
-  const canonical = `${SITE_URL}/${slug}`;
+  const canonical = `${SITE_URL}/${slug}/`;
   document.title = detail.title;
   ensureMeta('meta[name="description"]', { name: 'description' }, detail.description);
   ensureMeta('meta[property="og:title"]', { property: 'og:title' }, detail.title);
