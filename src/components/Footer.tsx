@@ -150,6 +150,9 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
           <div className="space-y-3">
             <h4 className={`text-xs font-bold uppercase tracking-wider ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Company & Lab</h4>
             <ul className="space-y-2">
+              <li><a href="/sql-server-to-databricks-migration/" className="hover:text-blue-400 transition-colors">SQL Server to Databricks</a></li>
+              <li><a href="/power-bi-consulting-services/" className="hover:text-blue-400 transition-colors">Power BI Consulting</a></li>
+              <li><a href="/ai-application-development/" className="hover:text-blue-400 transition-colors">AI Application Development</a></li>
               <li>
                 <button onClick={() => setActiveTab('about')} className="hover:text-blue-400 transition-colors cursor-pointer">
                   About Us & Vision

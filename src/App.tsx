@@ -10,6 +10,7 @@ import { AiChatBot } from './components/AiChatBot';
 import { PRODUCTS_DATA } from './data/contentData';
 import { updateSeo, updateServiceSeo } from './lib/seo';
 import { SeoServicePage, SeoServiceSlug } from './components/SeoServicePage';
+import { MigrationFactoryCaseStudy } from './components/MigrationFactoryCaseStudy';
 
 const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
 const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
@@ -57,7 +58,9 @@ export default function App() {
   };
 
   const serviceSlugs: SeoServiceSlug[] = ['sql-server-to-databricks-migration', 'power-bi-consulting-services', 'ai-application-development'];
-  const currentServiceSlug = serviceSlugs.find(slug => window.location.pathname.replace(/^\//, '').replace(/\/$/, '') === slug) || null;
+  const normalizedPath = window.location.pathname.replace(/\/$/, '') || '/';
+  const currentServiceSlug = serviceSlugs.find(slug => normalizedPath === `/${slug}`) || null;
+  const isMigrationCaseStudy = normalizedPath === '/case-studies/sql-server-to-databricks-migration-factory';
 
   const initialRoute = readRoute();
   const [activeTab, setActiveTab] = useState<NavTab>(initialRoute.tab);
@@ -100,9 +103,14 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (currentServiceSlug) updateServiceSeo(currentServiceSlug);
+    if (isMigrationCaseStudy) {
+      document.title = 'SQL Server to Databricks AI Migration Factory Case Study | VTAB Square';
+      const description = 'Explore VTAB Square’s SQL Server to Databricks migration factory approach for discovery, conversion, deployment, reconciliation and controlled promotion.';
+      let meta = document.head.querySelector<HTMLMetaElement>('meta[name="description"]'); if (meta) meta.content = description;
+      let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]'); if (canonical) canonical.href = 'https://www.vtabsquare.com/case-studies/sql-server-to-databricks-migration-factory/';
+    } else if (currentServiceSlug) updateServiceSeo(currentServiceSlug);
     else updateSeo(activeTab, selectedProduct);
-  }, [activeTab, selectedProduct, currentServiceSlug]);
+  }, [activeTab, selectedProduct, currentServiceSlug, isMigrationCaseStudy]);
 
   // ── Analytics: scroll depth (fires at 25/50/75/90/100%) ────────────────
   useEffect(() => {
@@ -224,7 +232,9 @@ export default function App() {
       <main className="relative z-10">
         
         {/* Search-focused service landing pages */}
-        {currentServiceSlug ? (
+        {isMigrationCaseStudy ? (
+          <MigrationFactoryCaseStudy onScheduleDemo={handleOpenDemoModal} />
+        ) : currentServiceSlug ? (
           <SeoServicePage slug={currentServiceSlug} onScheduleDemo={handleOpenDemoModal} />
         ) : selectedProduct ? (
           <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-white">Loading...</div>}>
