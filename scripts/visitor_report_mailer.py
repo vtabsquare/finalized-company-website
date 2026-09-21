@@ -111,10 +111,13 @@ def main():
     mode.add_argument("--dry-run", action="store_true", help="Inspect metadata without authenticating or sending")
     mode.add_argument("--send-test", action="store_true", help="Send an explicitly marked one-off test")
     mode.add_argument("--send-daily", action="store_true", help="Send yesterday IST report, once per day")
+    parser.add_argument("--date", default=None, help="IST date YYYY-MM-DD for --send-test or --dry-run only")
     parser.add_argument("--reports", type=Path, default=Path("/var/lib/vtabsquare-reports"))
     parser.add_argument("--config", type=Path, default=Path("/etc/vtabsquare-reporting/graph-mailer.json"))
     args = parser.parse_args()
-    date = report_date()
+    if args.send_daily and args.date is not None:
+        parser.error("--date cannot override previous IST day for automated daily mail")
+    date = args.date or report_date()
     file, data = safe_report(args.reports, date)
     if args.dry_run:
         print("DRY RUN: no authentication or email sent. Date:", date,
