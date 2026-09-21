@@ -36,6 +36,38 @@ python3 scripts/visitor_traffic_report.py \
 This creates \`vtabsquare-traffic-2026-09-20.html\` and \`.json\`. The output is a
 local administrative dashboard/report, not yet a publicly hosted web dashboard.
 
+## Daily India-time reporting and rotated logs
+
+The report now defaults to the **previous calendar day in Asia/Kolkata**, even
+when the Droplet clock and Nginx log timestamps are UTC. It reads the live
+dedicated Nginx log plus standard rotated files matching `.1`, `.2.gz`, etc.;
+`--single-log` is for diagnostics only and can produce incomplete totals.
+
+On the VTabSquarePortal Droplet, with the copy kept OUTSIDE the live website:
+
+```bash
+sudo python3 /opt/vtabsquare-reporting/visitor_traffic_report.py \
+  --log /var/log/nginx/vtabsquare-website.access.log \
+  --date 2026-09-21 \
+  --timezone Asia/Kolkata \
+  --output /var/lib/vtabsquare-reports
+```
+
+Use `--date` to test a particular **IST** day. For a future daily 09:00 IST
+schedule, omit `--date`: it automatically selects yesterday in India. At
+09:00 IST the preceding IST day has ended. On a UTC-configured server, 09:00 IST
+corresponds to 03:30 UTC. At that time the rotated log may contain the relevant
+traffic; do not schedule a single-live-log report.
+
+**Caution:** Dedicated logging on this Droplet began on September 20 after
+18:30 UTC, i.e. after midnight September 21 IST. Thus a September 20 IST
+report is expected to be empty/incomplete despite the previous UTC-day
+September 20 prototype counting requests. A September 21 IST report generated
+before midnight IST is also partial.
+
+This is a **private local HTML file**, not a logged-in web dashboard. No
+email sending or automated scheduling is installed by this script alone.
+
 ## Reporting limitations / next implementation phases
 
 - Request counts are not unique people, visits or qualified leads. Browser SPA
