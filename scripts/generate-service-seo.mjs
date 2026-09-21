@@ -44,4 +44,22 @@ for(const page of pages){
   mkdirSync(join('dist',page.slug),{recursive:true});
   writeFileSync(join('dist',page.slug,'index.html'),html);
 }
-console.log(`Generated ${pages.length} crawlable service HTML entry points`);
+
+const caseStudy = {
+  slug:'case-studies/sql-server-to-databricks-migration-factory',
+  title:'SQL Server to Databricks AI Migration Factory Case Study | VTAB Square',
+  description:'Explore VTAB Square’s SQL Server to Databricks migration factory approach for discovery, conversion, deployment, reconciliation and controlled promotion.',
+  heading:'SQL Server to Databricks AI Migration Factory',
+  intro:'A reusable migration-factory approach for assessing SQL Server estates, converting database objects and data pipelines, deploying to Databricks, reconciling results and controlling promotion through review gates.'
+};
+{
+  const page=caseStudy, url=`${base}/${page.slug}/`;
+  let html=template.replace(/<title>[^<]*<\/title>/,`<title>${escape(page.title)}</title>`)
+    .replace(/<meta name="description" content="[^"]*"\s*\/>/,`<meta name="description" content="${escape(page.description)}" />`)
+    .replace(/<link rel="canonical" href="[^"]*"\s*\/>/,`<link rel="canonical" href="${url}" />`);
+  const structured=JSON.stringify({'@context':'https://schema.org','@graph':[{'@type':'Organization','@id':base+'/#organization',name:'VTAB Square Private Limited',url:base},{'@type':'Article',headline:page.heading,description:page.description,url,author:{'@id':base+'/#organization'},publisher:{'@id':base+'/#organization'}},{'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Home',item:base+'/'},{'@type':'ListItem',position:2,name:'Case Studies',item:base+'/case-studies/'},{'@type':'ListItem',position:3,name:page.heading,item:url}]}]}).replaceAll('<','\\u003c');
+  html=html.replace('</head>',`<script type="application/ld+json">${structured}</script>\n</head>`);
+  html=html.replace('<div id="root"></div>',`<div id="root"><main><h1>${escape(page.heading)}</h1><p>${escape(page.intro)}</p><h2>Migration lifecycle</h2><p>Discovery, conversion, controlled deployment, technical reconciliation, business reconciliation and reviewed remediation.</p><p><a href="/sql-server-to-databricks-migration/">Explore SQL Server to Databricks migration services</a></p></main></div>`);
+  mkdirSync(join('dist',page.slug),{recursive:true}); writeFileSync(join('dist',page.slug,'index.html'),html);
+}
+console.log(`Generated ${pages.length} crawlable service HTML entry points plus migration case study`);
