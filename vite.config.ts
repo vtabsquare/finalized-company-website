@@ -9,6 +9,17 @@ const projectRoot = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'motion-vendor': ['motion'],
+            'icons-vendor': ['lucide-react'],
+          },
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': path.resolve(projectRoot, '.'),
