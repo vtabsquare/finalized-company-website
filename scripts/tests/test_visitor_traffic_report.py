@@ -24,6 +24,10 @@ class VisitorReportTests(unittest.TestCase):
             '"GET /.env.production HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
             '203.0.113.5 - - [20/Sep/2026:12:02:50 +0000] '
             '"GET /.git/config HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
+            '203.0.113.8 - - [20/Sep/2026:12:02:51 +0000] '
+            '"GET /phpinfo.php HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
+            '203.0.113.8 - - [20/Sep/2026:12:02:52 +0000] '
+            '"GET /service-account.json HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
             '203.0.113.5 - - [20/Sep/2026:12:03:00 +0000] '
             '"GET /solutions HTTP/1.1" 200 123 "-" "Googlebot/2.1"\n'
             '203.0.113.6 - - [20/Sep/2026:12:04:00 +0000] '
@@ -36,7 +40,7 @@ class VisitorReportTests(unittest.TestCase):
             file.write_text(sample, encoding="utf-8")
             report = traffic.summarize(file, "2026-09-20")
         self.assertEqual(report["page_requests"], 1)
-        self.assertEqual(report["excluded_requests"]["Security probe"], 2)
+        self.assertEqual(report["excluded_requests"]["Security probe / non-page path"], 4)
         self.assertEqual(report["pages"], {"/solutions": 1})
         self.assertEqual(report["acquisition_requests"], {"Google": 1})
         self.assertEqual(report["status_counts"], {"2xx": 1, "4xx": 1})
