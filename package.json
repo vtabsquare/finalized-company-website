@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build --configLoader runner",
+    "build": "vite build --configLoader runner && node scripts/generate-service-seo.mjs",
     "preview": "vite preview --configLoader runner",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
