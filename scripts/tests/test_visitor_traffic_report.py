@@ -1,3 +1,4 @@
+import gzip
 import importlib.util
 import json
 import tempfile
@@ -65,9 +66,46 @@ class VisitorReportTests(unittest.TestCase):
         self.assertEqual(report["pages"], {"/": 1})
         self.assertEqual(report["excluded_requests"]["Not a published sitemap page"], 2)
 
+    def test_ist_midnight_with_rotated_and_gzipped_logs(self):
+        def record(when, page):
+            return (
+                f'203.0.113.1 - - [{when}] '
+                f'"GET {page} HTTP/1.1" 200 123 "-" "Mozilla/5.0"\n'
+            )
+
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory) / "website.access.log"
+            # 18:30 UTC is 00:00 of the NEXT day in India.
+            older = base.with_name(base.name + ".2.gz")
+            with gzip.open(older, "wt", encoding="utf-8") as fh:
+                fh.write(record("20/Sep/2026:18:29:59 +0000", "/"))
+                fh.write(record("20/Sep/2026:18:30:00 +0000", "/solutions"))
+            rotated = base.with_name(base.name + ".1")
+            rotated.write_text(
+                record("21/Sep/2026:00:01:00 +0000", "/industries")
+                + record("21/Sep/2026:18:29:59 +0000", "/careers"),
+                encoding="utf-8",
+            )
+            base.write_text(
+                record("21/Sep/2026:18:30:00 +0000", "/contact"),
+                encoding="utf-8",
+            )
+            report = traffic.summarize(base, "2026-09-21")
+            self.assertEqual(
+                report["pages"],
+                {"/solutions": 1, "/industries": 1, "/careers": 1},
+            )
+            self.assertEqual(report["page_requests"], 3)
+            self.assertEqual(report["timezone"], "Asia/Kolkata")
+            self.assertEqual(len(report["logs_read"]), 3)
+            previous = traffic.summarize(base, "2026-09-20")
+            self.assertEqual(previous["pages"], {"/": 1})
+            single = traffic.summarize(base, "2026-09-21", include_rotated=False)
+            self.assertEqual(single["page_requests"], 0)
+
     def test_html_escape(self):
         report = {
-            "date": "2026-09-20", "page_requests": 1,
+            "date": "2026-09-20", "timezone": "Asia/Kolkata", "page_requests": 1,
             "pages": {"<script>alert(1)</script>": 1},
             "acquisition_requests": {}, "status_counts": {},
             "limitations": ["Visitors are not identifiable."],
