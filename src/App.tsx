@@ -8,7 +8,8 @@ import { DemoModal } from './components/DemoModal';
 import { InteractiveAiSandboxModal } from './components/InteractiveAiSandboxModal';
 import { AiChatBot } from './components/AiChatBot';
 import { PRODUCTS_DATA } from './data/contentData';
-import { updateSeo } from './lib/seo';
+import { updateSeo, updateServiceSeo } from './lib/seo';
+import { SeoServicePage, SeoServiceSlug } from './components/SeoServicePage';
 
 const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
 const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
@@ -55,6 +56,9 @@ export default function App() {
     return { tab: matchedTab, product: null };
   };
 
+  const serviceSlugs: SeoServiceSlug[] = ['sql-server-to-databricks-migration', 'power-bi-consulting-services', 'ai-application-development'];
+  const currentServiceSlug = serviceSlugs.find(slug => window.location.pathname.replace(/^\//, '').replace(/\/$/, '') === slug) || null;
+
   const initialRoute = readRoute();
   const [activeTab, setActiveTab] = useState<NavTab>(initialRoute.tab);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(initialRoute.product);
@@ -96,8 +100,9 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    updateSeo(activeTab, selectedProduct);
-  }, [activeTab, selectedProduct]);
+    if (currentServiceSlug) updateServiceSeo(currentServiceSlug);
+    else updateSeo(activeTab, selectedProduct);
+  }, [activeTab, selectedProduct, currentServiceSlug]);
 
   // ── Analytics: scroll depth (fires at 25/50/75/90/100%) ────────────────
   useEffect(() => {
@@ -218,8 +223,10 @@ export default function App() {
       {/* Main Content Area */}
       <main className="relative z-10">
         
-        {/* Full-page detail view for all selected products */}
-        {selectedProduct ? (
+        {/* Search-focused service landing pages */}
+        {currentServiceSlug ? (
+          <SeoServicePage slug={currentServiceSlug} onScheduleDemo={handleOpenDemoModal} />
+        ) : selectedProduct ? (
           <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-white">Loading...</div>}>
             <ProductDetailPage
               product={selectedProduct}

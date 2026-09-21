@@ -84,3 +84,34 @@ export function updateSeo(tab: NavTab, product: Product | null): void {
   }
   link.href = canonical;
 }
+
+
+const serviceSeo = {
+  'sql-server-to-databricks-migration': {
+    title: 'SQL Server to Databricks Migration Services | VTAB Square',
+    description: 'SQL Server to Databricks migration services covering assessment, schema and code conversion, Delta Lake, Unity Catalog, reconciliation and phased cutover.',
+  },
+  'power-bi-consulting-services': {
+    title: 'Power BI Consulting & Migration Services | VTAB Square',
+    description: 'Power BI consulting for semantic models, DAX, Power Query, dashboards, paginated reports, Qlik migration, optimization and governance.',
+  },
+  'ai-application-development': {
+    title: 'Enterprise AI Application Development | VTAB Square',
+    description: 'Enterprise AI application development with LLM and RAG integration, workflow automation, modern web engineering, governance and human oversight.',
+  },
+} as const;
+
+export function updateServiceSeo(slug: keyof typeof serviceSeo): void {
+  const detail = serviceSeo[slug];
+  const canonical = `${SITE_URL}/${slug}/`;
+  document.title = detail.title;
+  ensureMeta('meta[name="description"]', { name: 'description' }, detail.description);
+  ensureMeta('meta[property="og:title"]', { property: 'og:title' }, detail.title);
+  ensureMeta('meta[property="og:description"]', { property: 'og:description' }, detail.description);
+  ensureMeta('meta[property="og:url"]', { property: 'og:url' }, canonical);
+  ensureMeta('meta[name="twitter:title"]', { name: 'twitter:title' }, detail.title);
+  ensureMeta('meta[name="twitter:description"]', { name: 'twitter:description' }, detail.description);
+  let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
+  link.href = canonical;
+}

@@ -32,3 +32,10 @@ jobs:
           test -s dist/sitemap.xml
           grep -q 'https://www.vtabsquare.com/' dist/sitemap.xml
           grep -q 'name="description"' dist/index.html
+          grep -q 'sql-server-to-databricks-migration' dist/sitemap.xml
+          grep -q 'power-bi-consulting-services' dist/sitemap.xml
+          grep -q 'ai-application-development' dist/sitemap.xml
+          test -s dist/sql-server-to-databricks-migration/index.html
+          test -s dist/power-bi-consulting-services/index.html
+          test -s dist/ai-application-development/index.html
+          grep -q '<h1>SQL Server to Databricks Migration Services</h1>' dist/sql-server-to-databricks-migration/index.html
