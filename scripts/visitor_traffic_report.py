@@ -23,6 +23,10 @@ COMBINED = re.compile(
 BOT = re.compile(r'bot|crawler|spider|headless|lighthouse|curl/|wget/|uptime|monitor', re.I)
 STATIC = re.compile(r'^/(?:src/)?(?:assets|media|static)/|^/(?:favicon|logo|robots[.]txt|sitemap[.]xml)', re.I)
 HOSTS = {"vtabsquare.com", "www.vtabsquare.com"}
+# Conservative business-report scope: only the seven publicly published sitemap paths.
+# Product deep links and SPA transitions need first-party application analytics.
+PUBLIC_PAGES = {"/", "/solutions", "/industries", "/lab", "/about", "/careers", "/contact"}
+
 # Omit hidden paths and obvious probing URLs from BUSINESS page counts, even if
 # a React fallback returned HTTP 200 before Nginx protection was enabled.
 PROBE = re.compile(r'(^|/)[.]|(^|/)(?:wp-admin|wp-content|wp-includes|cgi-bin|vendor|phpmyadmin|actuator)(?:/|$)|[.](?:php|asp|aspx|jsp|sql|bak|backup|old|zip|tar|gz|yml|yaml|ini|log|conf|config|key|pem|sh)$', re.I)
@@ -93,6 +97,9 @@ def summarize(log: Path, date: str) -> dict:
                 continue
             if request[0] == "HEAD":
                 continue
+            if path not in PUBLIC_PAGES:
+                skipped["Not a published sitemap page"] += 1
+                continue
             code = int(match["status"])
             statuses[f"{code // 100}xx"] += 1
             if code >= 400:
@@ -102,7 +109,7 @@ def summarize(log: Path, date: str) -> dict:
             if source != "Internal":
                 sources[source] += 1
     return {
-        "date": date, "basis": "Nginx GET requests; not unique visitors or SPA navigation",
+        "date": date, "basis": "Nginx GET requests to 7 published sitemap routes; not unique visitors or SPA navigation",
         "page_requests": sum(pages.values()),
         "pages": dict(pages.most_common(30)),
         "acquisition_requests": dict(sources.most_common()),
@@ -111,6 +118,8 @@ def summarize(log: Path, date: str) -> dict:
         "limitations": [
             "No visitor identity, distinct user, session or client-IP metrics.",
             "SPA page transitions and product-click activity are not visible in server access logs.",
+            "Only the seven published sitemap paths are counted; other URLs are excluded.",
+            "A bot requesting / can still look like a human in access logs; metrics are not verified human visits.",
             "Bot filtering is approximate; browser caching/ad blockers can change counts.",
             "Use a dedicated site log; shared Nginx access logs may contain other applications.",
             "Date follows the timezone recorded by Nginx access-log timestamps.",
