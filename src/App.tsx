@@ -4,13 +4,16 @@ import { NavTab, Product } from './types';
 import { NeuralBackground } from './components/NeuralBackground';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
-import { DemoModal } from './components/DemoModal';
-import { InteractiveAiSandboxModal } from './components/InteractiveAiSandboxModal';
-import { AiChatBot } from './components/AiChatBot';
+
 import { PRODUCTS_DATA } from './data/contentData';
 import { updateSeo, updateServiceSeo } from './lib/seo';
-import { SeoServicePage, SeoServiceSlug } from './components/SeoServicePage';
-import { MigrationFactoryCaseStudy } from './components/MigrationFactoryCaseStudy';
+import type { SeoServiceSlug } from './components/SeoServicePage';
+
+const DemoModal = lazy(() => import('./components/DemoModal').then(m => ({ default: m.DemoModal })));
+const InteractiveAiSandboxModal = lazy(() => import('./components/InteractiveAiSandboxModal').then(m => ({ default: m.InteractiveAiSandboxModal })));
+const AiChatBot = lazy(() => import('./components/AiChatBot').then(m => ({ default: m.AiChatBot })));
+const SeoServicePage = lazy(() => import('./components/SeoServicePage').then(m => ({ default: m.SeoServicePage })));
+const MigrationFactoryCaseStudy = lazy(() => import('./components/MigrationFactoryCaseStudy').then(m => ({ default: m.MigrationFactoryCaseStudy })));
 
 const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
 const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
@@ -225,7 +228,7 @@ export default function App() {
           isLightMode={isLightMode}
           onToggleTheme={toggleTheme}
           isOverHero={(activeTab === 'home' || activeTab === 'products') && !selectedProduct}
-        />
+        /></Suspense>
       )}
 
       {/* Main Content Area */}
@@ -233,9 +236,9 @@ export default function App() {
         
         {/* Search-focused service landing pages */}
         {isMigrationCaseStudy ? (
-          <MigrationFactoryCaseStudy onScheduleDemo={handleOpenDemoModal} />
+          <Suspense fallback={<div className="min-h-[60vh]" />}><MigrationFactoryCaseStudy onScheduleDemo={handleOpenDemoModal} /></Suspense>
         ) : currentServiceSlug ? (
-          <SeoServicePage slug={currentServiceSlug} onScheduleDemo={handleOpenDemoModal} />
+          <Suspense fallback={<div className="min-h-[60vh]" />}><SeoServicePage slug={currentServiceSlug} onScheduleDemo={handleOpenDemoModal} /></Suspense>
         ) : selectedProduct ? (
           <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-white">Loading...</div>}>
             <ProductDetailPage
@@ -331,7 +334,7 @@ export default function App() {
 
       {/* Integrated Floating AI Assistant Bot */}
       {!selectedProduct && (
-        <AiChatBot
+        <Suspense fallback={null}><AiChatBot
           onScheduleDemo={handleOpenDemoModal}
           onOpenSandbox={() => setIsSandboxModalOpen(true)}
           onSelectProduct={handleSelectProduct}
@@ -349,17 +352,17 @@ export default function App() {
       )}
 
       {/* Modals & Dialogs */}
-      <DemoModal
+      {isDemoModalOpen && <Suspense fallback={null}><DemoModal
         isOpen={isDemoModalOpen}
         onClose={() => setIsDemoModalOpen(false)}
         initialInterest={demoInterest}
-      />
+      /></Suspense>}
 
-      <InteractiveAiSandboxModal
+      {isSandboxModalOpen && <Suspense fallback={null}><InteractiveAiSandboxModal
         isOpen={isSandboxModalOpen}
         onClose={() => setIsSandboxModalOpen(false)}
         onScheduleDemo={handleOpenDemoModal}
-      />
+      /></Suspense>}
 
     </div>
   );
