@@ -53,12 +53,22 @@ export const SeoServicePage: React.FC<{ slug: SeoServiceSlug; onScheduleDemo:(in
   const enquiryHref = `mailto:Contactsales@vtabsquare.com?subject=${enquirySubject}&body=${enquiryBody}`;
   return <div className="pt-28 pb-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-14">
     <header className="max-w-4xl space-y-5">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-400 flex flex-wrap gap-2">
+        <a href="/" className="hover:text-cyan-300">Home</a><span>/</span>
+        <a href="/solutions" className="hover:text-cyan-300">Solutions</a><span>/</span>
+        <span className="text-slate-300">{service.title}</span>
+      </nav>
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-400">{service.eyebrow}</p>
       <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight">{service.title}</h1>
       <p className="text-lg text-slate-300 leading-relaxed">{service.intro}</p>
-      <button onClick={()=>onScheduleDemo(service.title)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold">
-        {service.cta}<ArrowRight className="w-4 h-4"/>
-      </button>
+      <div className="flex flex-wrap gap-3">
+        <button onClick={()=>onScheduleDemo(service.title)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold">
+          {service.cta}<ArrowRight className="w-4 h-4"/>
+        </button>
+        <a href="#deliverables" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/15 hover:border-cyan-400/40 text-slate-200 font-semibold">
+          See engagement deliverables
+        </a>
+      </div>
     </header>
     <section className="grid md:grid-cols-3 gap-6">
       {service.sections.map(section=><article key={section.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
@@ -67,7 +77,7 @@ export const SeoServicePage: React.FC<{ slug: SeoServiceSlug; onScheduleDemo:(in
         <ul className="space-y-2">{section.points.map(point=><li key={point} className="flex gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"/><span>{point}</span></li>)}</ul>
       </article>)}
     </section>
-    <section className="grid md:grid-cols-2 gap-6">
+    <section id="deliverables" className="grid md:grid-cols-2 gap-6 scroll-mt-28">
       <article className="rounded-2xl border border-white/10 bg-white/[0.03] p-7">
         <h2 className="text-2xl font-bold text-white">Typical engagement deliverables</h2>
         <ul className="mt-5 space-y-3">{service.deliverables.map(item=><li key={item} className="flex gap-2 text-sm text-slate-300"><CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"/><span>{item}</span></li>)}</ul>
