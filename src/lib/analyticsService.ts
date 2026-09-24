@@ -334,5 +334,5 @@ export function trackClick(
 export function trackBusinessEvent(eventName: string): void {
   const safe = eventName.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
   if (!safe) return;
-  try { void fetch(`/__vt_event/${safe}`, { method: 'POST', keepalive: true, credentials: 'omit', cache: 'no-store' }); } catch {}
+  try { void fetch(`/__vt_event/${safe}`, { method: 'GET', keepalive: true, credentials: 'omit', cache: 'no-store' }); } catch {}
 }
