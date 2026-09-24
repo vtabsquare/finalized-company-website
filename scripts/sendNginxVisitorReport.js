@@ -1,0 +1,17 @@
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import dotenv from 'dotenv';
+dotenv.config();
+const execFileAsync=promisify(execFile);
+const apiKey=process.env.VITE_BREVO_API_KEY;
+const senderEmail=process.env.VITE_BREVO_SENDER_EMAIL || 'Contactsales@vtabsquare.com';
+const senderName=process.env.VITE_BREVO_SENDER_NAME || 'VTAB Square';
+const recipients=(process.env.VISITOR_REPORT_TO || process.env.VITE_ADMIN_EMAILS || 'Information@vtabsquare.com,vitabsquare@gmail.com').split(',').map(x=>x.trim()).filter(Boolean);
+if(!apiKey) throw new Error('Missing VITE_BREVO_API_KEY');
+const {stdout}=await execFileAsync(process.execPath,['scripts/nginxVisitorReport.js'],{env:{...process.env,REPORT_DAYS:process.env.REPORT_DAYS||'1'}});
+const report=JSON.parse(stdout);
+const list=(a,n=8)=>(a||[]).slice(0,n).map(([k,v])=>`<li>${k}: <strong>${v}</strong></li>`).join('')||'<li>None recorded</li>';
+const html=`<div style="font-family:Arial,sans-serif;max-width:720px"><h2>VTAB Square Daily Visitor Intelligence</h2><p><strong>Likely human page requests:</strong> ${report.likely_human_page_requests}<br><strong>Bot requests:</strong> ${report.bot_requests}<br><strong>Scanner requests:</strong> ${report.scanner_requests}<br><strong>Service-interest requests:</strong> ${report.service_interest_requests}<br><strong>Contact page requests:</strong> ${report.contact_page_requests}<br><strong>Tracked CTA actions:</strong> ${report.conversion_actions}</p><h3>Conversions</h3><ul>${list(report.conversions)}</ul><h3>Top pages</h3><ul>${list(report.top_pages)}</ul><h3>External referrers</h3><ul>${list(report.external_referrers)}</ul><p><strong>Suggested next action:</strong> ${report.next_action}</p><p style="color:#666;font-size:12px">Aggregate operational analytics only. No raw IP addresses are included.</p></div>`;
+const res=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{'api-key':apiKey,'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({sender:{name:senderName,email:senderEmail},to:recipients.map(email=>({email})),subject:`VTAB Square Daily Visitor Intelligence - ${new Date().toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata'})}`,htmlContent:html})});
+if(!res.ok) throw new Error(`Brevo send failed: ${res.status} ${await res.text()}`);
+console.log(`Visitor intelligence email sent via Brevo to ${recipients.join(', ')}`);

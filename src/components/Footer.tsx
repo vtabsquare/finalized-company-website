@@ -4,6 +4,7 @@ import { NavTab, Product } from '../types';
 import { PRODUCTS_DATA } from '../data/contentData';
 import { sendSubscribeEmail } from '../lib/brevoService';
 import { supabaseService } from '../lib/supabaseClient';
+import { trackBusinessEvent } from '../lib/analyticsService';
 
 interface FooterProps {
   setActiveTab: (tab: NavTab) => void;
@@ -96,10 +97,10 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
               <a href="https://api.whatsapp.com/send/?phone=%2B919962597975&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-green-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-green-500 hover:text-white text-slate-400'}`} title="WhatsApp">
                 <MessageCircle className="w-4 h-4" />
               </a>
-              <a href="mailto:Information@vtabsquare.com" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400'}`} title="Email">
+              <a href="mailto:Information@vtabsquare.com" onClick={() => trackBusinessEvent("email_click")} className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-red-500 hover:text-white text-slate-400'}`} title="Email">
                 <Mail className="w-4 h-4" />
               </a>
-              <a href="https://www.linkedin.com/company/vtab-square/" target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-blue-600 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-blue-600 hover:text-white text-slate-400'}`} title="LinkedIn">
+              <a href="https://www.linkedin.com/company/vtab-square/" onClick={() => trackBusinessEvent("linkedin_click")} target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-blue-600 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-blue-600 hover:text-white text-slate-400'}`} title="LinkedIn">
                 <Linkedin className="w-4 h-4" />
               </a>
               <a href="https://www.facebook.com/people/Vtab-Square-Pltd/pfbid022Lapbq9UHtRyvK9Bf24Feg8fuTdhWFTdgLs8ecb9aVigcz3yUUG6v84TbEyhdQHWl/" target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLightMode ? 'bg-slate-200 hover:bg-blue-500 hover:text-white text-slate-600' : 'bg-slate-800 hover:bg-blue-500 hover:text-white text-slate-400'}`} title="Facebook">
@@ -169,7 +170,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('contact')} className="hover:text-blue-400 transition-colors cursor-pointer">
+                <button onClick={() => { trackBusinessEvent('contact_click'); setActiveTab('contact'); }} className="hover:text-blue-400 transition-colors cursor-pointer">
                   Contact AI Experts
                 </button>
               </li>

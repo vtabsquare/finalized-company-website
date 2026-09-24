@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { initSession, trackPageView, trackEvent, stopHeartbeat, initScrollTracking, trackSectionTime, trackClick } from './lib/analyticsService';
+import { initSession, trackPageView, trackEvent, stopHeartbeat, initScrollTracking, trackSectionTime, trackClick, trackBusinessEvent } from './lib/analyticsService';
 import { NavTab, Product } from './types';
 import { NeuralBackground } from './components/NeuralBackground';
 import { Navbar } from './components/Navbar';
@@ -154,6 +154,7 @@ export default function App() {
     }
     setIsDemoModalOpen(true);
     trackEvent('demo_modal_open', { interest: interestArea || 'AI Reporting Platform' });
+    trackBusinessEvent('demo_open');
     trackClick('Schedule Demo', { interest: interestArea || 'AI Reporting Platform' });
   };
 
@@ -176,6 +177,7 @@ export default function App() {
     setSelectedProduct(prod);
     window.scrollTo({ top: 0, behavior: 'instant' });
     trackEvent('product_detail_open', { product_id: prod.id, product_title: prod.title });
+    trackBusinessEvent('product_view');
     trackClick('Explore Architecture', { product: prod.title });
   };
 

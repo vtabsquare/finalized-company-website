@@ -328,3 +328,11 @@ export function trackClick(
 ): void {
   void trackEvent('click', { element: elementId, page: _currentPage, ...extra });
 }
+
+
+// Privacy-safe business conversion signal. Event name only; no visitor ID, IP, email or form data.
+export function trackBusinessEvent(eventName: string): void {
+  const safe = eventName.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  if (!safe) return;
+  try { void fetch(`/__vt_event/${safe}`, { method: 'POST', keepalive: true, credentials: 'omit', cache: 'no-store' }); } catch {}
+}
