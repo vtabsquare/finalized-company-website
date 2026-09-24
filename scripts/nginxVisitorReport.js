@@ -7,7 +7,7 @@ const SCAN = /(^|\/)(\.env|wp-admin|wp-login|wp-json|phpinfo|test|txets|server-s
 const ASSET = /\.(?:js|css|png|jpe?g|gif|svg|ico|webp|avif|mp4|webm|mov|mp3|wav|woff2?|map|xml|txt|json)(?:$|\?)/i;
 const cutoff = Date.now() - days * 86400000;
 const rows = fs.readFileSync(logPath,'utf8').split('\n').filter(Boolean);
-const counts = new Map(), refs = new Map(), bots = new Map();
+const counts = new Map(), refs = new Map(), bots = new Map(), conversions = new Map();
 let humanRequests=0, botRequests=0, scannerRequests=0, contact=0, service=0;
 const inc=(m,k)=>m.set(k,(m.get(k)||0)+1);
 for (const line of rows) {
@@ -15,6 +15,7 @@ for (const line of rows) {
   if(!m) continue;
   const dt=Date.parse(m[1].replace(/:(\d\d):/, ' $1:')); if(Number.isFinite(dt)&&dt<cutoff) continue;
   const req=m[2].split(' '), raw=req[1]||'/'; const p=raw.split('?')[0]; const ref=m[3], ua=m[4];
+  if (p.startsWith('/__vt_event/')) { inc(conversions, p.slice('/__vt_event/'.length)); continue; }
   if(BOT.test(ua)){botRequests++; inc(bots,(ua.match(/(Googlebot|bingbot|LinkedInBot|GPTBot|Applebot|Bytespider|Bravebot|Amazonbot|DeepSeekBot|Kimi|Baiduspider|ClaudeBot|PerplexityBot)/i)||['Other bot'])[0]); continue;}
   let decoded = p;
   try { decoded = decodeURIComponent(p); } catch {}
@@ -29,4 +30,6 @@ for (const line of rows) {
   if(/power-bi|databricks|ai-application|architecture|case-stud/i.test(p)) service++;
 }
 const top=m=>[...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,20);
-console.log(JSON.stringify({period_days:days,likely_human_page_requests:humanRequests,bot_requests:botRequests,scanner_requests:scannerRequests,contact_page_requests:contact,service_interest_requests:service,top_pages:top(counts),external_referrers:top(refs),top_bots:top(bots)},null,2));
+const conversionTotal=[...conversions.values()].reduce((a,b)=>a+b,0);
+const conversionRate=humanRequests ? Number(((conversionTotal/humanRequests)*100).toFixed(1)) : 0;
+console.log(JSON.stringify({period_days:days,likely_human_page_requests:humanRequests,bot_requests:botRequests,scanner_requests:scannerRequests,contact_page_requests:contact,service_interest_requests:service,conversion_actions:conversionTotal,conversion_rate_per_100_page_requests:conversionRate,conversions:top(conversions),top_pages:top(counts),external_referrers:top(refs),top_bots:top(bots),next_action: conversionTotal===0 ? 'Improve CTA visibility and service-page contact prompts' : 'Review which CTA and service pages generate conversions'},null,2));
