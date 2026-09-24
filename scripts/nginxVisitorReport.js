@@ -1,4 +1,5 @@
 import fs from 'fs';
+import zlib from 'node:zlib';
 
 const logPath = process.env.VTAB_NGINX_LOG || '/var/log/nginx/vtabsquare-website.access.log';
 const days = Math.max(1, Number(process.env.REPORT_DAYS || 1));
@@ -12,7 +13,14 @@ const part = name => Number(todayIST.find(p => p.type === name).value);
 const todayStartUTC = Date.UTC(part('year'), part('month')-1, part('day')) - 330 * 60000;
 const windowStart = previousDay ? todayStartUTC - 86400000 : Date.now() - days * 86400000;
 const windowEnd = previousDay ? todayStartUTC : Date.now();
-const rows = fs.readFileSync(logPath,'utf8').split('\n').filter(Boolean);
+// Logrotate moves yesterday's UTC entries to .1 at midnight. Include bounded
+// rotation files so the previous complete IST day (18:30–18:30 UTC) is covered.
+const logFiles = [logPath, ...Array.from({length:Math.max(1,Math.ceil(days)+1)},(_,i)=>logPath+'.'+(i+1)).flatMap(p=>[p,p+'.gz'])].filter(p=>fs.existsSync(p));
+if (!logFiles.length) throw new Error('VTAB dedicated Nginx access log not found: '+logPath);
+const rows = logFiles.flatMap(p=>{
+  const data=fs.readFileSync(p);
+  return (p.endsWith('.gz')?zlib.gunzipSync(data).toString('utf8'):data.toString('utf8')).split('\n').filter(Boolean);
+});
 const counts = new Map(), refs = new Map(), bots = new Map(), conversions = new Map();
 let humanRequests=0, botRequests=0, scannerRequests=0, contact=0, service=0;
 const inc=(m,k)=>m.set(k,(m.get(k)||0)+1);
