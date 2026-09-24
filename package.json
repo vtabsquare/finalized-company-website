@@ -9,7 +9,8 @@
     "preview": "vite preview --configLoader runner",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "report": "node scripts/sendDailyReport.js"
+    "report": "node scripts/sendDailyReport.js",
+    "report:nginx": "node scripts/nginxVisitorReport.js"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
