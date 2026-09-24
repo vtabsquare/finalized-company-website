@@ -43,3 +43,19 @@ jobs:
           grep -q 'SQL Server to Databricks AI Migration Factory' dist/case-studies/sql-server-to-databricks-migration-factory/index.html
           grep -q 'BreadcrumbList' dist/sql-server-to-databricks-migration/index.html
           grep -q 'Organization' dist/power-bi-consulting-services/index.html
+
+      - name: Confirm original sitemap routes have distinct crawlable HTML
+        run: |
+          for route in solutions industries lab about careers contact architecture/ai-reporting-platform architecture/qlik-to-powerbi-migration; do
+            file="dist/$route/index.html"
+            test -s "$file"
+            grep -q "<h1>" "$file"
+            grep -q "https://www.vtabsquare.com/$route" "$file"
+            if grep -q '<link rel="canonical" href="https://www.vtabsquare.com/" />' "$file"; then
+              echo "Homepage canonical incorrectly used for $route"
+              exit 1
+            fi
+          done
+          grep -q '<h1>Contact VTAB Square</h1>' dist/contact/index.html
+          grep -q '<h1>AI Reporting Platform</h1>' dist/architecture/ai-reporting-platform/index.html
+          grep -q '<h1>Qlik to Power BI Migration</h1>' dist/architecture/qlik-to-powerbi-migration/index.html
