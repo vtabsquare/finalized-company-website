@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Zap, ArrowRight, Layers, User, ShieldCheck, BarChart2, Triangle, Cloud, Volume2, VolumeX } from 'lucide-react';
+import { Zap, ArrowRight, Layers, User, ShieldCheck, BarChart2, Triangle, Cloud, Volume2, VolumeX, Database, Gauge, Bot } from 'lucide-react';
 import { useIsMobile } from '../hooks/useIsMobile';
 import TypewriterHeadline from './TypewriterHeadline';
 
@@ -389,6 +389,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <Zap className="w-4 h-4 text-amber-400 fill-amber-400/20 group-hover:scale-110 transition-transform duration-300" />
                 <span className="tracking-wide">Schedule a Demo</span>
               </button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.68, ease: easeOut }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-5"
+              aria-label="Popular VTAB Square services"
+            >
+              <a href="/sql-server-to-databricks-migration/" className="group rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 hover:border-blue-400/40 hover:bg-blue-500/[0.08] transition-all">
+                <Database className="w-4 h-4 text-blue-400 mb-2" />
+                <span className="block text-sm font-bold text-white">SQL Server → Databricks</span>
+                <span className="block text-[11px] text-slate-400 mt-1">Assessment, conversion & reconciliation</span>
+              </a>
+              <a href="/power-bi-consulting-services/" className="group rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 hover:border-cyan-400/40 hover:bg-cyan-500/[0.08] transition-all">
+                <Gauge className="w-4 h-4 text-cyan-400 mb-2" />
+                <span className="block text-sm font-bold text-white">Power BI & Reporting</span>
+                <span className="block text-[11px] text-slate-400 mt-1">Modern BI, migration & optimization</span>
+              </a>
+              <a href="/ai-application-development/" className="group rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 hover:border-violet-400/40 hover:bg-violet-500/[0.08] transition-all">
+                <Bot className="w-4 h-4 text-violet-400 mb-2" />
+                <span className="block text-sm font-bold text-white">Enterprise AI Applications</span>
+                <span className="block text-[11px] text-slate-400 mt-1">AI automation built around business workflows</span>
+              </a>
             </motion.div>
 
             <motion.div 
