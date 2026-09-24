@@ -3,7 +3,7 @@ import fs from 'fs';
 const logPath = process.env.VTAB_NGINX_LOG || '/var/log/nginx/vtabsquare-website.access.log';
 const days = Math.max(1, Number(process.env.REPORT_DAYS || 1));
 const BOT = /(bot|crawler|spider|slurp|GPTBot|Googlebot|bingbot|Applebot|Bytespider|Bravebot|Amazonbot|facebookexternalhit|Meta-ExternalAgent|ClaudeBot|Claude-Web|PerplexityBot|DeepSeekBot|Kimi|Baiduspider|Yandex|curl|wget|python|Go-http-client|HeadlessChrome|jscrawler|Hunyuan)/i;
-const SCAN = /(^|\/)(\.env|wp-admin|wp-login|wp-json|phpinfo|test|txets|server-status|secrets?|config|manifest|\.git|vendor\/phpunit|graphql|v1\/graphql|signup|sign-?in|login|dashboard|register|user\/login|users\/login|auth(?:\/login)?|secure|app|forgot-password|reset-password|admin|console|backoffice|panel|portal|account)(?:[\/.?]|$)/i;
+const SCAN = /(^|\/)(\.env|wp-admin|wp-login|wp-json|phpinfo|test|txets|server-status|secrets?|config|manifest|\.git|vendor\/phpunit|graphql|v1\/graphql|signup|sign-?in|login|dashboard|register|user\/login|users\/login|auth(?:\/login)?|secure|app|forgot-password|reset-password|admin|console|backoffice|panel|portal|account|settings|pricing|checkout)(?:[\/.?]|$)/i;
 const ASSET = /\.(?:js|css|png|jpe?g|gif|svg|ico|webp|avif|mp4|webm|mov|mp3|wav|woff2?|map|xml|txt|json)(?:$|\?)/i;
 const cutoff = Date.now() - days * 86400000;
 const rows = fs.readFileSync(logPath,'utf8').split('\n').filter(Boolean);
@@ -18,7 +18,7 @@ for (const line of rows) {
   if(BOT.test(ua)){botRequests++; inc(bots,(ua.match(/(Googlebot|bingbot|LinkedInBot|GPTBot|Applebot|Bytespider|Bravebot|Amazonbot|DeepSeekBot|Kimi|Baiduspider|ClaudeBot|PerplexityBot)/i)||['Other bot'])[0]); continue;}
   let decoded = p;
   try { decoded = decodeURIComponent(p); } catch {}
-  if (SCAN.test(p) || SCAN.test(decoded) || SCAN.test(ref) || /(?:\.\.|%2e|%2f|proc\/self\/environ)/i.test(p)) {
+  if (SCAN.test(p) || SCAN.test(decoded) || SCAN.test(ref) || /(?:\.\.|%2e|%2f|proc\/self\/environ|wp-includes|wp-content|\.php(?:$|\/)|(?:^|\/)dump\.sql$|(?:^|\/)backup\.sql$|(?:^|\/)db\.sql$|(?:^|\/)database\.sql$)/i.test(p)) {
     scannerRequests++;
     continue;
   }
