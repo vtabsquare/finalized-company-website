@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Mail } from 'lucide-react';
+import { trackBusinessEvent } from '../lib/analyticsService';
 
 export type SeoServiceSlug = 'sql-server-to-databricks-migration' | 'power-bi-consulting-services' | 'ai-application-development';
 
@@ -47,6 +48,9 @@ const services: Record<SeoServiceSlug, { title:string; eyebrow:string; intro:str
 
 export const SeoServicePage: React.FC<{ slug: SeoServiceSlug; onScheduleDemo:(interest?:string)=>void }> = ({slug,onScheduleDemo}) => {
   const service=services[slug];
+  const enquirySubject = encodeURIComponent('VTAB Square enquiry: ' + service.title);
+  const enquiryBody = encodeURIComponent('Hello VTAB Square team,\n\nI would like to discuss ' + service.title + '.\n\nMy requirement: \n\nCompany: \n\nThank you.');
+  const enquiryHref = `mailto:Contactsales@vtabsquare.com?subject=${enquirySubject}&body=${enquiryBody}`;
   return <div className="pt-28 pb-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-14">
     <header className="max-w-4xl space-y-5">
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-400">{service.eyebrow}</p>
@@ -77,7 +81,10 @@ export const SeoServicePage: React.FC<{ slug: SeoServiceSlug; onScheduleDemo:(in
     <section className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-7 md:p-10">
       <h2 className="text-2xl font-bold text-white">Talk to VTAB Square</h2>
       <p className="mt-3 text-slate-300">Share your current platform, target outcome and delivery constraints. We can start with a focused assessment before defining implementation scope.</p>
-      <button onClick={()=>onScheduleDemo(service.title)} className="mt-5 text-cyan-300 font-semibold inline-flex items-center gap-2">Start a conversation <ArrowRight className="w-4 h-4"/></button>
+      <div className="mt-5 flex flex-wrap items-center gap-5">
+        <button onClick={()=>onScheduleDemo(service.title)} className="text-cyan-300 font-semibold inline-flex items-center gap-2">Start a conversation <ArrowRight className="w-4 h-4"/></button>
+        <a href={enquiryHref} onClick={()=>trackBusinessEvent('service_email_click')} className="text-cyan-300 font-semibold inline-flex items-center gap-2"><Mail className="w-4 h-4"/> Email our sales team</a>
+      </div>
     </section>
   </div>;
 };
