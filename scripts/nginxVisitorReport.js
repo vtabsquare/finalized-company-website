@@ -5,6 +5,8 @@ const logPath = process.env.VTAB_NGINX_LOG || '/var/log/nginx/vtabsquare-website
 const days = Math.max(1, Number(process.env.REPORT_DAYS || 1));
 const BOT = /(bot|crawler|spider|slurp|GPTBot|Googlebot|bingbot|Applebot|Bytespider|Bravebot|Amazonbot|facebookexternalhit|Meta-ExternalAgent|ClaudeBot|Claude-Web|PerplexityBot|DeepSeekBot|Kimi|Baiduspider|Yandex|curl|wget|python|Go-http-client|HeadlessChrome|jscrawler|Hunyuan)/i;
 const SCAN = /(^|\/)(\.env|wp-admin|wp-login|wp-json|phpinfo|test|txets|server-status|secrets?|config|manifest|\.git|vendor\/phpunit|graphql|v1\/graphql|signup|sign-?in|login|dashboard|register|user\/login|users\/login|auth(?:\/login)?|secure|app|forgot-password|reset-password|admin|console|backoffice|panel|portal|account|settings|pricing|checkout)(?:[\/.?]|$)/i;
+// Known opportunistic probes that previously inflated likely-human page requests.
+const PROBE = /(?:^|\/)(?:\.gitlab-ci\.yml|docker-compose(?:\.[^/]*)?\.ya?ml|terraform\.tfstate(?:\.[^/]*)?|\.git(?:\/|$)|\.svn(?:\/|$)|\.hg(?:\/|$)|\.DS_Store|\.aws(?:\/|$)|\.dev\.vars|\.pypirc|rclone\.conf|\.env(?:\.[^/]*)?|env|backup|wordpress|wp|cms|administrator|old|site1|__vite_rsc_findSourceMapURL|_image)(?:$|\/)/i;
 const ASSET = /\.(?:js|css|png|jpe?g|gif|svg|ico|webp|avif|mp4|webm|mov|mp3|wav|woff2?|map|xml|txt|json)(?:$|\?)/i;
 // REPORT_PREVIOUS_DAY=1 selects the previous complete Asia/Kolkata calendar day.
 const previousDay = process.env.REPORT_PREVIOUS_DAY === '1';
@@ -52,11 +54,12 @@ for (const line of rows) {
     scannerRequests++;
     continue;
   }
-  if(ASSET.test(p)||p.startsWith('/api/') ||
-    /(?:^|\/)(?:\.DS_Store|\.aws|\.dev.vars|\.pypirc|rclone\.conf|_image|__vite_rsc_findSourceMapURL)(?:$|\/)/i.test(p)) {
-    if (!ASSET.test(p) && !p.startsWith('/api/')) scannerRequests++;
+  if(ASSET.test(p)||p.startsWith('/api/') || PROBE.test(p) || PROBE.test(decoded)) {
+    if (PROBE.test(p) || PROBE.test(decoded)) scannerRequests++;
     continue;
   }
+  // Ignore failed and non-page requests rather than describing them as page interest.
+  if (req[0] !== 'GET' || Number(m[3]) >= 400) continue;
   humanRequests++; inc(counts,p);
   if(ref && ref!=='-' && !ref.includes('vtabsquare.com')) { try { inc(refs,new URL(ref).hostname); } catch {} }
   if(/^\/contact\/?$/i.test(p)) contact++;
@@ -65,4 +68,4 @@ for (const line of rows) {
 const top=m=>[...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,20);
 const conversionTotal=[...conversions.values()].reduce((a,b)=>a+b,0);
 const conversionRate=humanRequests ? Number(((conversionTotal/humanRequests)*100).toFixed(1)) : 0;
-console.log(JSON.stringify({period_days:previousDay ? 1 : days,report_window:previousDay ? 'previous_complete_day_IST' : 'rolling',likely_human_page_requests:humanRequests,bot_requests:botRequests,scanner_requests:scannerRequests,contact_page_requests:contact,service_interest_requests:service,conversion_actions:conversionTotal,conversion_rate_per_100_page_requests:conversionRate,conversions:top(conversions),top_pages:top(counts),external_referrers:top(refs),top_bots:top(bots),next_action: conversionTotal===0 ? 'Improve CTA visibility and service-page contact prompts' : 'Review which CTA and service pages generate conversions'},null,2));
+console.log(JSON.stringify({period_days:previousDay ? 1 : days,report_window:previousDay ? 'previous_complete_day_IST' : 'rolling',likely_human_page_requests:humanRequests,unique_visitors_measured:false,bot_requests:botRequests,scanner_requests:scannerRequests,contact_page_requests:contact,service_interest_requests:service,conversion_actions:conversionTotal,conversion_rate_per_100_page_requests:conversionRate,conversions:top(conversions),top_pages:top(counts),external_referrers:top(refs),top_bots:top(bots),next_action: conversionTotal===0 ? 'Improve CTA visibility and service-page contact prompts' : 'Review which CTA and service pages generate conversions'},null,2));
