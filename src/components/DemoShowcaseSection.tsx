@@ -7,6 +7,7 @@ import {
 import { ScrollReveal } from './animations/ScrollReveal';
 import { useDemoVideos, type DemoProduct } from '../hooks/useDemoVideos';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { trackBusinessEvent } from '../lib/analyticsService';
 
 const DEMO_APP_URL = 'https://vibrant-foundation.onrender.com';
 
@@ -159,7 +160,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ product, allProducts, onClose, 
             <span className="text-xs text-white/40 hidden sm:block">{idx + 1} / {allProducts.length}</span>
             <button onClick={prev} disabled={idx === 0} className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 transition-colors" title="Prev (↑)"><ChevronLeft className="w-4 h-4 text-white" /></button>
             <button onClick={next} disabled={idx === allProducts.length - 1} className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 transition-colors" title="Next (↓)"><ChevronRight className="w-4 h-4 text-white" /></button>
-            <a href={`${DEMO_APP_URL}?product=${product.id}`} target="_blank" rel="noopener noreferrer" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-white/80 transition-colors"><ExternalLink className="w-3.5 h-3.5" />Open App</a>
+            <a href={`${DEMO_APP_URL}?product=${product.id}`} onClick={() => trackBusinessEvent('demo_open')} target="_blank" rel="noopener noreferrer" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-white/80 transition-colors"><ExternalLink className="w-3.5 h-3.5" />Open App</a>
             <button onClick={onClose} className="p-1.5 rounded-lg bg-white/10 hover:bg-red-500/70 transition-colors"><X className="w-4 h-4 text-white" /></button>
           </div>
         </div>
@@ -171,7 +172,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ product, allProducts, onClose, 
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-3">
               <span className="text-4xl">⚠️</span>
               <p className="text-white/70 text-sm">Video unavailable</p>
-              <a href={`${DEMO_APP_URL}?product=${product.id}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-500 text-white text-sm hover:bg-cyan-400 transition-colors"><ExternalLink className="w-4 h-4" />Open Demo App</a>
+              <a href={`${DEMO_APP_URL}?product=${product.id}`} onClick={() => trackBusinessEvent('demo_open')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-500 text-white text-sm hover:bg-cyan-400 transition-colors"><ExternalLink className="w-4 h-4" />Open Demo App</a>
             </div>
           )}
           <video ref={videoRef} src={product.videoUrl} className="w-full h-full object-contain" playsInline muted={isMuted}
@@ -397,7 +398,7 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
                       <button onClick={() => setModalProduct(current)} className={`w-full px-5 py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all ${colors.btn} shadow-lg`}>
                         <Play className="w-4 h-4 fill-white" /> Watch Demo
                       </button>
-                      <a href={`${DEMO_APP_URL}?product=${current.id}`} target="_blank" rel="noopener noreferrer"
+                      <a href={`${DEMO_APP_URL}?product=${current.id}`} onClick={() => trackBusinessEvent('demo_open')} target="_blank" rel="noopener noreferrer"
                         className={`w-full px-5 py-3 rounded-xl text-sm font-bold border backdrop-blur-xl flex items-center justify-center gap-2 transition-all ${isLightMode ? 'text-slate-800 bg-white/90 border-slate-200' : 'text-slate-100 bg-slate-900/80 border-white/15'}`}>
                         <ExternalLink className="w-4 h-4" /> Open Demo App
                       </a>
@@ -543,7 +544,7 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
                 <h3 className={`font-heading font-bold text-xl mb-1 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Want the full-screen experience?</h3>
                 <p className={`text-sm ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Visit our dedicated showcase app to browse every demo with immersive full-screen playback.</p>
               </div>
-              <button onClick={() => window.open(DEMO_APP_URL, '_blank', 'noopener,noreferrer')}
+              <button onClick={() => { trackBusinessEvent('demo_open'); window.open(DEMO_APP_URL, '_blank', 'noopener,noreferrer'); }}
                 className="flex-shrink-0 flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold text-sm hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:-translate-y-0.5">
                 <ExternalLink className="w-4 h-4" /> Open Demo Showcase <ArrowUpRight className="w-4 h-4" />
               </button>
