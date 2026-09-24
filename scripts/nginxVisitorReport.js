@@ -16,15 +16,23 @@ const rows = fs.readFileSync(logPath,'utf8').split('\n').filter(Boolean);
 const counts = new Map(), refs = new Map(), bots = new Map(), conversions = new Map();
 let humanRequests=0, botRequests=0, scannerRequests=0, contact=0, service=0;
 const inc=(m,k)=>m.set(k,(m.get(k)||0)+1);
+// Nginx timestamps use DD/Mon/YYYY:HH:mm:ss ±HHMM, which Date.parse does not reliably accept.
+const MONTHS = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+function nginxTimestamp(value) {
+  const m = value.match(/^(\d{2})\/([A-Za-z]{3})\/(\d{4}):(\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$/);
+  if (!m || MONTHS[m[2]] === undefined) return NaN;
+  const offsetMinutes = (Number(m[8])*60+Number(m[9]))*(m[7] === '+' ? 1 : -1);
+  return Date.UTC(Number(m[3]),MONTHS[m[2]],Number(m[1]),Number(m[4]),Number(m[5]),Number(m[6]))-offsetMinutes*60000;
+}
 for (const line of rows) {
-  const m=line.match(/^\S+ \S+ \S+ \[([^\]]+)\] "([^"]*)" \d+ \S+ "([^"]*)" "([^"]*)"/);
+  const m=line.match(/^\S+ \S+ \S+ \[([^\]]+)\] "([^"]*)" (\d{3}) \S+ "([^"]*)" "([^"]*)"/);
   if(!m) continue;
-  const dt=Date.parse(m[1].replace(/:(\d\d):/, ' $1:')); if(!Number.isFinite(dt) || dt<windowStart || dt>=windowEnd) continue;
-  const req=m[2].split(' '), raw=req[1]||'/'; const p=raw.split('?')[0]; const ref=m[3], ua=m[4];
+  const dt=nginxTimestamp(m[1]); if(!Number.isFinite(dt) || dt<windowStart || dt>=windowEnd) continue;
+  const req=m[2].split(' '), raw=req[1]||'/'; const p=raw.split('?')[0]; const ref=m[4], ua=m[5];
   if (p.startsWith('/__vt_event/')) {
     // Only count known browser GET actions returning HTTP 200; ignore curl/manual probes.
     const event = p.slice('/__vt_event/'.length);
-    const status = Number(line.match(/"\\s+(\\d{3})\\s/)?.[1] || 0);
+    const status = Number(m[3]);
     if (req[0] === 'GET' && status === 200 && !BOT.test(ua) &&
         /^(demo_open|product_view|email_click|linkedin_click|contact_click|service_email_click)$/.test(event)) inc(conversions,event);
     continue;
