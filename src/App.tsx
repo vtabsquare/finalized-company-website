@@ -78,6 +78,26 @@ export default function App() {
     return () => stopHeartbeat();
   }, []);
 
+  // Allow external demo applications to send prospects into one secure VTAB enquiry flow.
+  // Example: /?demo=1&product=sql-server-databricks-migration-platform&source=demo-app
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const wantsDemo = params.get('demo') === '1' || params.get('contact') === 'demo';
+    if (!wantsDemo) return;
+
+    const productId = params.get('product')?.trim() || '';
+    const matchedProduct = productId ? PRODUCTS_DATA.find(product => product.id === productId) : undefined;
+    const interest = matchedProduct?.title || productId.replace(/[-_]+/g, ' ').replace(/\b\w/g, char => char.toUpperCase()) || 'AI Reporting Platform';
+
+    setDemoInterest(interest);
+    setIsDemoModalOpen(true);
+    trackBusinessEvent('demo_referral');
+    void trackEvent('demo_referral_open', { product_id: productId || null, source: params.get('source') || 'external-demo' });
+
+    // Keep the product context in state, but remove query data from the visible URL after it is consumed.
+    window.history.replaceState(window.history.state, '', window.location.pathname + window.location.hash);
+  }, []);
+
   // Keep app state synchronized with browser Back/Forward navigation.
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
