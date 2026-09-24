@@ -23,7 +23,7 @@ const rows = logFiles.flatMap(p=>{
   const data=fs.readFileSync(p);
   return (p.endsWith('.gz')?zlib.gunzipSync(data).toString('utf8'):data.toString('utf8')).split('\n').filter(Boolean);
 });
-const counts = new Map(), refs = new Map(), bots = new Map(), conversions = new Map();
+const counts = new Map(), refs = new Map(), bots = new Map(), conversions = new Map(), leadInterests = new Map();
 let humanRequests=0, botRequests=0, scannerRequests=0, contact=0, service=0;
 const inc=(m,k)=>m.set(k,(m.get(k)||0)+1);
 // Nginx timestamps use DD/Mon/YYYY:HH:mm:ss ±HHMM, which Date.parse does not reliably accept.
@@ -66,6 +66,18 @@ for (const line of rows) {
   if(/power-bi|databricks|ai-application|architecture|case-stud/i.test(p)) service++;
 }
 const top=m=>[...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,20);
+const leadLogPath=process.env.VTAB_LEAD_EVENT_LOG || '/var/log/vtabsquare-lead-events.log';
+let enquiries=0;
+if (fs.existsSync(leadLogPath)) {
+  for (const line of fs.readFileSync(leadLogPath,'utf8').split('\n').filter(Boolean)) {
+    const [ts,event,interest='Unspecified']=line.split('|');
+    const dt=Date.parse(ts);
+    if (event==='enquiry_received' && Number.isFinite(dt) && dt>=windowStart && dt<windowEnd) {
+      enquiries++; inc(leadInterests,interest || 'Unspecified');
+    }
+  }
+}
+if (enquiries) conversions.set('enquiry_received',enquiries);
 const conversionTotal=[...conversions.values()].reduce((a,b)=>a+b,0);
 const conversionRate=humanRequests ? Number(((conversionTotal/humanRequests)*100).toFixed(1)) : 0;
-console.log(JSON.stringify({period_days:previousDay ? 1 : days,report_window:previousDay ? 'previous_complete_day_IST' : 'rolling',likely_human_page_requests:humanRequests,unique_visitors_measured:false,bot_requests:botRequests,scanner_requests:scannerRequests,contact_page_requests:contact,service_interest_requests:service,conversion_actions:conversionTotal,conversion_rate_per_100_page_requests:conversionRate,conversions:top(conversions),top_pages:top(counts),external_referrers:top(refs),top_bots:top(bots),next_action: conversionTotal===0 ? 'Improve CTA visibility and service-page contact prompts' : 'Review which CTA and service pages generate conversions'},null,2));
+console.log(JSON.stringify({period_days:previousDay ? 1 : days,report_window:previousDay ? 'previous_complete_day_IST' : 'rolling',likely_human_page_requests:humanRequests,unique_visitors_measured:false,bot_requests:botRequests,scanner_requests:scannerRequests,contact_page_requests:contact,service_interest_requests:service,conversion_actions:conversionTotal,conversion_rate_per_100_page_requests:conversionRate,enquiries_received:enquiries,enquiry_interests:top(leadInterests),conversions:top(conversions),top_pages:top(counts),external_referrers:top(refs),top_bots:top(bots),next_action: enquiries>0 ? 'Follow up on new website enquiries and review their areas of interest' : conversionTotal===0 ? 'Improve CTA visibility and service-page contact prompts' : 'Review which CTA and service pages generate conversions'},null,2));

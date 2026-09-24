@@ -51,6 +51,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
       const result = await response.json().catch(() => ({}));
       if (response.ok && result.received === true) {
         trackBusinessEvent('demo_request');
+        trackBusinessEvent('enquiry_success');
         setSubmitted(true);
       } else {
         setSubmitError('We could not deliver your demo request. Please try again later.');
