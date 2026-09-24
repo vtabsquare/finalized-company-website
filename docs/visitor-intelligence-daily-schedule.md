@@ -11,13 +11,13 @@ This feature is **not enabled merely by merging this PR**. It needs an operator 
 - Confirm both intended recipient addresses in `VISITOR_REPORT_TO` or `VITE_ADMIN_EMAILS` (the latter may be different); do not assume the fallback recipients will be used.
 
 ## Schedule (only after verification)
-Check `timedatectl` and `command -v npm` first. On a server configured for UTC, 02:30 UTC = 08:00 IST. Add one entry to the **website deploy user's** crontab (`crontab -e`), replacing the npm path if necessary:
+Check `timedatectl` and `command -v npm` first. On a server configured for UTC, 02:30 UTC = 08:00 IST. For the confirmed VTabSquarePortal host, the existing report cron is in root's crontab, the timezone is UTC and npm is installed via root's NVM. Preserve the existing 01:30 UTC `npm run report` line. Add only this new 02:30 UTC entry after verifying the two-recipient test:
 
 ```cron
-30 2 * * * cd /var/www/vtabsquare-company-website && REPORT_PREVIOUS_DAY=1 /usr/bin/npm run report:nginx:email >> /var/log/vtabsquare-visitor-report.log 2>&1
+30 2 * * * cd /var/www/vtabsquare-company-website && PATH=/root/.nvm/versions/node/v20.20.2/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin VISITOR_REPORT_TO=Information@vtabsquare.com,vitabsquare@gmail.com REPORT_PREVIOUS_DAY=1 /root/.nvm/versions/node/v20.20.2/bin/npm run report:nginx:email >> /var/log/vtabsquare-visitor-report.log 2>&1
 ```
 
-Use a user-writable log path if that user cannot write to `/var/log` (for example, `/home/<deploy-user>/vtabsquare-visitor-report.log`). Do not run as root just to write a log. Check the crontab with `crontab -l`. The cron user must be able to read the dedicated Nginx log and the project's environment file. The script sends email; do not test it repeatedly against real recipients.
+For a future non-root deployment, use a user-writable log path and ensure that account can read the dedicated access logs and `.env`. Do not switch the current production cron owner during this rollout. Check the crontab with `crontab -l`. The cron user must be able to read the dedicated Nginx log and the project's environment file. The script sends email; do not test it repeatedly against real recipients.
 
 The scheduled report covers **the previous complete calendar day in Asia/Kolkata**. The default interactive `REPORT_DAYS=1` command still covers a rolling day.
 
