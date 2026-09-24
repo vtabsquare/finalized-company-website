@@ -3,7 +3,7 @@ import fs from 'fs';
 const logPath = process.env.VTAB_NGINX_LOG || '/var/log/nginx/vtabsquare-website.access.log';
 const days = Math.max(1, Number(process.env.REPORT_DAYS || 1));
 const BOT = /(bot|crawler|spider|slurp|GPTBot|Googlebot|bingbot|Applebot|Bytespider|Bravebot|Amazonbot|facebookexternalhit|Meta-ExternalAgent|ClaudeBot|Claude-Web|PerplexityBot|DeepSeekBot|Kimi|Baiduspider|Yandex|curl|wget|python|Go-http-client|HeadlessChrome|jscrawler|Hunyuan)/i;
-const SCAN = /(^|\/)(\.env|wp-admin|wp-login|wp-json|phpinfo|test|txets|server-status|secrets?|config|manifest|\.git|vendor\/phpunit|graphql|v1\/graphql|signup|sign-?in|login|dashboard|register|user\/login|users\/login|auth(?:\/login)?|secure|app)(?:[\/.?]|$)/i;
+const SCAN = /(^|\/)(\.env|wp-admin|wp-login|wp-json|phpinfo|test|txets|server-status|secrets?|config|manifest|\.git|vendor\/phpunit|graphql|v1\/graphql|signup|sign-?in|login|dashboard|register|user\/login|users\/login|auth(?:\/login)?|secure|app|forgot-password|reset-password|admin|console|backoffice|panel|portal|account)(?:[\/.?]|$)/i;
 const ASSET = /\.(?:js|css|png|jpe?g|gif|svg|ico|webp|avif|mp4|webm|mov|mp3|wav|woff2?|map|xml|txt|json)(?:$|\?)/i;
 const cutoff = Date.now() - days * 86400000;
 const rows = fs.readFileSync(logPath,'utf8').split('\n').filter(Boolean);
@@ -16,7 +16,7 @@ for (const line of rows) {
   const dt=Date.parse(m[1].replace(/:(\d\d):/, ' $1:')); if(Number.isFinite(dt)&&dt<cutoff) continue;
   const req=m[2].split(' '), raw=req[1]||'/'; const p=raw.split('?')[0]; const ref=m[3], ua=m[4];
   if(BOT.test(ua)){botRequests++; inc(bots,(ua.match(/(Googlebot|bingbot|LinkedInBot|GPTBot|Applebot|Bytespider|Bravebot|Amazonbot|DeepSeekBot|Kimi|Baiduspider|ClaudeBot|PerplexityBot)/i)||['Other bot'])[0]); continue;}
-  if(SCAN.test(p)||SCAN.test(ref)){scannerRequests++; continue;}
+  let decoded=p; try { decoded=decodeURIComponent(p); } catch {}\n  if(SCAN.test(p)||SCAN.test(decoded)||SCAN.test(ref)||/(?:\.\.|%2e|%2f|proc\/self\/environ)/i.test(p)){scannerRequests++; continue;}
   if(ASSET.test(p)||p.startsWith('/api/')) continue;
   humanRequests++; inc(counts,p);
   if(ref && ref!=='-' && !ref.includes('vtabsquare.com')) { try { inc(refs,new URL(ref).hostname); } catch {} }
