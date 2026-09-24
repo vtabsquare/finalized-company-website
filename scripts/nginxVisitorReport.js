@@ -16,7 +16,12 @@ for (const line of rows) {
   const dt=Date.parse(m[1].replace(/:(\d\d):/, ' $1:')); if(Number.isFinite(dt)&&dt<cutoff) continue;
   const req=m[2].split(' '), raw=req[1]||'/'; const p=raw.split('?')[0]; const ref=m[3], ua=m[4];
   if(BOT.test(ua)){botRequests++; inc(bots,(ua.match(/(Googlebot|bingbot|LinkedInBot|GPTBot|Applebot|Bytespider|Bravebot|Amazonbot|DeepSeekBot|Kimi|Baiduspider|ClaudeBot|PerplexityBot)/i)||['Other bot'])[0]); continue;}
-  let decoded=p; try { decoded=decodeURIComponent(p); } catch {}\n  if(SCAN.test(p)||SCAN.test(decoded)||SCAN.test(ref)||/(?:\.\.|%2e|%2f|proc\/self\/environ)/i.test(p)){scannerRequests++; continue;}
+  let decoded = p;
+  try { decoded = decodeURIComponent(p); } catch {}
+  if (SCAN.test(p) || SCAN.test(decoded) || SCAN.test(ref) || /(?:\.\.|%2e|%2f|proc\/self\/environ)/i.test(p)) {
+    scannerRequests++;
+    continue;
+  }
   if(ASSET.test(p)||p.startsWith('/api/')) continue;
   humanRequests++; inc(counts,p);
   if(ref && ref!=='-' && !ref.includes('vtabsquare.com')) { try { inc(refs,new URL(ref).hostname); } catch {} }
