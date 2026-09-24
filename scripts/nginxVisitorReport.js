@@ -37,7 +37,7 @@ for (const line of rows) {
     continue;
   }
   if(ASSET.test(p)||p.startsWith('/api/') ||
-    /(?:^|\\/)(?:\\.DS_Store|\\.aws|\\.dev.vars|\\.pypirc|rclone\\.conf|_image|__vite_rsc_findSourceMapURL)(?:$|\\/)/i.test(p)) {
+    /(?:^|\/)(?:\.DS_Store|\.aws|\.dev.vars|\.pypirc|rclone\.conf|_image|__vite_rsc_findSourceMapURL)(?:$|\/)/i.test(p)) {
     if (!ASSET.test(p) && !p.startsWith('/api/')) scannerRequests++;
     continue;
   }
