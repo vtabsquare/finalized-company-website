@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, CheckCircle2, Briefcase, Loader2 } from 'lucide-react';
 import { DemoFormState } from '../types';
-import { sendDemoRequestEmails } from '../lib/brevoService';
+import { trackBusinessEvent } from '../lib/analyticsService';
 
 interface DemoModalProps {
   isOpen: boolean;
@@ -36,53 +36,21 @@ export const DemoModal: React.FC<DemoModalProps> = ({
 
   if (!isOpen) return null;
 
-  // TEMPORARY: Original Supabase project admin access is being recovered.
-  // Do not submit to the broken send-email Edge Function or claim a demo is booked.
-  // Remove this fallback only after an end-to-end notification test succeeds.
-  const directEmailFallbackActive = true;
-  if (isOpen && directEmailFallbackActive) {
-    const subject = encodeURIComponent(`VTAB Square demo enquiry: ${form.interestArea}`);
-    const body = encodeURIComponent(
-      `Hello VTAB Square team,\n\nI'd like to request a demonstration of ${form.interestArea}.\n\n` +
-      `Please contact me to arrange a suitable time.\n\nThank you.`
-    );
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="demo-fallback-title">
-        <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-[#0b1120] border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-2xl">
-          <button type="button" onClick={onClose} aria-label="Close demo enquiry" className="absolute top-4 right-4 text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-          <Briefcase className="w-8 h-8 text-teal-600 dark:text-teal-400 mb-4" />
-          <h2 id="demo-fallback-title" className="text-2xl font-bold text-slate-900 dark:text-white">Request a product demo</h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-            Online demo scheduling is temporarily unavailable. Please email our team directly to arrange a demonstration. Your request is not submitted or booked through this window.
-          </p>
-          <p className="mt-4 text-sm text-slate-700 dark:text-slate-300">
-            Area of interest: <strong>{form.interestArea}</strong>
-          </p>
-          <a href={`mailto:Information@vtabsquare.com?subject=${subject}&body=${body}`} className="mt-6 block rounded-xl bg-teal-600 px-5 py-3 text-center text-sm font-bold text-white hover:bg-teal-500">
-            Open email to request demo
-          </a>
-          <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-            If an email application does not open, write directly to{' '}
-            <a href="mailto:Information@vtabsquare.com" className="font-semibold text-teal-700 dark:text-teal-300 underline break-all">Information@vtabsquare.com</a>.
-            Please send the email from your mail application; opening it does not send a request automatically.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
     setSubmitError('');
     try {
-      // sendDemoRequestEmails handles both lead storage and notifications.
-      const result = await sendDemoRequestEmails(form);
-      if (result.success) {
+      const response = await fetch('/api/enquiry', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, website: '' }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (response.ok && result.received === true) {
+        trackBusinessEvent('demo_request');
         setSubmitted(true);
       } else {
         setSubmitError('We could not deliver your demo request. Please try again later.');
@@ -247,16 +215,15 @@ export const DemoModal: React.FC<DemoModalProps> = ({
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Demo Scheduled!</h3>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Request Received!</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-md mx-auto">
-                  Thank you, <span className="font-semibold text-slate-900 dark:text-white">{form.fullName}</span>. An AI Specialist has received your request for <span className="font-semibold text-slate-900 dark:text-white">{form.interestArea}</span>.
+                  Thank you, <span className="font-semibold text-slate-900 dark:text-white">{form.fullName}</span>. Our team has received your request for <span className="font-semibold text-slate-900 dark:text-white">{form.interestArea}</span>.
                 </p>
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-5 border border-slate-200 dark:border-slate-800 text-left text-sm font-mono space-y-2 text-slate-600 dark:text-slate-400 max-w-md mx-auto shadow-sm">
-                <p>📅 Confirmation: #VTAB-DEMO-{Math.floor(10000 + Math.random() * 90000)}</p>
-                <p>✉️ Email sent to: <span className="text-slate-900 dark:text-white font-medium">{form.workEmail}</span></p>
-                <p>🚀 An architect will contact you within 2 business hours.</p>
+              <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-5 border border-slate-200 dark:border-slate-800 text-left text-sm space-y-2 text-slate-600 dark:text-slate-400 max-w-md mx-auto shadow-sm">
+                <p>Your enquiry was delivered successfully.</p>
+                <p>We will contact you at <span className="text-slate-900 dark:text-white font-medium">{form.workEmail}</span> to arrange the next step.</p>
               </div>
             </div>
           )}
