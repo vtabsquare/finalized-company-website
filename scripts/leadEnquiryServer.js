@@ -38,9 +38,9 @@ const server=http.createServer(async(req,res)=>{
   for await(const chunk of req){raw+=chunk;if(raw.length>12000) return respond(res,413,{error:'Request too large'});}
   const body=JSON.parse(raw);
   if(text(body.website,100)) return respond(res,200,{received:true}); // Honeypot: don't send spam.
-  const name=text(body.fullName,120), email=text(body.workEmail,254), company=text(body.companyName,160), interest=text(body.interestArea,160), message=text(body.message,2500), date=text(body.preferredDate,20), team=text(body.teamSize,60);
+  const name=text(body.fullName,120), email=text(body.workEmail,254), company=text(body.companyName,160), interest=text(body.interestArea,160), message=text(body.message,2500), date=text(body.preferredDate,20), team=text(body.teamSize,60), referralSource=text(body.referralSource,120).replace(/[\r\n|]/g,' ');
   if(!name || !company || !interest || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !message) return respond(res,400,{error:'Name, work email, company, interest and requirements are required'});
-  const fields=[['Name',name],['Email',email],['Company',company],['Interest',interest],['Team size',team],['Preferred date',date],['Requirements',message]];
+  const fields=[['Name',name],['Email',email],['Company',company],['Interest',interest],['Demo referral source',referralSource],['Team size',team],['Preferred date',date],['Requirements',message]];
   const html='<h2>VTAB Square website enquiry</h2>'+fields.map(([k,v])=>'<p><strong>'+k+':</strong> '+escapeHtml(v).replace(/\n/g,'<br>')+'</p>').join('');
   const result=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',signal:AbortSignal.timeout(10000),headers:{'api-key':key,'Content-Type':'application/json'},body:JSON.stringify({sender:{email:sender,name:'VTAB Square'},to:[{email:recipient}],replyTo:{email,name},subject:'VTAB Square website enquiry: '+interest.replace(/[\r\n]/g,' '),htmlContent:html})});
   if(!result.ok){console.error('Brevo enquiry delivery failed:',result.status);return respond(res,502,{error:'Unable to deliver enquiry; please email our team'});}
