@@ -1,6 +1,11 @@
 name: VTAB Estate Standards Validation
 
 on:
+  push:
+    branches: [develop]
+    paths:
+      - 'deployment-platform/**'
+      - '.github/workflows/vtab-estate-standards.yml'
   workflow_dispatch:
   schedule:
     - cron: '30 2 * * 1'
