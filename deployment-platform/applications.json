@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "environments": {
+    "development": {
+      "platform": "Cloudflare",
+      "branch": "develop",
+      "suffix": "-dev"
+    },
+    "production": {
+      "platform": "existing production hosting",
+      "branches": [
+        "main",
+        "master"
+      ],
+      "promotion": "pull-request-after-DEV-approval"
+    }
+  },
+  "applications": [
+    {
+      "repository": "finalized-company-website",
+      "architecture": "static",
+      "dev_worker": "vtab-company-website-dev",
+      "output": "dist",
+      "status": "automated"
+    },
+    {
+      "repository": "blueharbor",
+      "architecture": "fullstack-container",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-cloudflare-runtime-adapter"
+    },
+    {
+      "repository": "Agreement-app",
+      "architecture": "python-plus-frontend",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-cloudflare-runtime-adapter"
+    },
+    {
+      "repository": "AI-Recruitment-System",
+      "architecture": "python-plus-vite",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-cloudflare-runtime-adapter"
+    },
+    {
+      "repository": "Monitoring-Tool",
+      "architecture": "tanstack-cloudflare",
+      "dev_worker": "vtab-monitoring-tool-dev",
+      "output": null,
+      "status": "cloudflare-capable-needs-runtime-config"
+    },
+    {
+      "repository": "payroll-management-system",
+      "architecture": "frontend-plus-node-backend",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-backend-worker-migration"
+    },
+    {
+      "repository": "AI-meetscribe",
+      "architecture": "python",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-python-worker-assessment"
+    },
+    {
+      "repository": "VTAB-365",
+      "architecture": "python",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-python-worker-assessment"
+    },
+    {
+      "repository": "Enterprise-L1-ticket-resolving-automation-agent",
+      "architecture": "container-fullstack",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-cloudflare-container-assessment"
+    },
+    {
+      "repository": "office360-wsr",
+      "architecture": "vite-with-node-api",
+      "dev_worker": "vtab-office360-dev",
+      "output": null,
+      "status": "requires-api-worker-extraction"
+    },
+    {
+      "repository": "tableau-to-powerbi",
+      "architecture": "python-plus-frontend-container",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-cloudflare-runtime-adapter"
+    },
+    {
+      "repository": "QliktopowerBI",
+      "architecture": "tanstack-static",
+      "dev_worker": "vtab-qlik-to-powerbi-dev",
+      "output": "dist",
+      "status": "cloudflare-capable"
+    },
+    {
+      "repository": "Reporting-tool-2",
+      "architecture": "vite-plus-api",
+      "dev_worker": "vtab-reporting-studio-dev",
+      "output": "dist-web",
+      "status": "frontend-capable-backend-required"
+    },
+    {
+      "repository": "Ai-Tax-Application",
+      "architecture": "vite-plus-python",
+      "dev_worker": "vtab-ai-tax-dev",
+      "output": "dist",
+      "status": "blocked-lockfile-validation"
+    },
+    {
+      "repository": "Project-planner",
+      "architecture": "frontend-plus-node-backend",
+      "dev_worker": "vtab-project-planner-dev",
+      "output": "frontend/dist",
+      "status": "requires-backend-worker-migration"
+    },
+    {
+      "repository": "Invoice-app",
+      "architecture": "frontend-plus-node-backend",
+      "dev_worker": "vtab-invoice-dev",
+      "output": "frontend/dist",
+      "status": "requires-backend-worker-migration"
+    },
+    {
+      "repository": "Resort-booking",
+      "architecture": "vite-plus-python",
+      "dev_worker": "vtab-resort-booking-dev",
+      "output": "dist",
+      "status": "blocked-lockfile-validation"
+    },
+    {
+      "repository": "AI-CHATBOT",
+      "architecture": "python-plus-frontend",
+      "dev_worker": null,
+      "output": null,
+      "status": "requires-cloudflare-runtime-adapter"
+    }
+  ]
+}
