@@ -40,6 +40,10 @@ export const DemoModal: React.FC<DemoModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (import.meta.env.VITE_APP_ENV === 'development') {
+      setSubmitError('This is a development preview. Demo enquiries are disabled here.');
+      return;
+    }
     setLoading(true);
     
     setSubmitError('');
