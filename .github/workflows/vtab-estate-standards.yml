@@ -1,0 +1,62 @@
+name: VTAB Estate Standards Validation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 2 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  repository-standards:
+    strategy:
+      fail-fast: false
+      matrix:
+        repository:
+          - finalized-company-website
+          - blueharbor
+          - Agreement-app
+          - AI-Recruitment-System
+          - Monitoring-Tool
+          - payroll-management-system
+          - AI-meetscribe
+          - VTAB-365
+          - Enterprise-L1-ticket-resolving-automation-agent
+          - office360-wsr
+          - tableau-to-powerbi
+          - QliktopowerBI
+          - Reporting-tool-2
+          - Ai-Tax-Application
+          - Project-planner
+          - Invoice-app
+          - Resort-booking
+          - AI-CHATBOT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout application develop branch
+        uses: actions/checkout@v4
+        with:
+          repository: vtabsquare/${{ matrix.repository }}
+          ref: develop
+          path: app
+
+      - name: Verify VTAB release controls
+        shell: bash
+        run: |
+          test -f app/RELEASE_PROCESS.md || { echo "::error::RELEASE_PROCESS.md missing"; exit 1; }
+          test -f app/.github/workflows/vtab-promotion-gate.yml || { echo "::error::Promotion gate missing"; exit 1; }
+
+      - name: Detect committed high-risk private keys
+        shell: bash
+        run: |
+          if grep -RIl --exclude-dir=.git --exclude='*.md' --exclude='package-lock.json' --exclude='*.map' -E 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' app; then
+            echo "::error::Potential private key material detected in repository."
+            exit 1
+          fi
+
+      - name: Record architecture evidence
+        shell: bash
+        run: |
+          echo "Repository: ${{ matrix.repository }}" >> "$GITHUB_STEP_SUMMARY"
+          find app -maxdepth 2 -type f \( -name package.json -o -name requirements.txt -o -name pyproject.toml -o -name Dockerfile \) -print | sort >> "$GITHUB_STEP_SUMMARY"
