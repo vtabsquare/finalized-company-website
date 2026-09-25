@@ -1,4 +1,4 @@
-name: Build DEV Cloudflare Artifact
+name: Build and Deploy DEV to Cloudflare
 
 on:
   workflow_dispatch:
@@ -8,8 +8,12 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: vtab-company-website-dev
+  cancel-in-progress: true
+
 jobs:
-  build-dev-artifact:
+  validate-build-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout develop
@@ -21,23 +25,39 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Install dependencies
+      - name: Install locked dependencies
         run: npm ci
 
-      - name: Build isolated development preview
+      - name: Type validation
+        run: npm run lint
+
+      - name: Build isolated DEV preview
         env:
           VITE_APP_ENV: development
           VITE_SUPABASE_URL: ''
           VITE_SUPABASE_ANON_KEY: ''
         run: npm run build
 
-      - name: Add SPA fallback for static hosting
+      - name: Verify DEV safeguards
+        shell: bash
+        run: |
+          test -f dist/index.html
+          grep -Rqs "VTAB DEVELOPMENT PREVIEW" dist || { echo "::error::DEV preview banner missing"; exit 1; }
+
+      - name: Add static fallback
         run: cp dist/index.html dist/404.html
 
-      - name: Upload Cloudflare-ready artifact
+      - name: Archive validated build
         uses: actions/upload-artifact@v4
         with:
           name: vtab-company-website-dev-dist
           path: dist/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Deploy validated build to Cloudflare DEV
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --name vtab-company-website-dev --assets dist
