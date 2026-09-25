@@ -26,6 +26,7 @@ const PageViews = lazy(() => import('./components/PageViews').then(m => ({ defau
 const DemoShowcaseSection = lazy(() => import('./components/DemoShowcaseSection').then(m => ({ default: m.DemoShowcaseSection })));
 
 export default function App() {
+  const isDevelopmentPreview = import.meta.env.VITE_APP_ENV === 'development';
   const tabRoutes: Partial<Record<NavTab, string>> = {
     home: '/',
     products: '/',
@@ -371,6 +372,12 @@ export default function App() {
           }}
           isLightMode={isLightMode}
         />
+      )}
+
+      {isDevelopmentPreview && (
+        <div role="status" style={{position:'fixed',top:0,left:0,right:0,zIndex:9999,background:'#7c2d12',color:'#fff',textAlign:'center',padding:'6px 12px',fontWeight:700,fontSize:13}}>
+          VTAB DEVELOPMENT PREVIEW — not for client demos. Demo enquiries are disabled.
+        </div>
       )}
 
       {/* Modals & Dialogs */}
