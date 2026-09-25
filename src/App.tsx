@@ -67,6 +67,7 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(initialRoute.product);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [demoInterest, setDemoInterest] = useState('');
+  const [demoSource, setDemoSource] = useState('website');
   const [isSandboxModalOpen, setIsSandboxModalOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
@@ -90,6 +91,7 @@ export default function App() {
     const interest = matchedProduct?.title || productId.replace(/[-_]+/g, ' ').replace(/\b\w/g, char => char.toUpperCase()) || 'AI Reporting Platform';
 
     setDemoInterest(interest);
+    setDemoSource(params.get('source')?.trim().slice(0,120) || 'external-demo');
     setIsDemoModalOpen(true);
     trackBusinessEvent('demo_referral');
     void trackEvent('demo_referral_open', { product_id: productId || null, source: params.get('source') || 'external-demo' });
@@ -167,6 +169,7 @@ export default function App() {
   };
 
   const handleOpenDemoModal = (interestArea?: string) => {
+    setDemoSource('website');
     if (interestArea) {
       setDemoInterest(interestArea);
     } else {
@@ -375,6 +378,7 @@ export default function App() {
         isOpen={isDemoModalOpen}
         onClose={() => setIsDemoModalOpen(false)}
         initialInterest={demoInterest}
+        referralSource={demoSource}
       />
 
       <InteractiveAiSandboxModal
