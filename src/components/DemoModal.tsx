@@ -7,12 +7,14 @@ interface DemoModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialInterest?: string;
+  referralSource?: string;
 }
 
 export const DemoModal: React.FC<DemoModalProps> = ({
   isOpen,
   onClose,
-  initialInterest = ''
+  initialInterest = '',
+  referralSource = 'website'
 }) => {
   const [form, setForm] = useState<DemoFormState>({
     fullName: '',
@@ -46,7 +48,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, website: '' }),
+        body: JSON.stringify({ ...form, referralSource, website: '' }),
       });
       const result = await response.json().catch(() => ({}));
       if (response.ok && result.received === true) {
@@ -157,6 +159,9 @@ export const DemoModal: React.FC<DemoModalProps> = ({
                     className="w-full bg-transparent border border-slate-200 dark:border-slate-700/80 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-600/30 dark:focus:ring-teal-500/30 focus:border-teal-600 dark:focus:border-teal-500 transition-all shadow-sm appearance-none cursor-pointer"
                     style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundPosition: 'right 1rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.2em' }}
                   >
+                    {initialInterest && !['AI Reporting Platform', 'Qlik to Power BI Migration', 'AI Employees & Agents', 'GBTI Smart Home Builder', 'BuildSmart Estimator', 'FaceAuth Biometrics', 'PostgreSQL / SQL Server Migration', 'Custom AI Development'].includes(initialInterest) && (
+                      <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value={initialInterest}>{initialInterest}</option>
+                    )}
                     <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">AI Reporting Platform</option>
                     <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Qlik to Power BI Migration</option>
                     <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">AI Employees & Agents</option>
