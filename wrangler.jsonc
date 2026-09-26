@@ -1,0 +1,11 @@
+{
+  // Staging-only configuration. Do not deploy this as the production Worker.
+  // The existing vtab-company-website-dev Worker is intentionally untouched.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vtab-company-website-staging-audit",
+  "compatibility_date": "2026-09-25",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

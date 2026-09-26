@@ -1,0 +1,76 @@
+name: Cloudflare staging preflight (no deploy)
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'package*.json'
+      - 'vite.config.*'
+      - 'wrangler.jsonc'
+      - '.github/workflows/cloudflare-staging-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install exact dependencies
+        run: npm ci
+      - name: TypeScript validation
+        run: npm run lint
+      - name: Build complete website and SEO entry points
+        run: npm run build
+      - name: Validate generated site, service pages and static assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in \
+            dist/index.html \
+            dist/sql-server-to-databricks-migration/index.html \
+            dist/power-bi-consulting-services/index.html \
+            dist/ai-application-development/index.html \
+            dist/case-studies/sql-server-to-databricks-migration-factory/index.html \
+            dist/solutions/index.html \
+            dist/industries/index.html \
+            dist/lab/index.html \
+            dist/about/index.html \
+            dist/careers/index.html \
+            dist/contact/index.html \
+            dist/architecture/ai-reporting-platform/index.html \
+            dist/architecture/qlik-to-powerbi-migration/index.html; do
+            test -s "$path" || { echo "::error::Missing or empty $path"; exit 1; }
+          done
+          test -d dist/assets
+          test -s dist/robots.txt
+          test -s dist/sitemap.xml
+          grep -q 'https://www.vtabsquare.com/sql-server-to-databricks-migration/' dist/sql-server-to-databricks-migration/index.html
+          grep -q 'https://www.vtabsquare.com/power-bi-consulting-services/' dist/power-bi-consulting-services/index.html
+      - name: Check staging Wrangler bundle without publishing
+        run: npx --yes wrangler@4 deploy --dry-run --config wrangler.jsonc
+      - name: Record public DNS diagnostics (read only)
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## Read-only DNS observations'
+            echo 'These are resolver observations, not a complete DigitalOcean zone export.'
+            for host in vtabsquare.com vtabsquare.workers.dev vtab-company-website-dev.vtabsquare.workers.dev; do
+              echo "### $host"
+              for type in NS A MX TXT; do
+                echo "#### $type"
+                dig +time=3 +tries=1 @1.1.1.1 "$host" "$type" +noall +answer || true
+              done
+            done
+            echo 'No DNS records, nameservers, or Cloudflare account settings were changed.'
+          } >> "$GITHUB_STEP_SUMMARY"
