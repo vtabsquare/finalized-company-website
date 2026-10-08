@@ -36,6 +36,24 @@ export const DemoModal: React.FC<DemoModalProps> = ({
     }
   }, [initialInterest]);
 
+  const isPricingEnquiry = referralSource === 'reporting-studio-pricing';
+  const isServicesEnquiry = referralSource === 'reporting-studio-services';
+  const enquiryTitle = isPricingEnquiry
+    ? 'Request Reporting Studio Pricing'
+    : isServicesEnquiry
+      ? 'Request Reporting Studio Services'
+      : 'Schedule Executive Demo';
+  const enquiryButtonText = isPricingEnquiry
+    ? 'Request Pricing'
+    : isServicesEnquiry
+      ? 'Request Services'
+      : 'Request Demo';
+  const enquiryDescription = isPricingEnquiry
+    ? 'Tell us about your licensing needs and we will prepare a quotation.'
+    : isServicesEnquiry
+      ? 'Tell us about your implementation, training or AMC requirements.'
+      : 'Enter your institutional information below.';
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,8 +95,8 @@ export const DemoModal: React.FC<DemoModalProps> = ({
               <Briefcase className="w-5 h-5 text-slate-700 dark:text-slate-300" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Schedule Executive Demo</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Enter your institutional information below.</p>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{enquiryTitle}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">{enquiryDescription}</p>
             </div>
           </div>
           <button
@@ -268,7 +286,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
                     <span>Processing...</span>
                   </>
                 ) : (
-                  <span>Request Demo</span>
+                  <span>{enquiryButtonText}</span>
                 )}
               </button>
             </>
