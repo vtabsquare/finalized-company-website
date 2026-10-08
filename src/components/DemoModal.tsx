@@ -79,7 +79,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
                 'Annual maintenance and support: ' + format(annualSupport),
                 'Estimated current 3-year total: ' + format(implementation + 3 * (annualLicense + annualSupport)),
                 'VTAB quotation and savings are not assumed; pricing to be confirmed.'
-              ].join('\\n');
+              ].join('\n');
             }
           }
         } catch { /* Invalid or unavailable saved estimate: submit the enquiry without it. */ }
