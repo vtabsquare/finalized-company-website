@@ -260,6 +260,38 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
   const [animKey, setAnimKey]           = useState(0);
   const [activeCategory, setActiveCategory] = useState('All');
   const [modalProduct, setModalProduct] = useState<DemoProduct | null>(null);
+  // Optional customer-entered TCO comparison. No assumed VTAB pricing or savings claims.
+  const [existingAnnualLicense, setExistingAnnualLicense] = useState('');
+  const [existingAnnualSupport, setExistingAnnualSupport] = useState('');
+  const [existingOneTimeBuild, setExistingOneTimeBuild] = useState('');
+  const [vtabAnnualLicense, setVtabAnnualLicense] = useState('');
+  const [vtabAnnualSupport, setVtabAnnualSupport] = useState('');
+  const [vtabOneTimeBuild, setVtabOneTimeBuild] = useState('');
+  const costFields = [existingAnnualLicense, existingAnnualSupport, existingOneTimeBuild, vtabAnnualLicense, vtabAnnualSupport, vtabOneTimeBuild];
+  const costsReady = costFields.every(v => v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0);
+  const existingTco = Number(existingOneTimeBuild) + 3 * (Number(existingAnnualLicense) + Number(existingAnnualSupport));
+  const vtabTco = Number(vtabOneTimeBuild) + 3 * (Number(vtabAnnualLicense) + Number(vtabAnnualSupport));
+  const savings = existingTco - vtabTco;
+  const money = (n: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
+
+
+  // Shareable Reporting Studio link: /?demo=reporting-studio#demo-showcase
+  // Wait for the live catalog so the selected demo is the current published video.
+  useEffect(() => {
+    if (loading || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') !== 'reporting-studio') return;
+    const reporting = products.find(p =>
+      p.name.toLowerCase().includes('reporting') &&
+      (p.category.toLowerCase().includes('business intelligence') ||
+       p.tags.some(t => t.toLowerCase().includes('reporting studio')))
+    );
+    if (!reporting) return;
+    setActiveCategory(reporting.category);
+    setCurrentIndex(Math.max(0, products.filter(p => p.category === reporting.category).findIndex(p => p.id === reporting.id)));
+    setModalProduct(reporting);
+    document.getElementById('demo-showcase')?.scrollIntoView({ block: 'start' });
+  }, [loading, products]);
 
   // Build category list dynamically from DB
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
@@ -273,6 +305,7 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
 
   const current = filtered[currentIndex] ?? filtered[0];
   const colors  = current ? c(current.accent) : c('blue');
+  const reportingSelected = !!current && current.name.toLowerCase().includes('reporting') && current.category.toLowerCase().includes('business intelligence');
 
   const goTo = (i: number) => { setCurrentIndex(i); setAnimKey(k => k + 1); };
   const prev = () => goTo((currentIndex - 1 + filtered.length) % filtered.length);
@@ -529,6 +562,83 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
             ))}
           </div>
         </ScrollReveal>
+
+        {/* Reporting Studio commercial value proposition and customer-entered ROI */}
+        {reportingSelected && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-7" id="reporting-studio-savings">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <p className="text-xs font-bold tracking-[0.2em] uppercase text-cyan-400">Reporting Studio • Cost Optimization</p>
+              <h3 className={`font-heading text-3xl sm:text-4xl font-extrabold ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Own Your Reporting Platform. Reduce Recurring Costs.</h3>
+              <p className={isLightMode ? 'text-slate-600' : 'text-slate-300'}>Purchase or license VTAB Reporting Studio for your organization, with optional implementation, annual maintenance contracts (AMC), training and technical support. Evaluate potential savings across BI licensing, development, support and manual reporting effort — based on your requirements and agreed commercial terms.</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                ['Product Purchase / License', 'Acquire VTAB Reporting Studio under agreed licensing terms, with deployment options tailored to your organization.'],
+                ['Product + Implementation', 'Add installation, configuration, data modeling, report migration and initial rollout services.'],
+                ['Enterprise Support Package', 'Choose optional annual maintenance (AMC), administrator and end-user training, technical support and future enhancements.'],
+              ].map(([heading, detail]) => (
+                <div key={heading} className={`rounded-2xl border p-5 ${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900/70 border-white/10'}`}>
+                  <h4 className={`font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>{heading}</h4>
+                  <p className={`text-sm leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                ['Licensing efficiency', 'Assess opportunities to reduce recurring per-user or capacity-based BI licensing costs.'],
+                ['Faster report delivery', 'Reuse semantic models and reporting components to reduce repetitive development effort.'],
+                ['Lower ongoing effort', 'Streamline maintenance, publishing and routine reporting processes.'],
+              ].map(([heading, detail]) => (
+                <div key={heading} className={`rounded-2xl border p-5 ${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900/70 border-white/10'}`}>
+                  <CheckCircle2 className="w-5 h-5 text-cyan-400 mb-3" />
+                  <h4 className={`font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>{heading}</h4>
+                  <p className={`text-sm leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className={`rounded-2xl border p-6 sm:p-8 ${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900/70 border-white/10'}`}>
+              <h4 className={`font-heading text-2xl font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Estimate Your 3-Year Reporting Cost</h4>
+              <p className={`text-sm mb-6 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>Enter your own estimates in INR. Include implementation, product license or purchase costs, and annual AMC/support for both approaches. No default VTAB prices or savings assumptions are used.</p>
+              <div className="grid md:grid-cols-2 gap-6">
+                {[
+                  { title: 'Current reporting platform', fields: [
+                    ['One-time implementation (₹)', existingOneTimeBuild, setExistingOneTimeBuild],
+                    ['Annual licensing (₹)', existingAnnualLicense, setExistingAnnualLicense],
+                    ['Annual maintenance & support (₹)', existingAnnualSupport, setExistingAnnualSupport],
+                  ] },
+                  { title: 'Proposed VTAB Reporting Studio', fields: [
+                    ['One-time implementation (₹)', vtabOneTimeBuild, setVtabOneTimeBuild],
+                    ['Annual licensing (₹)', vtabAnnualLicense, setVtabAnnualLicense],
+                    ['Annual maintenance & support (₹)', vtabAnnualSupport, setVtabAnnualSupport],
+                  ] },
+                ].map(group => (
+                  <div key={group.title} className="space-y-3">
+                    <h5 className={`font-bold ${isLightMode ? 'text-slate-900' : 'text-white'}`}>{group.title}</h5>
+                    {group.fields.map(([label, value, setter]) => (
+                      <label key={label as string} className={`block text-xs font-medium ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                        {label as string}
+                        <input type="number" min="0" step="any" inputMode="decimal" value={value as string}
+                          onChange={e => (setter as React.Dispatch<React.SetStateAction<string>>)(e.target.value)}
+                          placeholder="Enter amount" className={`mt-1 block w-full rounded-lg border px-3 py-2.5 outline-none focus:ring-2 focus:ring-cyan-500 ${isLightMode ? 'bg-slate-50 text-slate-900 border-slate-300' : 'bg-slate-950 text-white border-white/20'}`} />
+                      </label>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <div className={`mt-6 rounded-xl p-5 ${isLightMode ? 'bg-cyan-50 text-slate-900' : 'bg-slate-950 text-white'}`} aria-live="polite">
+                {costsReady ? (
+                  <div className="space-y-2">
+                    <p className="text-sm">Current 3-year TCO: <strong>{money(existingTco)}</strong></p>
+                    <p className="text-sm">VTAB 3-year TCO: <strong>{money(vtabTco)}</strong></p>
+                    <p className="text-xl font-bold">{savings >= 0 ? 'Estimated 3-year savings' : 'Estimated additional 3-year cost'}: {money(Math.abs(savings))}{existingTco > 0 ? ` (${Math.abs(savings / existingTco * 100).toFixed(1)}%)` : ''}</p>
+                  </div>
+                ) : <p className="text-sm">Complete all six fields to calculate a like-for-like three-year comparison.</p>}
+              </div>
+              <p className={`text-xs mt-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Illustrative customer-input estimate only. Excludes migration, hosting, training, taxes and other costs unless included in your inputs. Actual savings depend on requirements, negotiated pricing and deployment.</p>
+              <a href="/contact" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request Pricing, Demo & AMC Options <ArrowUpRight className="w-4 h-4" /></a>
+            </div>
+          </div>
+        )}
 
         {/* ── Bottom CTA ── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
