@@ -261,6 +261,24 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
   const [activeCategory, setActiveCategory] = useState('All');
   const [modalProduct, setModalProduct] = useState<DemoProduct | null>(null);
 
+  // Shareable Reporting Studio link: /?demo=reporting-studio#demo-showcase
+  // Wait for the live catalog so the selected demo is the current published video.
+  useEffect(() => {
+    if (loading || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') !== 'reporting-studio') return;
+    const reporting = products.find(p =>
+      p.name.toLowerCase().includes('reporting') &&
+      (p.category.toLowerCase().includes('business intelligence') ||
+       p.tags.some(t => t.toLowerCase().includes('reporting studio')))
+    );
+    if (!reporting) return;
+    setActiveCategory(reporting.category);
+    setCurrentIndex(Math.max(0, products.filter(p => p.category === reporting.category).findIndex(p => p.id === reporting.id)));
+    setModalProduct(reporting);
+    document.getElementById('demo-showcase')?.scrollIntoView({ block: 'start' });
+  }, [loading, products]);
+
   // Build category list dynamically from DB
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
   const filtered   = activeCategory === 'All' ? products : products.filter(p => p.category === activeCategory);
