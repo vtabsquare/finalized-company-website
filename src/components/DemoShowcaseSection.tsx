@@ -563,6 +563,41 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
           </div>
         </ScrollReveal>
 
+        {/* Reporting Studio customer journey: product demo, live app and commercial enquiries. */}
+        {reportingSelected && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10" id="reporting-studio-actions">
+            <h3 className={`text-center font-heading text-2xl sm:text-3xl font-extrabold mb-3 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Explore VTAB Reporting Studio</h3>
+            <p className={`text-center text-sm max-w-2xl mx-auto mb-7 ${isLightMode ? 'text-slate-600' : 'text-slate-300'}`}>Watch the product in action, explore the hosted application, or talk to our team about licensing and enterprise services.</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <button type="button" onClick={() => setModalProduct(current)}
+                className="text-left rounded-2xl border border-cyan-500/30 bg-cyan-600 hover:bg-cyan-500 text-white p-5 transition-colors">
+                <Play className="w-6 h-6 mb-4" />
+                <span className="block font-bold mb-2">Watch Product Demo</span>
+                <span className="block text-xs text-white/80">See Reporting Studio features and workflows.</span>
+              </button>
+              <a href="https://reportservices.vtabsquare.com/" target="_blank" rel="noopener noreferrer"
+                onClick={() => trackBusinessEvent('demo_open')}
+                className={`text-left rounded-2xl border p-5 transition-colors ${isLightMode ? 'bg-white border-slate-200 hover:border-cyan-500 text-slate-900' : 'bg-slate-900 border-white/15 hover:border-cyan-500 text-white'}`}>
+                <ExternalLink className="w-6 h-6 mb-4 text-cyan-400" />
+                <span className="block font-bold mb-2">Try Live Reporting Studio</span>
+                <span className="block text-xs opacity-70">Open the hosted application in a new tab. Account access may be required.</span>
+              </a>
+              <a href="/?demo=1&product=reporting-studio-license&source=reporting-studio-pricing"
+                className={`text-left rounded-2xl border p-5 transition-colors ${isLightMode ? 'bg-white border-slate-200 hover:border-cyan-500 text-slate-900' : 'bg-slate-900 border-white/15 hover:border-cyan-500 text-white'}`}>
+                <BarChart3 className="w-6 h-6 mb-4 text-cyan-400" />
+                <span className="block font-bold mb-2">Request Pricing / Purchase License</span>
+                <span className="block text-xs opacity-70">Ask for a quotation and licensing options.</span>
+              </a>
+              <a href="/?demo=1&product=reporting-studio-implementation-training-amc&source=reporting-studio-services"
+                className={`text-left rounded-2xl border p-5 transition-colors ${isLightMode ? 'bg-white border-slate-200 hover:border-cyan-500 text-slate-900' : 'bg-slate-900 border-white/15 hover:border-cyan-500 text-white'}`}>
+                <CheckCircle2 className="w-6 h-6 mb-4 text-cyan-400" />
+                <span className="block font-bold mb-2">Implementation, Training or AMC</span>
+                <span className="block text-xs opacity-70">Request rollout, enablement, maintenance and support.</span>
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* Reporting Studio commercial value proposition and customer-entered ROI */}
         {reportingSelected && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-7" id="reporting-studio-savings">
