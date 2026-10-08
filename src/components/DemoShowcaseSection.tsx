@@ -260,18 +260,11 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
   const [animKey, setAnimKey]           = useState(0);
   const [activeCategory, setActiveCategory] = useState('All');
   const [modalProduct, setModalProduct] = useState<DemoProduct | null>(null);
-  // Optional customer-entered TCO comparison. No assumed VTAB pricing or savings claims.
+  // Customer-entered costs only; VTAB pricing is supplied in a tailored quote.
   const [existingAnnualLicense, setExistingAnnualLicense] = useState('');
   const [existingAnnualSupport, setExistingAnnualSupport] = useState('');
   const [existingOneTimeBuild, setExistingOneTimeBuild] = useState('');
-  const [vtabAnnualLicense, setVtabAnnualLicense] = useState('');
-  const [vtabAnnualSupport, setVtabAnnualSupport] = useState('');
-  const [vtabOneTimeBuild, setVtabOneTimeBuild] = useState('');
-  const costFields = [existingAnnualLicense, existingAnnualSupport, existingOneTimeBuild, vtabAnnualLicense, vtabAnnualSupport, vtabOneTimeBuild];
-  const costsReady = costFields.every(v => v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0);
   const existingTco = Number(existingOneTimeBuild) + 3 * (Number(existingAnnualLicense) + Number(existingAnnualSupport));
-  const vtabTco = Number(vtabOneTimeBuild) + 3 * (Number(vtabAnnualLicense) + Number(vtabAnnualSupport));
-  const savings = existingTco - vtabTco;
   const money = (n: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 
 
