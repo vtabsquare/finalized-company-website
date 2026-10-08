@@ -62,16 +62,39 @@ export const DemoModal: React.FC<DemoModalProps> = ({
     
     setSubmitError('');
     try {
+      let pricingNotes = '';
+      if (isPricingEnquiry) {
+        try {
+          const stored = sessionStorage.getItem('vtab_reporting_cost_estimate');
+          if (stored) {
+            const values = JSON.parse(stored) as Record<string, unknown>;
+            const amounts = [values.implementation, values.annualLicense, values.annualSupport];
+            if (amounts.every(v => typeof v === 'number' && Number.isFinite(v) && v >= 0)) {
+              const [implementation, annualLicense, annualSupport] = amounts as number[];
+              const format = (v: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(v);
+              pricingNotes = [
+                'Customer-entered current reporting platform cost estimate (INR):',
+                'One-time implementation: ' + format(implementation),
+                'Annual licensing: ' + format(annualLicense),
+                'Annual maintenance and support: ' + format(annualSupport),
+                'Estimated current 3-year total: ' + format(implementation + 3 * (annualLicense + annualSupport)),
+                'VTAB quotation and savings are not assumed; pricing to be confirmed.'
+              ].join('\n');
+            }
+          }
+        } catch { /* Invalid or unavailable saved estimate: submit the enquiry without it. */ }
+      }
       const response = await fetch('/api/enquiry', {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, referralSource, website: '' }),
+        body: JSON.stringify({ ...form, message: [form.message.trim(), pricingNotes].filter(Boolean).join('\n\n'), referralSource, website: '' }),
       });
       const result = await response.json().catch(() => ({}));
       if (response.ok && result.received === true) {
         trackBusinessEvent('demo_request');
         trackBusinessEvent('enquiry_success');
+        if (isPricingEnquiry) sessionStorage.removeItem('vtab_reporting_cost_estimate');
         setSubmitted(true);
       } else {
         setSubmitError('We could not deliver your demo request. Please try again later.');

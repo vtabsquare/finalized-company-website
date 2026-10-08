@@ -647,7 +647,14 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
                   : <p className="text-sm">Complete the three fields above to estimate your current three-year reporting cost.</p>}
               </div>
               <p className={`text-xs mt-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Customer-provided estimate only. Include hosting, migration, training, taxes and other costs in your inputs where relevant. A like-for-like savings comparison requires an approved VTAB quotation.</p>
-              <a href="/?demo=1&product=reporting-studio-license&source=reporting-studio-pricing" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request a Tailored VTAB Quote <ArrowUpRight className="w-4 h-4" /></a>
+              <a href="/?demo=1&product=reporting-studio-license&source=reporting-studio-pricing" onClick={() => {
+                const values = [existingOneTimeBuild, existingAnnualLicense, existingAnnualSupport];
+                if (values.every(v => v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0)) {
+                  sessionStorage.setItem('vtab_reporting_cost_estimate', JSON.stringify({ implementation: Number(values[0]), annualLicense: Number(values[1]), annualSupport: Number(values[2]) }));
+                } else {
+                  sessionStorage.removeItem('vtab_reporting_cost_estimate');
+                }
+              }} className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request a Tailored VTAB Quote <ArrowUpRight className="w-4 h-4" /></a>
             </div>
           </div>
         )}
