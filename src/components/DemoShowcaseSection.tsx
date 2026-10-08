@@ -635,7 +635,7 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
                 ) : <p className="text-sm">Complete all six fields to calculate a like-for-like three-year comparison.</p>}
               </div>
               <p className={`text-xs mt-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Illustrative customer-input estimate only. Excludes migration, hosting, training, taxes and other costs unless included in your inputs. Actual savings depend on requirements, negotiated pricing and deployment.</p>
-              <a href="/#contact" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request Pricing, Demo & AMC Options <ArrowUpRight className="w-4 h-4" /></a>
+              <a href="/contact" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request Pricing, Demo & AMC Options <ArrowUpRight className="w-4 h-4" /></a>
             </div>
           </div>
         )}
