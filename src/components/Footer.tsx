@@ -177,6 +177,22 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDemoModal, o
             </ul>
           </div>
 
+          {/* Staff tools: links to a separately authenticated application. */}
+          <div className="space-y-3">
+            <h4 className={`text-xs font-bold uppercase tracking-wider ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Staff Access</h4>
+            <a
+              href="https://leads.vtabsquare.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 hover:text-blue-400 transition-colors"
+              aria-label="Open VTAB Lead Management Dashboard (staff login required)"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              Lead Management Dashboard
+            </a>
+            <p className="text-[11px]">Authorized team members only. Sign in to view enquiries and follow-ups.</p>
+          </div>
+
           {/* Contact Column */}
           <div className="space-y-3">
             <h4 className={`text-xs font-bold uppercase tracking-wider ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Contact Us</h4>
