@@ -568,8 +568,20 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-7" id="reporting-studio-savings">
             <div className="text-center max-w-3xl mx-auto space-y-3">
               <p className="text-xs font-bold tracking-[0.2em] uppercase text-cyan-400">Reporting Studio • Cost Optimization</p>
-              <h3 className={`font-heading text-3xl sm:text-4xl font-extrabold ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Cut Reporting Costs. Accelerate Development.</h3>
-              <p className={isLightMode ? 'text-slate-600' : 'text-slate-300'}>Explore a more economical way to build, publish and maintain enterprise reports. Evaluate potential savings across BI licensing, development, support and manual reporting effort — without compromising your reporting requirements.</p>
+              <h3 className={`font-heading text-3xl sm:text-4xl font-extrabold ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Own Your Reporting Platform. Reduce Recurring Costs.</h3>
+              <p className={isLightMode ? 'text-slate-600' : 'text-slate-300'}>Purchase or license VTAB Reporting Studio for your organization, with optional implementation, annual maintenance contracts (AMC), training and technical support. Evaluate potential savings across BI licensing, development, support and manual reporting effort — based on your requirements and agreed commercial terms.</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                ['Product Purchase / License', 'Acquire VTAB Reporting Studio under agreed licensing terms, with deployment options tailored to your organization.'],
+                ['Product + Implementation', 'Add installation, configuration, data modeling, report migration and initial rollout services.'],
+                ['Enterprise Support Package', 'Choose optional annual maintenance (AMC), administrator and end-user training, technical support and future enhancements.'],
+              ].map(([heading, detail]) => (
+                <div key={heading} className={`rounded-2xl border p-5 ${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900/70 border-white/10'}`}>
+                  <h4 className={`font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>{heading}</h4>
+                  <p className={`text-sm leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{detail}</p>
+                </div>
+              ))}
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               {[
@@ -586,7 +598,7 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
             </div>
             <div className={`rounded-2xl border p-6 sm:p-8 ${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900/70 border-white/10'}`}>
               <h4 className={`font-heading text-2xl font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Estimate Your 3-Year Reporting Cost</h4>
-              <p className={`text-sm mb-6 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>Enter your own estimates in INR. Include implementation costs and annual licensing and support for both approaches. No default prices or savings assumptions are used.</p>
+              <p className={`text-sm mb-6 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>Enter your own estimates in INR. Include implementation, product license or purchase costs, and annual AMC/support for both approaches. No default VTAB prices or savings assumptions are used.</p>
               <div className="grid md:grid-cols-2 gap-6">
                 {[
                   { title: 'Current reporting platform', fields: [
@@ -623,7 +635,7 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
                 ) : <p className="text-sm">Complete all six fields to calculate a like-for-like three-year comparison.</p>}
               </div>
               <p className={`text-xs mt-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Illustrative customer-input estimate only. Excludes migration, hosting, training, taxes and other costs unless included in your inputs. Actual savings depend on requirements, negotiated pricing and deployment.</p>
-              <a href="/#contact" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request a Cost Savings Assessment <ArrowUpRight className="w-4 h-4" /></a>
+              <a href="/#contact" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request Pricing, Demo & AMC Options <ArrowUpRight className="w-4 h-4" /></a>
             </div>
           </div>
         )}
