@@ -43,6 +43,11 @@ export const DemoModal: React.FC<DemoModalProps> = ({
     : isServicesEnquiry
       ? 'Request Reporting Studio Services'
       : 'Schedule Executive Demo';
+  const enquiryButtonText = isPricingEnquiry
+    ? 'Request Pricing'
+    : isServicesEnquiry
+      ? 'Request Services'
+      : 'Request Demo';
   const enquiryDescription = isPricingEnquiry
     ? 'Tell us about your licensing needs and we will prepare a quotation.'
     : isServicesEnquiry
@@ -281,7 +286,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({
                     <span>Processing...</span>
                   </>
                 ) : (
-                  <span>Request Demo</span>
+                  <span>{enquiryButtonText}</span>
                 )}
               </button>
             </>
