@@ -260,18 +260,11 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
   const [animKey, setAnimKey]           = useState(0);
   const [activeCategory, setActiveCategory] = useState('All');
   const [modalProduct, setModalProduct] = useState<DemoProduct | null>(null);
-  // Optional customer-entered TCO comparison. No assumed VTAB pricing or savings claims.
+  // Customer-entered costs only; VTAB pricing is supplied in a tailored quote.
   const [existingAnnualLicense, setExistingAnnualLicense] = useState('');
   const [existingAnnualSupport, setExistingAnnualSupport] = useState('');
   const [existingOneTimeBuild, setExistingOneTimeBuild] = useState('');
-  const [vtabAnnualLicense, setVtabAnnualLicense] = useState('');
-  const [vtabAnnualSupport, setVtabAnnualSupport] = useState('');
-  const [vtabOneTimeBuild, setVtabOneTimeBuild] = useState('');
-  const costFields = [existingAnnualLicense, existingAnnualSupport, existingOneTimeBuild, vtabAnnualLicense, vtabAnnualSupport, vtabOneTimeBuild];
-  const costsReady = costFields.every(v => v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0);
   const existingTco = Number(existingOneTimeBuild) + 3 * (Number(existingAnnualLicense) + Number(existingAnnualSupport));
-  const vtabTco = Number(vtabOneTimeBuild) + 3 * (Number(vtabAnnualLicense) + Number(vtabAnnualSupport));
-  const savings = existingTco - vtabTco;
   const money = (n: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 
 
@@ -632,45 +625,29 @@ export const DemoShowcaseSection: React.FC<Props> = ({ isLightMode = false }) =>
               ))}
             </div>
             <div className={`rounded-2xl border p-6 sm:p-8 ${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900/70 border-white/10'}`}>
-              <h4 className={`font-heading text-2xl font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Estimate Your 3-Year Reporting Cost</h4>
-              <p className={`text-sm mb-6 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>Enter your own estimates in INR. Include implementation, product license or purchase costs, and annual AMC/support for both approaches. No default VTAB prices or savings assumptions are used.</p>
-              <div className="grid md:grid-cols-2 gap-6">
+              <h4 className={`font-heading text-2xl font-bold mb-2 ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Estimate Your Current 3-Year Reporting Cost</h4>
+              <p className={`text-sm mb-6 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>Enter your current reporting platform costs in INR. VTAB pricing is provided separately in a tailored quotation; we do not assume or invent license, implementation or support prices.</p>
+              <div className="grid sm:grid-cols-3 gap-4">
                 {[
-                  { title: 'Current reporting platform', fields: [
-                    ['One-time implementation (₹)', existingOneTimeBuild, setExistingOneTimeBuild],
-                    ['Annual licensing (₹)', existingAnnualLicense, setExistingAnnualLicense],
-                    ['Annual maintenance & support (₹)', existingAnnualSupport, setExistingAnnualSupport],
-                  ] },
-                  { title: 'Proposed VTAB Reporting Studio', fields: [
-                    ['One-time implementation (₹)', vtabOneTimeBuild, setVtabOneTimeBuild],
-                    ['Annual licensing (₹)', vtabAnnualLicense, setVtabAnnualLicense],
-                    ['Annual maintenance & support (₹)', vtabAnnualSupport, setVtabAnnualSupport],
-                  ] },
-                ].map(group => (
-                  <div key={group.title} className="space-y-3">
-                    <h5 className={`font-bold ${isLightMode ? 'text-slate-900' : 'text-white'}`}>{group.title}</h5>
-                    {group.fields.map(([label, value, setter]) => (
-                      <label key={label as string} className={`block text-xs font-medium ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
-                        {label as string}
-                        <input type="number" min="0" step="any" inputMode="decimal" value={value as string}
-                          onChange={e => (setter as React.Dispatch<React.SetStateAction<string>>)(e.target.value)}
-                          placeholder="Enter amount" className={`mt-1 block w-full rounded-lg border px-3 py-2.5 outline-none focus:ring-2 focus:ring-cyan-500 ${isLightMode ? 'bg-slate-50 text-slate-900 border-slate-300' : 'bg-slate-950 text-white border-white/20'}`} />
-                      </label>
-                    ))}
-                  </div>
+                  ['One-time implementation (₹)', existingOneTimeBuild, setExistingOneTimeBuild],
+                  ['Annual licensing (₹)', existingAnnualLicense, setExistingAnnualLicense],
+                  ['Annual maintenance & support (₹)', existingAnnualSupport, setExistingAnnualSupport],
+                ].map(([label, value, setter]) => (
+                  <label key={label as string} className={`block text-xs font-medium ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                    {label as string}
+                    <input type="number" min="0" step="any" inputMode="decimal" value={value as string}
+                      onChange={e => (setter as React.Dispatch<React.SetStateAction<string>>)(e.target.value)}
+                      placeholder="Enter amount" className={`mt-1 block w-full rounded-lg border px-3 py-2.5 outline-none focus:ring-2 focus:ring-cyan-500 ${isLightMode ? 'bg-slate-50 text-slate-900 border-slate-300' : 'bg-slate-950 text-white border-white/20'}`} />
+                  </label>
                 ))}
               </div>
               <div className={`mt-6 rounded-xl p-5 ${isLightMode ? 'bg-cyan-50 text-slate-900' : 'bg-slate-950 text-white'}`} aria-live="polite">
-                {costsReady ? (
-                  <div className="space-y-2">
-                    <p className="text-sm">Current 3-year TCO: <strong>{money(existingTco)}</strong></p>
-                    <p className="text-sm">VTAB 3-year TCO: <strong>{money(vtabTco)}</strong></p>
-                    <p className="text-xl font-bold">{savings >= 0 ? 'Estimated 3-year savings' : 'Estimated additional 3-year cost'}: {money(Math.abs(savings))}{existingTco > 0 ? ` (${Math.abs(savings / existingTco * 100).toFixed(1)}%)` : ''}</p>
-                  </div>
-                ) : <p className="text-sm">Complete all six fields to calculate a like-for-like three-year comparison.</p>}
+                {[existingOneTimeBuild, existingAnnualLicense, existingAnnualSupport].every(v => v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0)
+                  ? <p className="text-xl font-bold">Your estimated current 3-year cost: {money(existingTco)}</p>
+                  : <p className="text-sm">Complete the three fields above to estimate your current three-year reporting cost.</p>}
               </div>
-              <p className={`text-xs mt-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Illustrative customer-input estimate only. Excludes migration, hosting, training, taxes and other costs unless included in your inputs. Actual savings depend on requirements, negotiated pricing and deployment.</p>
-              <a href="/contact" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request Pricing, Demo & AMC Options <ArrowUpRight className="w-4 h-4" /></a>
+              <p className={`text-xs mt-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Customer-provided estimate only. Include hosting, migration, training, taxes and other costs in your inputs where relevant. A like-for-like savings comparison requires an approved VTAB quotation.</p>
+              <a href="/?demo=1&product=reporting-studio-license&source=reporting-studio-pricing" className="inline-flex mt-5 items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-6 py-3 hover:from-cyan-400 hover:to-blue-400">Request a Tailored VTAB Quote <ArrowUpRight className="w-4 h-4" /></a>
             </div>
           </div>
         )}
