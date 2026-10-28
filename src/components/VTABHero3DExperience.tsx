@@ -384,7 +384,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
               >
                 <Download className="w-4 h-4" />
                 <span>
-                  {releaseLoading ? 'Download Desktop' : `Download Desktop ${releaseVersion}`}
+                  Download Desktop {releaseVersion}
                 </span>
                 <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-white/20 text-white border border-white/30 backdrop-blur-sm">
                   Win 64-bit
