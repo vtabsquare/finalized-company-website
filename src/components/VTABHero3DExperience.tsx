@@ -452,22 +452,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
                   className="w-full h-full object-cover cursor-pointer"
                 />
 
-                {/* Corner Blur Vignette — immersive edge softening */}
-                <div className="absolute inset-0 pointer-events-none z-10">
-                  {/* Top-left */}
-                  <div className="absolute top-0 left-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-br-full" />
-                  {/* Top-right */}
-                  <div className="absolute top-0 right-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-bl-full" />
-                  {/* Bottom-left */}
-                  <div className="absolute bottom-0 left-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-tr-full" />
-                  {/* Bottom-right */}
-                  <div className="absolute bottom-0 right-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-tl-full" />
-                  {/* Thin edge feathers — top / bottom / left / right */}
-                  <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[#050c1e]/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#050c1e]/60 to-transparent" />
-                  <div className="absolute top-0 left-0 bottom-0 w-6 bg-gradient-to-r from-[#050c1e]/50 to-transparent" />
-                  <div className="absolute top-0 right-0 bottom-0 w-6 bg-gradient-to-l from-[#050c1e]/50 to-transparent" />
-                </div>
+                
 
                 {/* Center Play Indicator when paused */}
                 {!isPlaying && (
