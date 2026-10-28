@@ -1,6 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize2,
+  RotateCcw,
   Download,
   Zap,
   LayoutDashboard,
@@ -34,6 +39,61 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
+
+  // ── Live Video Player State ──
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return;
+    setCurrentTime(videoRef.current.currentTime);
+    setDuration(videoRef.current.duration || 0);
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!videoRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    videoRef.current.currentTime = pct * duration;
+  };
+
+  const toggleFullscreen = () => {
+    if (!videoRef.current) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      videoRef.current.requestFullscreen();
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    if (isNaN(seconds) || seconds <= 0) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
 
   useEffect(() => {
     const root = rootRef.current;
@@ -226,18 +286,18 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
 
           </div>
 
-          {/* ── RIGHT COLUMN: FUTURE LIVE DASHBOARD PLACEHOLDER CONTAINER ── */}
+          {/* ── RIGHT COLUMN: LIVE APPLICATION VIDEO STAGE ── */}
           <div className="lg:col-span-5 relative">
 
-            {/* Ambient Backlight Glow behind Placeholder */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-cyan-500/15 via-blue-500/15 to-purple-500/15 blur-2xl rounded-3xl pointer-events-none" />
+            {/* Ambient Backlight Glow behind Video Stage */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-2xl rounded-3xl pointer-events-none" />
 
-            {/* ══════════════════════════════════════════════════════════════
-                FUTURE LIVE DASHBOARD PLACEHOLDER CONTAINER
-                You can replace the contents inside this container in the future
-                with your live dashboard canvas or WebGL interactive widget.
-               ══════════════════════════════════════════════════════════════ */}
-            <div className="relative rounded-2xl border border-cyan-500/35 bg-[#050c1e]/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(0,213,242,0.18)] overflow-hidden group hover:border-cyan-400/60 transition-all duration-300">
+            {/* Obsidian Glass Console Container */}
+            <div 
+              className="relative rounded-2xl border border-cyan-500/40 bg-[#050c1e]/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(0,213,242,0.2)] overflow-hidden group hover:border-cyan-400/70 transition-all duration-300"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               
               {/* Top Console Titlebar */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#07132a]/95 text-xs font-mono">
@@ -245,117 +305,135 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                  <span className="ml-2 text-slate-300 text-[11px] font-medium">
-                    Live Analytics Engine · Dashboard Stage
+                  <span className="ml-2 text-slate-200 text-[11px] font-semibold tracking-wide">
+                    VTAB Reporting Studio · Live Interactive Preview
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/70 border border-emerald-500/40">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/70 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Live Ready
+                    Live Video
                   </span>
                 </div>
               </div>
 
-              {/* Live Canvas / Dashboard Preview Stage */}
-              <div className="p-5 sm:p-6 space-y-4 relative min-h-[350px] flex flex-col justify-between">
-                
-                {/* Background Subtle Grid Pattern */}
-                <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+              {/* Video Player Stage */}
+              <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
+                <video
+                  ref={videoRef}
+                  src="/media/Reporting Tool AV.mp4"
+                  autoPlay
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  preload="auto"
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={handleTimeUpdate}
+                  onClick={togglePlay}
+                  className="w-full h-full object-cover cursor-pointer"
+                />
 
-                {/* Top Metrics Row */}
-                <div className="grid grid-cols-3 gap-2.5 relative z-10">
-                  <div className="p-3 rounded-xl bg-[#030919]/80 border border-cyan-500/20 backdrop-blur-md">
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Total Volume</div>
-                    <div className="text-lg font-extrabold text-white mt-0.5">$48.2M</div>
-                    <div className="text-[10px] font-semibold text-emerald-400 flex items-center gap-1 mt-0.5">
-                      <span>+18.4%</span>
-                      <span className="text-slate-500 font-normal">vs target</span>
+                {/* Center Play Indicator when paused */}
+                {!isPlaying && (
+                  <div 
+                    onClick={togglePlay}
+                    className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center cursor-pointer transition-opacity z-10"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center shadow-[0_0_30px_rgba(0,213,242,0.6)] transform hover:scale-110 active:scale-95 transition-transform cursor-pointer">
+                      <Play className="w-7 h-7 fill-white ml-1 text-white" />
                     </div>
                   </div>
+                )}
 
-                  <div className="p-3 rounded-xl bg-[#030919]/80 border border-blue-500/20 backdrop-blur-md">
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Response</div>
-                    <div className="text-lg font-extrabold text-cyan-300 mt-0.5">0.14ms</div>
-                    <div className="text-[10px] font-semibold text-cyan-400 flex items-center gap-1 mt-0.5">
-                      <span>Vector SIMD</span>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#030919]/80 border border-purple-500/20 backdrop-blur-md">
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Cached Rows</div>
-                    <div className="text-lg font-extrabold text-purple-300 mt-0.5">12.4M</div>
-                    <div className="text-[10px] font-semibold text-purple-400 flex items-center gap-1 mt-0.5">
-                      <span>Parquet DuckDB</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Simulated Chart Waveform Canvas */}
-                <div className="relative z-10 p-4 rounded-xl bg-[#020614]/90 border border-white/10 overflow-hidden">
-                  <div className="flex items-center justify-between text-xs mb-3 text-slate-400 font-mono">
-                    <span className="flex items-center gap-2">
-                      <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>Real-Time Analytical Stream</span>
-                    </span>
-                    <span className="text-cyan-400 text-[11px]">60 FPS Fluid</span>
-                  </div>
-
-                  {/* SVG Multi-Frequency Waveform */}
-                  <div className="h-24 w-full relative">
-                    <svg className="w-full h-full" viewBox="0 0 500 110" preserveAspectRatio="none" fill="none">
-                      <defs>
-                        <linearGradient id="liveWaveGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#00D5F2" stopOpacity="0.4" />
-                          <stop offset="100%" stopColor="#287BFF" stopOpacity="0.0" />
-                        </linearGradient>
-                        <linearGradient id="liveWaveGradPurple" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.35" />
-                          <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.0" />
-                        </linearGradient>
-                      </defs>
-
-                      <line x1="0" y1="25" x2="500" y2="25" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
-                      <line x1="0" y1="55" x2="500" y2="55" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
-                      <line x1="0" y1="85" x2="500" y2="85" stroke="rgba(255,255,255,0.08)" />
-
-                      <path d="M 0 75 Q 80 40, 160 60 T 320 30 T 500 50 L 500 110 L 0 110 Z" fill="url(#liveWaveGradPurple)" />
-                      <path d="M 0 75 Q 80 40, 160 60 T 320 30 T 500 50" stroke="#8B5CF6" strokeWidth="1.8" strokeLinecap="round" />
-
-                      <path d="M 0 65 Q 90 20, 180 45 T 360 15 T 500 35 L 500 110 L 0 110 Z" fill="url(#liveWaveGrad)" />
-                      <path d="M 0 65 Q 90 20, 180 45 T 360 15 T 500 35" stroke="#00D5F2" strokeWidth="2.4" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 6px #00D5F2)' }} />
-
-                      <circle cx="180" cy="45" r="4" fill="#ffffff" stroke="#00D5F2" strokeWidth="2" />
-                      <circle cx="360" cy="15" r="4.5" fill="#ffffff" stroke="#00D5F2" strokeWidth="2" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Future Integration Prompt Banner */}
+                {/* Floating Interactive Video Controls Overlay */}
                 <div 
-                  onClick={onWatchDemo || (() => {
-                    const el = document.getElementById('dashboards');
-                    if (el) {
-                      const yOffset = -70;
-                      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                      window.scrollTo({ top: y, behavior: 'smooth' });
-                    }
-                  })}
-                  className="relative z-10 flex items-center justify-between p-3 rounded-xl border border-dashed border-cyan-400/40 bg-cyan-950/20 hover:bg-cyan-950/40 text-xs cursor-pointer transition-colors"
+                  className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent transition-opacity duration-300 z-20 ${
+                    isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
                 >
-                  <div className="flex items-center gap-2.5 text-cyan-200">
-                    <LayoutDashboard className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span className="font-mono text-[11px]">
-                      Future Live Dashboard Canvas Placeholder
-                    </span>
+                  {/* Progress Scrubber */}
+                  <div 
+                    onClick={handleSeek}
+                    className="relative w-full h-1.5 bg-white/20 hover:h-2.5 rounded-full cursor-pointer mb-2.5 transition-all group/scrubber"
+                  >
+                    <div 
+                      className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full relative"
+                      style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                    >
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)] opacity-0 group-hover/scrubber:opacity-100 transition-opacity" />
+                    </div>
                   </div>
-                  <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-400/30">
-                    Ready for Integration
-                  </span>
+
+                  {/* Controls Row */}
+                  <div className="flex items-center justify-between text-xs text-white">
+                    <div className="flex items-center gap-3">
+                      {/* Play/Pause Button */}
+                      <button
+                        type="button"
+                        onClick={togglePlay}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-200 hover:text-cyan-300 transition cursor-pointer"
+                        title={isPlaying ? 'Pause' : 'Play'}
+                      >
+                        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                      </button>
+
+                      {/* Sound Mute/Unmute */}
+                      <button
+                        type="button"
+                        onClick={toggleMute}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-200 hover:text-cyan-300 transition cursor-pointer"
+                        title={isMuted ? 'Unmute' : 'Mute'}
+                      >
+                        {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
+                      </button>
+
+                      {/* Time Code */}
+                      <span className="font-mono text-[11px] text-slate-300">
+                        {formatTime(currentTime)} / {formatTime(duration)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {/* Replay */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (videoRef.current) {
+                            videoRef.current.currentTime = 0;
+                            videoRef.current.play();
+                            setIsPlaying(true);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition cursor-pointer"
+                        title="Replay from start"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      </button>
+
+                      {/* Fullscreen */}
+                      <button
+                        type="button"
+                        onClick={toggleFullscreen}
+                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition cursor-pointer"
+                        title="Fullscreen"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
               </div>
+
+              {/* Bottom Quick Feature Strip */}
+              <div className="px-4 py-2.5 border-t border-white/10 bg-[#060e22]/95 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Real-Time Interaction Engine</span>
+                </span>
+                <span className="text-cyan-400 font-semibold">1080p · 60 FPS</span>
+              </div>
+
             </div>
 
           </div>
