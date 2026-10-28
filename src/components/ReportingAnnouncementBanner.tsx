@@ -93,8 +93,8 @@ export const ReportingAnnouncementBanner: React.FC<
         aria-hidden="true"
         className="pointer-events-none absolute bottom-0 left-[39%] right-[15%] top-0 z-0 hidden opacity-75 sm:block"
         style={{
-          // Keep the exact filename used by your current, working component.
-          backgroundImage: "url('/media/vtab-reporting-analytics-bg (1).png')",
+          // Clean URL-safe image filename
+          backgroundImage: "url('/media/vtab-reporting-analytics-bg.png')",
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center 54%',
           backgroundSize: '100% 100%',
