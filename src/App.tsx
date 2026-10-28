@@ -164,6 +164,44 @@ export default function App() {
     trackPageView(activeTab);
   }, [activeTab]);
 
+  // VTAB Reporting banner collapse & docking state
+  const [isReportingBannerDismissed, setIsReportingBannerDismissed] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('vtab_reporting_banner_dismissed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [pillDockedPulse, setPillDockedPulse] = useState(false);
+
+  useEffect(() => {
+    const handleScrollDocking = () => {
+      const scrolled = window.scrollY > 90;
+      if (scrolled !== isScrolledPastHero) {
+        setIsScrolledPastHero(scrolled);
+        if (scrolled && !isReportingBannerDismissed) {
+          setPillDockedPulse(true);
+          setTimeout(() => setPillDockedPulse(false), 1200);
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScrollDocking, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollDocking);
+  }, [isScrolledPastHero, isReportingBannerDismissed]);
+
+  const handleDismissReportingBanner = () => {
+    try {
+      sessionStorage.setItem('vtab_reporting_banner_dismissed', 'true');
+    } catch {}
+    setIsReportingBannerDismissed(true);
+    setPillDockedPulse(true);
+    setTimeout(() => setPillDockedPulse(false), 1400);
+  };
+
+  const showReportingPill = isReportingBannerDismissed || isScrolledPastHero || activeTab !== 'home';
+  const isBannerVisible = !isReportingBannerDismissed && !isScrolledPastHero && activeTab === 'home';
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
@@ -247,9 +285,12 @@ export default function App() {
           setActiveTab={handleNavigateTab}
           onOpenDemoModal={handleOpenDemoModal}
           onOpenSandboxModal={() => setIsSandboxModalOpen(true)}
+          onSelectProduct={handleSelectProduct}
           isLightMode={isLightMode}
           onToggleTheme={toggleTheme}
           isOverHero={(activeTab === 'home' || activeTab === 'products') && !selectedProduct}
+          showReportingPill={showReportingPill}
+          isPillDockedPulse={pillDockedPulse}
         />
       )}
 
@@ -288,7 +329,10 @@ export default function App() {
               onExploreProducts={handleExploreProducts}
               onScheduleDemo={handleOpenDemoModal}
               onOpenSandbox={() => { setIsSandboxModalOpen(true); trackClick('Open Sandbox (Hero)'); }}
+              onSelectProduct={handleSelectProduct}
               isLightMode={isLightMode}
+              isBannerVisible={isBannerVisible}
+              onDismissBanner={handleDismissReportingBanner}
             />
             </div>
 

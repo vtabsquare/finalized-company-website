@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ArrowUpRight, Sun, Moon, ChevronDown, Building2, Briefcase, Mail, ShieldCheck } from 'lucide-react';
-import { NavTab } from '../types';
+import { Menu, X, ArrowUpRight, ArrowRight, Sparkle, Sun, Moon, ChevronDown, Building2, Briefcase, Mail, ShieldCheck } from 'lucide-react';
+import { NavTab, Product } from '../types';
+import { PRODUCTS_DATA } from '../data/contentData';
 import { trackClick } from '../lib/analyticsService';
 
 interface NavbarProps {
@@ -8,9 +9,12 @@ interface NavbarProps {
   setActiveTab: (tab: NavTab) => void;
   onOpenDemoModal: (interestArea?: string) => void;
   onOpenSandboxModal: () => void;
+  onSelectProduct?: (product: Product) => void;
   isLightMode?: boolean;
   onToggleTheme?: () => void;
   isOverHero?: boolean;
+  showReportingPill?: boolean;
+  isPillDockedPulse?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -18,9 +22,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   onOpenDemoModal,
   onOpenSandboxModal,
+  onSelectProduct,
   isLightMode = false,
   onToggleTheme,
-  isOverHero = false
+  isOverHero = false,
+  showReportingPill = true,
+  isPillDockedPulse = false
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -99,6 +106,18 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
+  const handleReportingClick = () => {
+    trackClick('Navbar: VTAB Reporting Button');
+    if (onSelectProduct) {
+      const prod = PRODUCTS_DATA.find(p => p.id === 'ai-reporting-platform');
+      if (prod) {
+        onSelectProduct(prod);
+        return;
+      }
+    }
+    window.location.href = '/architecture/ai-reporting-platform';
+  };
+
   const isSecondaryActive = secondaryNavItems.some(item => item.id === activeTab);
 
   const navActiveClass = useHeroNav && !isLightMode
@@ -148,12 +167,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             : 'bg-[#030712]/40 backdrop-blur-md border-b border-white/5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <button
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-3.5 group text-left cursor-pointer focus:outline-none"
+            className="flex items-center gap-3.5 group text-left cursor-pointer focus:outline-none shrink-0"
             id="vtab-logo-button"
           >
             <div className="flex items-center justify-center relative w-11 h-11 shrink-0">
@@ -176,7 +195,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {/* Editorial Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1 px-4">
             {primaryNavItems.map((item) => {
               const isActive = activeTab === item.id;
               return (
@@ -257,7 +276,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Action CTAs */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-3.5 lg:gap-4 xl:gap-5">
             {/* Dark/Light Mode Switch */}
             {onToggleTheme && (
               <button
@@ -267,6 +286,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id="theme-toggle-btn"
               >
                 {isLightMode ? <Moon className="w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
+              </button>
+            )}
+
+            {/* NEW: VTAB Reporting Capsule Button (Docked when banner collapses) */}
+            {showReportingPill && (
+              <button
+                onClick={handleReportingClick}
+                className={`group relative inline-flex items-center gap-2.5 h-[36px] pl-3 pr-3.5 rounded-full border border-[#007cd6]/70 hover:border-[#00c8ff] bg-gradient-to-r from-[#03122c] via-[#05234d] to-[#0080c6] hover:to-[#0092dd] shadow-[0_0_16px_rgba(0,140,255,0.28)] hover:shadow-[0_0_24px_rgba(0,180,255,0.48)] transition-all duration-300 cursor-pointer text-left whitespace-nowrap active:scale-[0.98] animate-in fade-in zoom-in-95 duration-300 ${
+                  isPillDockedPulse ? 'ring-2 ring-cyan-300 shadow-[0_0_28px_rgba(0,242,254,0.7)] scale-105' : ''
+                }`}
+                id="navbar-reporting-tool-btn"
+                title="Explore VTAB Reporting Application"
+              >
+                <Sparkle className={`w-3.5 h-3.5 text-[#00f2fe] shrink-0 transition-transform duration-300 ${isPillDockedPulse ? 'rotate-45 scale-125' : ''}`} strokeWidth={2.2} />
+                <span className="px-2 py-0.5 rounded-full border border-[#00c8ff]/60 bg-[#03152d] text-[9.5px] font-bold tracking-wider text-[#00e5ff] uppercase leading-none">
+                  NEW
+                </span>
+                <span className="text-[12.5px] font-semibold text-white tracking-wide">
+                  VTAB Reporting
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-white/90 transition-transform duration-300 group-hover:translate-x-0.5 shrink-0" />
               </button>
             )}
 

@@ -28,7 +28,8 @@ interface ProductVideoStreamingPlayerProps {
 }
 
 // High quality tech/AI video loops
-const SUPABASE_MEDIA = 'https://doazlhotvvzmsngjbfne.supabase.co/storage/v1/object/public/product-media';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://wclpchjxdglhinoazxmr.supabase.co';
+const SUPABASE_MEDIA = `${SUPABASE_URL}/storage/v1/object/public/product-media`;
 
 // All entries point at the -web variants: <=1280 wide, 24fps, CRF 28 capped at
 // 1000k with +faststart. The un-suffixed originals run 4.6-7.9 Mbps and stall

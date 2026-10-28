@@ -3,12 +3,18 @@ import { motion } from 'motion/react';
 import { Zap, ArrowRight, Layers, User, ShieldCheck, BarChart2, Triangle, Cloud, Volume2, VolumeX, Database, Gauge, Bot } from 'lucide-react';
 import { useIsMobile } from '../hooks/useIsMobile';
 import TypewriterHeadline from './TypewriterHeadline';
+import { Product } from '../types';
+import { PRODUCTS_DATA } from '../data/contentData';
+import { ReportingAnnouncementBanner } from './ReportingAnnouncementBanner';
 
 interface HeroSectionProps {
   onExploreProducts: () => void;
   onScheduleDemo: (interest?: string) => void;
   onOpenSandbox: () => void;
+  onSelectProduct?: (product: Product) => void;
   isLightMode?: boolean;
+  isBannerVisible?: boolean;
+  onDismissBanner?: () => void;
 }
 
 const HERO_VIDEO_SRC = '/media/videos/new-hero-video.mp4';
@@ -140,7 +146,20 @@ function HeroStatCard({
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreProducts,
   onScheduleDemo,
+  onOpenSandbox,
+  onSelectProduct,
+  isLightMode = false,
+  isBannerVisible = true,
+  onDismissBanner,
 }) => {
+  const handleExploreReporting = () => {
+    const prod = PRODUCTS_DATA.find(p => p.id === 'ai-reporting-platform');
+    if (prod && onSelectProduct) {
+      onSelectProduct(prod);
+    } else {
+      onScheduleDemo('AI Reporting Platform');
+    }
+  };
   const [isMuted, setIsMuted] = useState(true);
   const [statsVisible, setStatsVisible] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -201,9 +220,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[100px] opacity-40" />
       </div>
 
-      {/* Desktop Full-Bleed Video Background (Right Aligned, below Navbar) */}
+      {/* Dedicated Floating Island Row for VTAB Reporting Announcement Banner */}
+      <div className="relative z-20 w-full pt-[69px]">
+        <ReportingAnnouncementBanner
+          onExploreReporting={handleExploreReporting}
+          isLightMode={isLightMode}
+          isVisible={isBannerVisible}
+          onDismiss={onDismissBanner}
+        />
+      </div>
+
+      {/* Desktop Full-Bleed Video Background (Right Aligned, below Banner) */}
       {!isMobile && (
-        <div className="absolute top-[72px] bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
+        <div className="absolute top-[181px] bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
           {/* Left Gradient Mask for text readability */}
           <div className="absolute inset-0 z-10 w-full lg:w-[55%] bg-gradient-to-r from-[#030712] via-[#030712]/80 to-transparent pointer-events-none" />
           
@@ -277,7 +306,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       )}
 
       {/* Main Content Area */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-8 sm:pt-32 sm:pb-12 md:pt-36">
+      <div className="relative z-10 flex-1 flex flex-col justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-8 sm:pt-5 sm:pb-12 md:pt-6">
         <div className="w-full lg:w-[55%] space-y-6 sm:space-y-7 text-left">
             <motion.div
               initial={{ opacity: 0, y: 24 }}

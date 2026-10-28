@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Product } from '../types';
 import { getValidImageUrl } from '../utils/imageFallback';
-import { 
+import {
+  ExternalLink,
   ArrowLeft, 
   Target, 
   Zap,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
+import { VTABReportingDetailPage } from './VTABReportingDetailPage';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -27,6 +29,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   onScheduleDemo,
   isLightMode = false,
 }) => {
+  if (product.id === 'ai-reporting-platform') {
+    return (
+      <VTABReportingDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  const liveUrls: Record<string, string> = {
+    'vtab-meetscribe-ai': 'https://ai-meetscribewebsite-frontend.onrender.com/',
+    'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/'
+  };
+  const liveUrl = liveUrls[product.id];
+
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -192,7 +210,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
                 {/* Action Buttons */}
                 <div className="pt-2">
-                  <button 
+                  {liveUrl && (
+                      <a 
+                        href={liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-3.5 px-6 mb-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:shadow-[0_0_35px_rgba(16,185,129,0.5)] border border-emerald-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                      >
+                        <span>Visit Live Application</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    )}
+                    <button 
                     onClick={() => onScheduleDemo(product.title)}
                     className="w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] border border-cyan-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
