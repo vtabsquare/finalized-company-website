@@ -1,35 +1,31 @@
 import React, { useRef } from 'react';
-import { ArrowUpRight, X } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 interface ReportingAnnouncementBannerProps {
   onExploreReporting: () => void;
   isLightMode?: boolean;
-  isVisible?: boolean;
-  onDismiss?: () => void;
 }
 
 /**
- * VTAB Reporting Announcement Banner
+ * Top announcement banner for VTAB Reporting.
  *
- * Uses the high-impact cyber neon banner artwork (Futuristic Neon Analytics Dashboard Banner.png)
- * on desktop with pixel-aligned interactive CTA button, and responsive vector UI on mobile.
+ * Install asset: public/media/vtab-reporting-analytics-bg.png
+ * The decorative chart is cropped from the supplied reference image.
+ * All copy and the call-to-action are real, accessible React elements.
  */
 export const ReportingAnnouncementBanner: React.FC<
   ReportingAnnouncementBannerProps
-> = ({ onExploreReporting, isLightMode = false, isVisible = true, onDismiss }) => {
+> = ({ onExploreReporting, isLightMode = false }) => {
   const bannerRef = useRef<HTMLElement>(null);
 
-  if (isVisible === false) {
-    return null;
-  }
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const banner = bannerRef.current;
+    if (!banner) return;
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
-    const element = bannerRef.current;
-    if (!element) return;
-    const rect = element.getBoundingClientRect();
-    element.style.setProperty('--spotlight-x', `${event.clientX - rect.left}px`);
-    element.style.setProperty('--spotlight-y', `${event.clientY - rect.top}px`);
-    element.style.setProperty('--spotlight-opacity', '1');
+    const rect = banner.getBoundingClientRect();
+    banner.style.setProperty('--spotlight-x', `${e.clientX - rect.left}px`);
+    banner.style.setProperty('--spotlight-y', `${e.clientY - rect.top}px`);
+    banner.style.setProperty('--spotlight-opacity', '1');
   };
 
   const handleMouseLeave = () => {
@@ -39,151 +35,119 @@ export const ReportingAnnouncementBanner: React.FC<
   return (
     <aside
       ref={bannerRef}
-      aria-label="VTAB Reporting — New Application Announcement"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onClick={onExploreReporting}
-      className={`group/banner relative isolate flex h-[112px] min-h-[112px] w-full items-center overflow-hidden border-y select-none bg-[#010c1f] text-white transition-[border-color,box-shadow] duration-300 cursor-pointer ${
-        isLightMode
-          ? 'border-cyan-400/35 shadow-[0_4px_28px_rgba(6,182,212,0.18)]'
-          : 'border-cyan-500/20 shadow-[0_4px_24px_rgba(0,15,40,0.55)]'
+      aria-label="New application announcement: VTAB Reporting"
+      className={`group/banner relative isolate flex h-[112px] min-h-[112px] w-full items-center overflow-hidden border-y text-white shadow-[0_6px_24px_rgba(4,15,42,0.22)] ${
+        isLightMode ? 'border-blue-400/25' : 'border-cyan-400/20'
       }`}
+      style={{ backgroundColor: '#041330' }}
     >
-      {/*
-        ── DESKTOP DISPLAY (>= 1024px) ──
-        Exact high-impact cyber analytics artwork provided by user.
-        Cropped with zero padding for full-bleed edge-to-edge display.
-      */}
-      <img
-        src="/media/Futuristic Neon Analytics Dashboard Banner.png"
-        alt="Meet VTAB Reporting Announcement"
-        aria-hidden="true"
-        draggable={false}
-        loading="eager"
-        className="pointer-events-none absolute inset-0 hidden h-full w-full select-none lg:block"
-        style={{ objectFit: 'fill' }}
-      />
-
-      {/* Screen reader announcement for assistive technologies */}
-      <div className="sr-only lg:block">
-        New application. Meet VTAB Reporting. Turn complex data into clear,
-        actionable insights.
-      </div>
-
-      {/*
-        ── DESKTOP INTERACTIVE BUTTON OVERLAY ──
-        Calibrated to the exact position of the "Explore Reporting Tool ↗" button in the artwork.
-        Includes hover glow, cursor pointer, and keyboard accessibility.
-      */}
-      <button
-        id="explore-reporting-tool-btn"
-        type="button"
-        aria-label="Explore Reporting Tool"
-        onClick={(e) => {
-          e.stopPropagation();
-          onExploreReporting();
-        }}
-        className="absolute right-[1.95%] top-[31%] z-20 hidden h-[58%] w-[13.4%] min-w-[170px] cursor-pointer rounded-full border border-transparent bg-transparent transition-all duration-200 hover:border-cyan-300/40 hover:bg-white/[0.05] hover:shadow-[0_0_24px_rgba(0,210,255,0.45)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 active:scale-[0.98] lg:block"
-        title="Explore VTAB Reporting Tool"
-      />
-
-      {/*
-        ── TABLET & MOBILE DISPLAY (< 1024px) ──
-        High-clarity native UI with glowing cyber backdrop from the artwork.
-      */}
+      {/* Full-width navy -> blue -> muted violet background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 lg:hidden"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            'linear-gradient(90deg, #001526 0%, #020b22 42%, #031a38 75%, #001126 100%)',
+            'linear-gradient(103deg, #062454 0%, #04142f 31%, #041631 58%, #101a51 79%, #3c155d 100%)',
         }}
       />
-      <img
-        src="/media/Futuristic Neon Analytics Dashboard Banner.png"
-        alt=""
+
+      {/* Atmospheric color only, not separate floating dashboard panels */}
+      <div
         aria-hidden="true"
-        draggable={false}
-        loading="eager"
-        className="pointer-events-none absolute inset-y-0 right-0 h-full w-3/4 max-w-none object-cover object-right opacity-70 lg:hidden"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
-          maskImage: 'linear-gradient(to right, transparent 0%, black 45%, black 100%)',
+          background:
+            'radial-gradient(ellipse 44% 115% at -5% 0%, rgba(0,176,255,.27), transparent 73%), radial-gradient(ellipse 35% 130% at 100% -24%, rgba(218,69,252,.27), transparent 78%)',
+        }}
+      />
+
+      {/* Real reference analytics, blended into the banner behind content.
+          The left fade and slight blur match the supplied design. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 top-0 left-[39%] right-[15%] z-0 hidden opacity-75 sm:block"
+        style={{
+          backgroundImage: "url('/media/vtab-reporting-analytics-bg.png')",
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center 54%',
+          backgroundSize: '100% 100%',
+          filter: 'blur(1.7px)',
           WebkitMaskImage:
-            'linear-gradient(to right, transparent 0%, black 45%, black 100%)',
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 lg:hidden"
-        style={{
-          background:
-            'linear-gradient(90deg, rgba(1,9,25,0.85) 0%, rgba(1,9,25,0.65) 45%, rgba(1,9,25,0.15) 75%, transparent 100%)',
+            'linear-gradient(to right, transparent 0%, #000 29%, #000 82%, transparent 100%)',
+          maskImage:
+            'linear-gradient(to right, transparent 0%, #000 29%, #000 82%, transparent 100%)',
         }}
       />
 
-      {/* Interactive cursor spotlight effect */}
+      {/* Keep the main copy readable and let the charts emerge on the right. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            'linear-gradient(to right, rgba(2,11,32,.16) 0%, rgba(2,11,32,.15) 39%, transparent 66%)',
+        }}
+      />
+
+      {/* Very subtle interactive glow: does not disturb the minimal layout */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
         style={{
           opacity: 'var(--spotlight-opacity, 0)',
           background:
-            'radial-gradient(circle 380px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(0,242,254,0.10), transparent 75%)',
+            'radial-gradient(350px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(91,153,255,.12), transparent 70%)',
         }}
       />
 
-      {/* Native typography and interactive CTA for touch screens */}
-      <div className="relative z-10 mx-auto flex h-full w-full items-center justify-between gap-3 px-3 sm:px-5 lg:px-7 lg:hidden">
-        <div className="flex min-w-0 items-center gap-2.5 sm:gap-4">
-          <div className="hidden shrink-0 items-center gap-1.5 rounded-full border border-cyan-400/80 bg-[#031a39]/80 px-2.5 py-1.5 shadow-[0_0_12px_rgba(0,220,255,0.15)] sm:inline-flex">
-            <span className="h-2 w-2 rounded-full bg-[#00e8f6] shadow-[0_0_10px_#00e8f6]" />
-            <span className="whitespace-nowrap text-[9px] sm:text-[10px] font-bold tracking-[0.14em] text-cyan-200">
-              NEW APPLICATION
+      {/* Faint top and bottom edge highlights */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-gradient-to-r from-cyan-400/40 via-blue-400/15 to-fuchsia-400/40" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-px bg-gradient-to-r from-transparent via-sky-400/15 to-transparent" />
+
+      {/* Foreground layout: badge | product message | CTA */}
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1840px] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 lg:gap-7 lg:px-10">
+        <div className="flex min-w-0 items-center gap-4 sm:gap-5 lg:gap-6">
+          {/* Status indicator: intentionally small and refined */}
+          <div className="hidden shrink-0 items-center gap-2.5 rounded-full border border-cyan-400/70 bg-[#031c45]/50 px-3.5 py-2 shadow-[0_0_15px_rgba(0,187,255,.09)] backdrop-blur-sm md:inline-flex">
+            <span className="relative flex h-2 w-2 items-center justify-center">
+              <span className="absolute inline-flex h-2.5 w-2.5 animate-ping rounded-full bg-cyan-300/30 motion-reduce:animate-none" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_9px_rgba(34,211,238,.8)]" />
+            </span>
+            <span className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[.16em] text-cyan-200 lg:text-[11px]">
+              New Application
             </span>
           </div>
 
           <div className="min-w-0">
-            <h2 className="flex flex-wrap items-center gap-x-1.5 text-[13px] sm:text-[16px] leading-tight font-bold tracking-tight">
+            <h2 className="flex flex-wrap items-baseline gap-x-1.5 text-[18px] font-bold leading-tight tracking-tight text-white sm:text-[20px] lg:text-[23px] xl:text-[25px]">
               <span>Meet</span>
-              <span className="bg-gradient-to-r from-[#00eaf3] to-[#24b5fa] bg-clip-text font-extrabold text-transparent">
+              <span className="whitespace-nowrap bg-gradient-to-r from-[#17c8fd] via-[#539bfc] to-[#e668e9] bg-clip-text font-extrabold text-transparent">
                 VTAB Reporting
               </span>
             </h2>
-            <p className="mt-0.5 sm:mt-1 max-w-[340px] text-[10px] sm:text-xs leading-snug text-slate-200/90 truncate sm:whitespace-normal">
+            <p className="mt-1 hidden max-w-[500px] text-[11px] leading-snug text-slate-200/90 sm:block lg:text-[12.5px]">
               Turn complex data into clear, actionable insights.
             </p>
           </div>
         </div>
 
         <button
-          id="explore-reporting-tool-btn-mobile"
+          id="explore-reporting-tool-btn"
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onExploreReporting();
-          }}
-          className="group/cta relative inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#2355e5] to-[#00c8ec] px-3 py-2 text-[11px] font-semibold text-white shadow-[0_0_18px_rgba(0,210,255,0.35)] transition duration-200 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 active:scale-[0.98] sm:px-4 sm:py-2.5 sm:text-xs"
+          onClick={onExploreReporting}
+          aria-label="Explore VTAB Reporting Tool"
+          className="group/cta relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl border border-white/15 bg-gradient-to-r from-[#00aaf4] via-[#477ffc] to-[#db4ce7] px-3.5 py-2.5 text-[12px] font-semibold text-white shadow-[0_0_22px_rgba(112,84,247,.38)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(160,75,243,.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#041330] active:translate-y-0 active:scale-[.98] sm:px-5 sm:py-3 sm:text-[13px] lg:px-6"
         >
-          <span className="sm:hidden">Explore</span>
-          <span className="hidden whitespace-nowrap sm:inline">Explore Reporting Tool</span>
-          <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 transition-transform group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5" />
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-70" />
+          <span className="relative hidden whitespace-nowrap sm:inline">
+            Explore Reporting Tool
+          </span>
+          <span className="relative whitespace-nowrap sm:hidden">Explore</span>
+          <ArrowUpRight className="relative h-4 w-4 shrink-0 transition-transform duration-200 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5" />
         </button>
       </div>
-
-      {/* Optional dismiss button if dismissal is supported */}
-      {onDismiss && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDismiss();
-          }}
-          className="absolute top-2 right-2 z-30 p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition"
-          aria-label="Dismiss banner"
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
-      )}
     </aside>
   );
 };
