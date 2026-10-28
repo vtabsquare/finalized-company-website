@@ -9,9 +9,12 @@ import {
   Download,
   Zap,
   LayoutDashboard,
-  Activity,
   Sparkles
 } from 'lucide-react';
+
+// ── Background video: same source as the homepage ──
+const HERO_VIDEO_SRC = '/media/videos/new-hero-video.mp4';
+const HERO_VIDEO_POSTER = '/media/videos/company-overview-poster.jpg';
 
 interface VTABHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
@@ -40,7 +43,61 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
 
-  // ── Live Video Player State ──
+  // ── Background video state (matches homepage implementation) ──
+  const bgVideoRef = useRef<HTMLVideoElement>(null);
+  const [isBgMuted, setIsBgMuted] = useState(true);
+  const [isBgVideoReady, setIsBgVideoReady] = useState(false);
+
+  // Keep bg video muted prop in sync
+  useEffect(() => {
+    const v = bgVideoRef.current;
+    if (!v) return;
+    v.muted = isBgMuted;
+  }, [isBgMuted]);
+
+  // Respect prefers-reduced-motion — skip autoplay if user prefers it
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Desktop Release Configuration via Environment Variables (.env) ──
+  const ENV_DOWNLOAD_URL = (import.meta.env.VITE_REPORTING_TOOL_DOWNLOAD_URL as string | undefined)?.trim() || '';
+  const ENV_VERSION = (import.meta.env.VITE_REPORTING_TOOL_VERSION as string | undefined)?.trim() || '';
+  const ENV_REPO = (import.meta.env.VITE_REPORTING_TOOL_GITHUB_REPO as string | undefined)?.trim() || 'vtabsquare/Reporting-tool-desktop-releases';
+
+  const GITHUB_API = `https://api.github.com/repos/${ENV_REPO}/releases/latest`;
+  const DEFAULT_PAGE = ENV_DOWNLOAD_URL || `https://github.com/${ENV_REPO}/releases/latest`;
+
+  const [releaseUrl, setReleaseUrl] = useState(DEFAULT_PAGE);
+  const [releaseVersion, setReleaseVersion] = useState(ENV_VERSION || 'v5.0.22');
+  const [releaseLoading, setReleaseLoading] = useState(!ENV_DOWNLOAD_URL);
+
+  useEffect(() => {
+    // If a direct .exe link or custom download URL is specified in .env, use it directly!
+    if (ENV_DOWNLOAD_URL && !ENV_DOWNLOAD_URL.endsWith('/releases/latest')) {
+      setReleaseUrl(ENV_DOWNLOAD_URL);
+      if (ENV_VERSION) setReleaseVersion(ENV_VERSION);
+      setReleaseLoading(false);
+      return;
+    }
+
+    // Automatically fetch the latest .exe installer asset from GitHub Releases
+    fetch(GITHUB_API)
+      .then((res) => res.json())
+      .then((data) => {
+        const exeAsset = data.assets?.find((a: { name: string; browser_download_url: string }) =>
+          a.name.toLowerCase().endsWith('.exe')
+        );
+        if (exeAsset?.browser_download_url) {
+          setReleaseUrl(exeAsset.browser_download_url);
+        }
+        if (data.tag_name && !ENV_VERSION) {
+          setReleaseVersion(data.tag_name);
+        }
+      })
+      .catch(() => { /* fallback: keep releases page link */ })
+      .finally(() => setReleaseLoading(false));
+  }, [ENV_DOWNLOAD_URL, ENV_VERSION, GITHUB_API]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
@@ -144,6 +201,83 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
       style={{ background: '#020611' }}
     >
       {/* ─────────────────────────────────────────────────────────────
+          0. HOMEPAGE-STYLE FULL-BLEED BACKGROUND VIDEO
+             Same source, same treatment as HeroSection.tsx.
+             Sits at z-0, pointer-events-none so content stays interactive.
+         ───────────────────────────────────────────────────────────── */}
+      {!prefersReducedMotion && (
+        <div className="absolute inset-0 z-0 flex justify-end pointer-events-none">
+          {/* Left gradient mask — keeps the left content readable */}
+          <div className="absolute inset-0 z-10 w-full lg:w-[55%] bg-gradient-to-r from-[#020611] via-[#020611]/85 to-transparent pointer-events-none" />
+
+          {/* Bottom gradient fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-48 z-10 bg-gradient-to-t from-[#020611] via-[#020611]/60 to-transparent pointer-events-none" />
+
+          {/* Video wrapper — right-aligned, masked on its left edge */}
+          <div
+            className="relative h-full w-full lg:w-[70%] z-0"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent 0%, black 22%, black 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 22%, black 100%)',
+            }}
+          >
+            {/* Static poster shown until video is fully buffered */}
+            <img
+              src={HERO_VIDEO_POSTER}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                isBgVideoReady ? 'opacity-0' : 'opacity-100'
+              }`}
+              alt=""
+              aria-hidden="true"
+            />
+
+            {/* Background video — exact homepage treatment */}
+            <div
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                isBgVideoReady ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <video
+                ref={bgVideoRef}
+                className="w-full h-full object-cover"
+                src={HERO_VIDEO_SRC}
+                loop
+                muted={isBgMuted}
+                playsInline
+                preload="auto"
+                aria-hidden="true"
+                onCanPlay={() => {
+                  setIsBgVideoReady(true);
+                  const v = bgVideoRef.current;
+                  if (!v) return;
+                  v.play().catch(() => {
+                    // Autoplay blocked; ensure we stay muted and retry
+                    setIsBgMuted(true);
+                    v.muted = true;
+                    v.play().catch(() => {});
+                  });
+                }}
+                style={{
+                  willChange: 'transform',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Sound toggle button — top-right, matches homepage style */}
+          <button
+            type="button"
+            onClick={() => setIsBgMuted(m => !m)}
+            className="absolute top-6 right-8 z-30 w-12 h-12 rounded-full bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl pointer-events-auto"
+            aria-label={isBgMuted ? 'Unmute background video' : 'Mute background video'}
+          >
+            {isBgMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </button>
+        </div>
+      )}
+      {/* ─────────────────────────────────────────────────────────────
           1. 3D ATMOSPHERIC STAGE (WITH TASTEFUL DEPTH BLUR)
          ───────────────────────────────────────────────────────────── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -208,7 +342,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
           {/* ── LEFT COLUMN: TITLE, PARAGRAPH, DOWNLOAD CTA, FEATURE BADGES ── */}
-          <div className="lg:col-span-7 text-left space-y-6">
+          <div className="lg:col-span-5 text-left space-y-6">
 
             {/* Top Tagline Pill */}
             <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/35 text-xs font-semibold text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
@@ -243,17 +377,19 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
 
             {/* Action Buttons: Download Desktop + Interactive Demo */}
             <div className="flex flex-wrap items-center gap-3.5 pt-2">
-              <button
-                type="button"
-                onClick={onOpenDownload}
-                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95"
+              <a
+                href={releaseUrl}
+                download
+                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95 no-underline"
               >
                 <Download className="w-4 h-4" />
-                <span>Download Desktop v5.0.22</span>
+                <span>
+                  {releaseLoading ? 'Download Desktop' : `Download Desktop ${releaseVersion}`}
+                </span>
                 <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-white/20 text-white border border-white/30 backdrop-blur-sm">
                   Win 64-bit
                 </span>
-              </button>
+              </a>
 
               <button
                 type="button"
@@ -287,7 +423,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
           </div>
 
           {/* ── RIGHT COLUMN: LIVE APPLICATION VIDEO STAGE ── */}
-          <div className="lg:col-span-5 relative">
+          <div className="lg:col-span-7 relative">
 
             {/* Ambient Backlight Glow behind Video Stage */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-2xl rounded-3xl pointer-events-none" />
@@ -299,23 +435,6 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
               onMouseLeave={() => setIsHovered(false)}
             >
               
-              {/* Top Console Titlebar */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#07132a]/95 text-xs font-mono">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                  <span className="ml-2 text-slate-200 text-[11px] font-semibold tracking-wide">
-                    VTAB Reporting Studio · Live Interactive Preview
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/70 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Live Video
-                  </span>
-                </div>
-              </div>
 
               {/* Video Player Stage */}
               <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
@@ -332,6 +451,23 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
                   onClick={togglePlay}
                   className="w-full h-full object-cover cursor-pointer"
                 />
+
+                {/* Corner Blur Vignette — immersive edge softening */}
+                <div className="absolute inset-0 pointer-events-none z-10">
+                  {/* Top-left */}
+                  <div className="absolute top-0 left-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-br-full" />
+                  {/* Top-right */}
+                  <div className="absolute top-0 right-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-bl-full" />
+                  {/* Bottom-left */}
+                  <div className="absolute bottom-0 left-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-tr-full" />
+                  {/* Bottom-right */}
+                  <div className="absolute bottom-0 right-0 w-28 h-28 bg-[#050c1e] opacity-70 blur-2xl rounded-tl-full" />
+                  {/* Thin edge feathers — top / bottom / left / right */}
+                  <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[#050c1e]/60 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#050c1e]/60 to-transparent" />
+                  <div className="absolute top-0 left-0 bottom-0 w-6 bg-gradient-to-r from-[#050c1e]/50 to-transparent" />
+                  <div className="absolute top-0 right-0 bottom-0 w-6 bg-gradient-to-l from-[#050c1e]/50 to-transparent" />
+                </div>
 
                 {/* Center Play Indicator when paused */}
                 {!isPlaying && (
@@ -425,14 +561,6 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
 
               </div>
 
-              {/* Bottom Quick Feature Strip */}
-              <div className="px-4 py-2.5 border-t border-white/10 bg-[#060e22]/95 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span className="flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Real-Time Interaction Engine</span>
-                </span>
-                <span className="text-cyan-400 font-semibold">1080p · 60 FPS</span>
-              </div>
 
             </div>
 

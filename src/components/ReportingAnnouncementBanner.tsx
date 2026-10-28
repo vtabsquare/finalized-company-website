@@ -7,24 +7,22 @@ interface ReportingAnnouncementBannerProps {
 }
 
 /**
- * Top announcement banner for VTAB Reporting.
- *
- * Install asset: public/media/vtab-reporting-analytics-bg.png
- * The decorative chart is cropped from the supplied reference image.
- * All copy and the call-to-action are real, accessible React elements.
+ * VTAB Reporting announcement banner.
+ * Background asset: public/media/vtab-reporting-analytics-bg (1).png
+ * The headline, badge and CTA remain real React elements.
  */
 export const ReportingAnnouncementBanner: React.FC<
   ReportingAnnouncementBannerProps
 > = ({ onExploreReporting, isLightMode = false }) => {
   const bannerRef = useRef<HTMLElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     const banner = bannerRef.current;
     if (!banner) return;
 
-    const rect = banner.getBoundingClientRect();
-    banner.style.setProperty('--spotlight-x', `${e.clientX - rect.left}px`);
-    banner.style.setProperty('--spotlight-y', `${e.clientY - rect.top}px`);
+    const bounds = banner.getBoundingClientRect();
+    banner.style.setProperty('--spotlight-x', `${event.clientX - bounds.left}px`);
+    banner.style.setProperty('--spotlight-y', `${event.clientY - bounds.top}px`);
     banner.style.setProperty('--spotlight-opacity', '1');
   };
 
@@ -38,12 +36,39 @@ export const ReportingAnnouncementBanner: React.FC<
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-label="New application announcement: VTAB Reporting"
-      className={`group/banner relative isolate flex h-[112px] min-h-[112px] w-full items-center overflow-hidden border-y text-white shadow-[0_6px_24px_rgba(4,15,42,0.22)] ${
-        isLightMode ? 'border-blue-400/25' : 'border-cyan-400/20'
+      className={`group/banner relative isolate flex h-[112px] min-h-[112px] w-full items-center overflow-hidden border-y text-white ${
+        isLightMode ? 'border-cyan-300/30' : 'border-cyan-400/25'
       }`}
-      style={{ backgroundColor: '#041330' }}
+      style={{
+        backgroundColor: '#041330',
+        // Outer glow is intentionally restrained so it still looks like a premium SaaS UI.
+        boxShadow:
+          '0 -2px 16px rgba(0, 199, 255, .20), 0 3px 18px rgba(148, 65, 255, .20), 0 0 0 1px rgba(45, 170, 255, .10), inset 0 1px 0 rgba(120, 231, 255, .16), inset 0 -1px 0 rgba(225, 100, 255, .14)',
+      }}
     >
-      {/* Full-width navy -> blue -> muted violet background */}
+      <style>{`
+        @keyframes vtabBorderSweep {
+          from { transform: translateX(0); }
+          to   { transform: translateX(390%); }
+        }
+        @keyframes vtabBorderBreathe {
+          0%, 100% { opacity: 0.45; }
+          50%      { opacity: 0.78; }
+        }
+        .vtab-banner-border-beam {
+          animation: vtabBorderSweep 8s linear infinite;
+          will-change: transform;
+        }
+        .vtab-banner-border-glow {
+          animation: vtabBorderBreathe 4s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .vtab-banner-border-beam,
+          .vtab-banner-border-glow { animation: none; }
+        }
+      `}</style>
+
+      {/* Background: navy on left, violet on right */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
@@ -53,7 +78,7 @@ export const ReportingAnnouncementBanner: React.FC<
         }}
       />
 
-      {/* Atmospheric color only, not separate floating dashboard panels */}
+      {/* Color atmosphere to frame the main copy and the CTA */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
@@ -63,17 +88,17 @@ export const ReportingAnnouncementBanner: React.FC<
         }}
       />
 
-      {/* Real reference analytics, blended into the banner behind content.
-          The left fade and slight blur match the supplied design. */}
+      {/* Subtle dashboard visual, faded at the left and right edges */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 top-0 left-[39%] right-[15%] z-0 hidden opacity-75 sm:block"
+        className="pointer-events-none absolute bottom-0 left-[39%] right-[15%] top-0 z-0 hidden opacity-75 sm:block"
         style={{
-          backgroundImage: "url('/media/vtab-reporting-analytics-bg.png')",
+          // Keep the exact filename used by your current, working component.
+          backgroundImage: "url('/media/vtab-reporting-analytics-bg (1).png')",
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center 54%',
           backgroundSize: '100% 100%',
-          filter: 'blur(1.7px)',
+          filter: 'blur(0px)',
           WebkitMaskImage:
             'linear-gradient(to right, transparent 0%, #000 29%, #000 82%, transparent 100%)',
           maskImage:
@@ -81,7 +106,7 @@ export const ReportingAnnouncementBanner: React.FC<
         }}
       />
 
-      {/* Keep the main copy readable and let the charts emerge on the right. */}
+      {/* Keep the heading readable over the analytics */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
@@ -91,10 +116,10 @@ export const ReportingAnnouncementBanner: React.FC<
         }}
       />
 
-      {/* Very subtle interactive glow: does not disturb the minimal layout */}
+      {/* Subtle cursor glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+        className="pointer-events-none absolute inset-0 z-[1] transition-opacity duration-300"
         style={{
           opacity: 'var(--spotlight-opacity, 0)',
           background:
@@ -102,14 +127,65 @@ export const ReportingAnnouncementBanner: React.FC<
         }}
       />
 
-      {/* Faint top and bottom edge highlights */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-gradient-to-r from-cyan-400/40 via-blue-400/15 to-fuchsia-400/40" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-px bg-gradient-to-r from-transparent via-sky-400/15 to-transparent" />
+      {/* NEON BORDER SYSTEM: crisp gradients + blurred spill + moving highlights */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-[2px]"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(0,229,255,.12) 0%, #00dfff 16%, #3895ff 47%, #986bff 74%, #f060e8 94%, rgba(240,96,232,.2) 100%)',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="vtab-banner-border-glow pointer-events-none absolute inset-x-0 -top-[8px] z-[4] h-[20px] blur-[9px]"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(0,225,255,.25), rgba(55,134,255,.50) 47%, rgba(223,72,244,.48))',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[2px]"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(0,229,255,.15) 0%, #05cbf6 20%, #4777ff 52%, #b75dff 79%, #ee67dd 96%, rgba(240,96,232,.18) 100%)',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="vtab-banner-border-glow pointer-events-none absolute -bottom-[9px] inset-x-0 z-[4] h-[21px] blur-[9px]"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(0,225,255,.28), rgba(78,124,255,.48) 47%, rgba(223,72,244,.48))',
+          animationDelay: '-2s',
+        }}
+      />
 
-      {/* Foreground layout: badge | product message | CTA */}
+      {/* One slim glint sweeps each border without flashing the content */}
+      <div
+        aria-hidden="true"
+        className="vtab-banner-border-beam pointer-events-none absolute -left-[35%] top-0 z-[6] h-[2px] w-[35%]"
+        style={{
+          background:
+            'linear-gradient(to right, transparent, rgba(255,255,255,.08) 17%, rgba(255,255,255,.95) 50%, rgba(255,255,255,.08) 83%, transparent)',
+          boxShadow: '0 0 10px rgba(91,206,255,.45)',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="vtab-banner-border-beam pointer-events-none absolute -left-[35%] bottom-0 z-[6] h-[2px] w-[35%]"
+        style={{
+          background:
+            'linear-gradient(to right, transparent, rgba(255,255,255,.06) 17%, rgba(255,255,255,.85) 50%, rgba(255,255,255,.06) 83%, transparent)',
+          boxShadow: '0 0 10px rgba(181,107,255,.45)',
+          animationDelay: '-4s',
+        }}
+      />
+
+      {/* Foreground content remains unchanged and clickable */}
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[1840px] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 lg:gap-7 lg:px-10">
         <div className="flex min-w-0 items-center gap-4 sm:gap-5 lg:gap-6">
-          {/* Status indicator: intentionally small and refined */}
           <div className="hidden shrink-0 items-center gap-2.5 rounded-full border border-cyan-400/70 bg-[#031c45]/50 px-3.5 py-2 shadow-[0_0_15px_rgba(0,187,255,.09)] backdrop-blur-sm md:inline-flex">
             <span className="relative flex h-2 w-2 items-center justify-center">
               <span className="absolute inline-flex h-2.5 w-2.5 animate-ping rounded-full bg-cyan-300/30 motion-reduce:animate-none" />

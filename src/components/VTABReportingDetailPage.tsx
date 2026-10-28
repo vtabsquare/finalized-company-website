@@ -118,22 +118,22 @@ export const VTABReportingDetailPage: React.FC<VTABReportingDetailPageProps> = (
         isLightMode={isLightMode}
       />
 
-      {/* ── 3. PRODUCT WORKFLOW OVERVIEW (MANAGER'S NEW SECTION) ── */}
-      <WorkflowSection />
-
-      {/* ── 4. INTERACTIVE FEATURES TABBED SHOWCASE (MANAGER'S NEW SECTION) ── */}
-      <FeatureShowcase />
-
-      {/* ── 5. IMMERSIVE ZIGZAG ARCHITECTURAL DEEP-DIVE (MANAGER'S NEW SECTION) ── */}
-      <ZigzagFeatures />
-
-      {/* ── 6. LIVE DASHBOARD SHOWCASE GALLERY (MANAGER'S NEW SECTION) ── */}
+      {/* ── 3. LIVE DASHBOARD SHOWCASE GALLERY ── */}
       <DashboardGallery />
 
-      {/* ── 7. DESKTOP & REPORTING SERVICES ECOSYSTEM (MANAGER'S NEW SECTION) ── */}
+      {/* ── 4. PRODUCT WORKFLOW OVERVIEW ── */}
+      <WorkflowSection />
+
+      {/* ── 5. INTERACTIVE FEATURES TABBED SHOWCASE ── */}
+      <FeatureShowcase />
+
+      {/* ── 6. IMMERSIVE ZIGZAG ARCHITECTURAL DEEP-DIVE ── */}
+      <ZigzagFeatures />
+
+      {/* ── 7. DESKTOP & REPORTING SERVICES ECOSYSTEM ── */}
       <EditionsSection onOpenDownload={() => setDownloadModalOpen(true)} />
 
-      {/* ── 8. FINAL CALL TO ACTION (MANAGER'S NEW SECTION) ── */}
+      {/* ── 8. FINAL CALL TO ACTION ── */}
       <FinalCTA onOpenDownload={() => setDownloadModalOpen(true)} />
 
       {/* ── 9. DOWNLOAD MODAL (MANAGER'S NEW MODAL) ── */}
