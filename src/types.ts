@@ -12,6 +12,7 @@ export interface Product {
   iconName: string;
   featured?: boolean;
   imageUrl?: string;
+  embedUrl?: string;
   demoSnippet?: {
     type: 'chart' | 'code' | 'blueprint' | 'biometric' | 'chat' | '3d';
     previewHeadline: string;
@@ -24,6 +25,7 @@ export interface Product {
     impact: string[];
     videoUrl?: string;
     pptUrl?: string;
+    embedUrl?: string;
   };
 }
 

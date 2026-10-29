@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Product } from '../types';
 import { getValidImageUrl } from '../utils/imageFallback';
 import {
@@ -10,7 +10,10 @@ import {
   Sparkles,
   ArrowRight,
   ChevronDown,
-  Download
+  Download,
+  RotateCcw,
+  Loader2,
+  Globe
 } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
@@ -43,7 +46,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     'vtab-meetscribe-ai': 'https://ai-meetscribewebsite-frontend.onrender.com/',
     'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/'
   };
-  const liveUrl = liveUrls[product.id];
+  const effectiveEmbedUrl = 
+    product.embedUrl || 
+    product.detailContent?.embedUrl || 
+    (product.demoSnippet as any)?.embedUrl || 
+    liveUrls[product.id] || 
+    '';
+
+  const [iframeLoading, setIframeLoading] = useState(true);
+  const [iframeKey, setIframeKey] = useState(0);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -210,18 +221,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
                 {/* Action Buttons */}
                 <div className="pt-2">
-                  {liveUrl && (
-                      <a 
-                        href={liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full py-3.5 px-6 mb-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:shadow-[0_0_35px_rgba(16,185,129,0.5)] border border-emerald-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                      >
-                        <span>Visit Live Application</span>
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    )}
-                    <button 
+                  {effectiveEmbedUrl && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const el = document.getElementById('live-demo-interactive');
+                        if (el) {
+                          const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+                          window.scrollTo({ top: y, behavior: 'smooth' });
+                        }
+                      }}
+                      className="w-full py-3.5 px-6 mb-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:shadow-[0_0_35px_rgba(16,185,129,0.5)] border border-emerald-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                    >
+                      <Globe className="w-4 h-4 text-emerald-100 animate-pulse" />
+                      <span>Launch Interactive Live Sandbox</span>
+                    </button>
+                  )}
+                  <button 
                     onClick={() => onScheduleDemo(product.title)}
                     className="w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] border border-cyan-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
@@ -268,6 +284,103 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
         </div>
       </div>
+
+      {/* ── INTERACTIVE LIVE IFRAME APPLICATION / SANDBOX (BELOW HERO) ── */}
+      {effectiveEmbedUrl && (
+        <section id="live-demo-interactive" className="relative w-full py-16 px-4 sm:px-8 border-b border-white/10 overflow-hidden bg-[#020716]">
+          {/* Ambient Lighting Glows */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[500px] bg-gradient-to-tr from-cyan-500/10 via-indigo-500/10 to-purple-500/10 blur-3xl rounded-full pointer-events-none" />
+
+          <div className="relative z-10 max-w-7xl mx-auto space-y-6">
+            
+            {/* Header / Title Bar */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-cyan-950/70 text-cyan-400 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.25)] mb-2.5">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  Live Interactive Sandbox
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                  Experience {product.title} in Real Time
+                </h2>
+                <p className="text-sm text-slate-300 font-light max-w-2xl mt-1.5 leading-relaxed">
+                  Direct live application telemetry deployed from our production cluster. Interact with features, filters, and real-time processing below.
+                </p>
+              </div>
+
+              {/* Action Buttons: Refresh + Fullscreen / Open external */}
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIframeLoading(true);
+                    setIframeKey(k => k + 1);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-cyan-400/40 shadow-lg transition-all cursor-pointer active:scale-95"
+                  title="Reload sandbox"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Refresh View</span>
+                </button>
+
+                <a
+                  href={effectiveEmbedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 shadow-[0_0_20px_rgba(6,182,212,0.35)] border border-cyan-400/30 transition-all cursor-pointer active:scale-95"
+                >
+                  <span>Open Full Portal</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* Obsidian Glass Console Frame with Iframe */}
+            <div className="relative rounded-2xl md:rounded-3xl border border-cyan-500/35 bg-[#030919] shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(6,182,212,0.15)] overflow-hidden">
+              
+              {/* Top Browser Console Chrome */}
+              <div className="flex items-center justify-between px-4 py-3 bg-[#051126] border-b border-white/10 text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                  <span className="ml-2 text-slate-400 text-[11px] truncate max-w-xs sm:max-w-md">
+                    {effectiveEmbedUrl}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    CONNECTED
+                  </span>
+                </div>
+              </div>
+
+              {/* Iframe Viewport Stage with Loading Spinner */}
+              <div className="relative w-full h-[650px] sm:h-[750px] lg:h-[850px] bg-black flex items-center justify-center">
+                {iframeLoading && (
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#020717]/95 backdrop-blur-sm gap-3">
+                    <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+                    <p className="text-xs font-mono text-cyan-300 tracking-wider uppercase">Connecting to live environment...</p>
+                  </div>
+                )}
+                <iframe
+                  key={iframeKey}
+                  src={effectiveEmbedUrl}
+                  title={`${product.title} Live Interactive Demo`}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                  onLoad={() => setIframeLoading(false)}
+                />
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+      )}
 
       {/* CONTENT BODY: Clean Whitespace, Reduced Gaps */}
       <div id="architecture-details-section" className="w-full max-w-4xl mx-auto px-6 py-10 md:py-14 space-y-12 md:space-y-20">

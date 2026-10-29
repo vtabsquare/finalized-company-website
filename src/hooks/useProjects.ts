@@ -50,6 +50,11 @@ export function useProjects() {
               demoSnippet = undefined;
             }
 
+            const embedUrl = item.embed_url || detailContent?.embedUrl || demoSnippet?.embedUrl || '';
+            if (detailContent && embedUrl && !detailContent.embedUrl) {
+              detailContent.embedUrl = embedUrl;
+            }
+
             return {
               id: item.id,
               title: item.title,
@@ -64,6 +69,7 @@ export function useProjects() {
               iconName: item.icon_name || item.iconName || 'Package',
               featured: item.featured ?? true,
               imageUrl: getValidImageUrl(item.image_url || item.imageUrl, item.category, item.title, item.id),
+              embedUrl,
               demoSnippet,
               detailContent
             };
