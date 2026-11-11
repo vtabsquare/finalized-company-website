@@ -1,0 +1,13 @@
+{
+  // Isolated staging configuration. This Worker is deliberately separate from
+  // vtab-company-website-dev and does not bind vtabsquare.com or any zone route.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vtab-company-website-staging-audit",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
