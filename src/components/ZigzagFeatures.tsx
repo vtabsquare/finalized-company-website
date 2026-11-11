@@ -134,14 +134,14 @@ export const ZigzagFeatures: React.FC = () => {
           </div>
         </div>
 
-        {/* ZIGZAG ROW 3: Semantic Modelling (Text Left, Visual Right) */}
+        {/* ZIGZAG ROW 3: Unified Data Modelling (Text Left, Visual Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center relative">
           <AmbientGlow variant="zigzag-cyan" />
 
           <div className="lg:col-span-6 space-y-6 text-left">
             <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-cyan-400 font-mono">
               <Network className="w-4 h-4 text-cyan-400" />
-              <span>03 · SEMANTIC RELATIONAL MODELLING</span>
+              <span>03 · UNIFIED DATA MODELLING</span>
             </div>
 
             <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -333,14 +333,14 @@ const ZigzagTransformVisual: React.FC = () => {
   );
 };
 
-// 3. Semantic Schema Visual Component
+// 3. Unified Data Model Schema Visual Component
 const ZigzagSchemaVisual: React.FC = () => {
   return (
     <div className="rounded-2xl border border-cyan-500/30 bg-[#090D1A] p-5 sm:p-6 shadow-[0_0_50px_-15px_rgba(6,182,212,0.3)] space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
         <span className="font-semibold text-white flex items-center gap-2">
           <Network className="w-3.5 h-3.5 text-cyan-400" />
-          Semantic Relational Topology
+          Unified Data Model Topology
         </span>
         <span className="text-cyan-400 font-mono text-[11px]">3 Relationships Active</span>
       </div>

@@ -7,10 +7,12 @@ import {
   Maximize2,
   RotateCcw,
   Download,
+  FileText,
   Zap,
   LayoutDashboard,
   Sparkles
 } from 'lucide-react';
+import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
 
 // ── Background video: same source as the homepage ──
 const HERO_VIDEO_SRC = '/media/videos/new-hero-video.mp4';
@@ -98,6 +100,31 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
       .catch(() => { /* fallback: keep releases page link */ })
       .finally(() => setReleaseLoading(false));
   }, [ENV_DOWNLOAD_URL, ENV_VERSION, GITHUB_API]);
+
+  // ── Reporting PPT URL from Supabase ──
+  const ENV_PPT_URL = (import.meta.env.VITE_REPORTING_TOOL_PPT_URL as string | undefined)?.trim() || '';
+  const [reportingPptUrl, setReportingPptUrl] = useState(ENV_PPT_URL);
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    const fetchPpt = () => {
+      supabase
+        .from('products')
+        .select('demo_snippet, detail_content')
+        .eq('id', 'ai-reporting-platform')
+        .single()
+        .then(({ data }) => {
+          const ppt = (data?.demo_snippet as { pptUrl?: string } | null)?.pptUrl 
+                   || (data?.detail_content as { pptUrl?: string } | null)?.pptUrl 
+                   || '';
+          if (ppt) setReportingPptUrl(ppt);
+        })
+        .catch(() => {});
+    };
+
+    fetchPpt();
+    window.addEventListener('focus', fetchPpt);
+    return () => window.removeEventListener('focus', fetchPpt);
+  }, []);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
@@ -406,6 +433,23 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
                 <Play className="w-4 h-4 text-cyan-400 fill-cyan-400/20" />
                 <span>Watch Interactive Demo</span>
               </button>
+
+              <a
+                href={reportingPptUrl || '#'}
+                download={Boolean(reportingPptUrl)}
+                target={reportingPptUrl ? '_blank' : undefined}
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (!reportingPptUrl) {
+                    e.preventDefault();
+                    alert('Presentation deck (PPT) has not been configured yet. You can upload or link the PPT in the Admin Dashboard > Live Dashboards section.');
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-purple-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95 no-underline"
+              >
+                <FileText className="w-4 h-4 text-purple-400" />
+                <span>Download PPT</span>
+              </a>
             </div>
 
             {/* Feature Badges Row */}

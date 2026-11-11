@@ -18,7 +18,7 @@ import type { FeatureItem } from '../typesReporting';
 const categoryIcons = {
   'Data Connectivity': Database,
   'Data Transformation': Workflow,
-  'Semantic Modelling': Network,
+  'Unified Data Modelling': Network,
   'VTAB Measure Engine': Cpu,
   'Interactive Dashboards': LayoutDashboard,
   'Advanced Reporting': FileSpreadsheet,
@@ -147,7 +147,7 @@ const FeatureMockup: React.FC<{ previewType: FeatureItem['previewType'] }> = ({ 
           <span className="text-slate-300 ml-2 font-mono text-[10px]">
             {previewType === 'connectors' && 'VTAB Studio — Connector Catalog'}
             {previewType === 'transform' && 'VTAB Studio — Data Shaping Recipe Canvas'}
-            {previewType === 'model' && 'VTAB Studio — Semantic Relational Graph'}
+            {previewType === 'model' && 'VTAB Studio — Unified Data Model Graph'}
             {previewType === 'engine' && 'VTAB Studio — DAX Formula Compiler & Profiler'}
             {previewType === 'dashboard' && 'VTAB Studio — Live Canvas Visualizer'}
             {previewType === 'paginated' && 'VTAB Studio — Paginated Report Designer'}

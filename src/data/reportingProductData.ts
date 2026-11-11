@@ -29,7 +29,7 @@ export const WORKFLOW_STEPS: WorkflowStep[] = [
   {
     step: '02',
     title: 'Model & Relate',
-    subtitle: 'Visual semantic diagramming',
+    subtitle: 'Visual unified data modelling',
     description: 'Design robust star and snowflake schemas with drag-and-drop cardinalities, role-playing dimensions, and automatic relationship detection.',
     bullets: [
       'Bidirectional cross-filtering and active/inactive pathways',
@@ -103,7 +103,7 @@ export const FEATURE_ITEMS: FeatureItem[] = [
   },
   {
     id: 'modelling',
-    category: 'Semantic Modelling',
+    category: 'Unified Data Modelling',
     shortTag: 'MODEL',
     title: 'High-Density Relational Schema Graph',
     description: 'Build enterprise-grade semantic layers with clear 1:N and N:M cardinality maps, display folders, hierarchies, and security roles.',
