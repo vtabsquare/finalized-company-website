@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  ArrowLeft,
   ArrowUpRight,
   Play
 } from 'lucide-react';
@@ -58,15 +59,31 @@ export const VTABReportingDetailPage: React.FC<VTABReportingDetailPageProps> = (
       }`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Product Brand Indicator */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.22em] text-cyan-400">
-              VTAB Analytics Suite
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60" />
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-widest uppercase border border-cyan-400/40 bg-cyan-950/60 text-cyan-300">
-              v2.4.1 Stable
-            </span>
+          {/* Left: Back to Homepage + Product Brand Indicator */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button
+              type="button"
+              onClick={onBack}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border ${
+                isLightMode
+                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                  : 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border-slate-700/80 hover:border-cyan-400/50'
+              }`}
+              aria-label="Back to Homepage"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Back to Home</span>
+            </button>
+
+            <div className="hidden sm:flex items-center gap-3">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.22em] text-cyan-400">
+                VTAB Analytics Suite
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60" />
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-widest uppercase border border-cyan-400/40 bg-cyan-950/60 text-cyan-300">
+                v2.4.1 Stable
+              </span>
+            </div>
           </div>
 
           {/* Quick Actions */}

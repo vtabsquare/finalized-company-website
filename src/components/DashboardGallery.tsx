@@ -135,7 +135,7 @@ export const DashboardGallery: React.FC = () => {
       {/* Background radial lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-cyan-600/10 blur-[160px] rounded-full pointer-events-none -z-10" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1520px] w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading & Filter Bar */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl text-left space-y-3">
@@ -293,7 +293,7 @@ export const DashboardGallery: React.FC = () => {
               </div>
 
               {/* Live Iframe Body with Loading Overlay */}
-              <div className={`relative w-full ${isFullscreen ? 'flex-1 min-h-[calc(100vh-140px)]' : 'h-[640px] sm:h-[720px] lg:h-[800px]'} bg-[#050711] overflow-hidden`}>
+              <div className={`relative w-full ${isFullscreen ? 'flex-1 min-h-[calc(100vh-140px)] overflow-hidden' : 'h-[820px] min-h-[820px] overflow-auto'} bg-[#050711]`}>
                 {iframeLoading && (
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#070A14]/95 backdrop-blur-sm space-y-4">
                     <div className="relative">
@@ -312,7 +312,7 @@ export const DashboardGallery: React.FC = () => {
                   src={activeDashboard.embedUrl || 'https://reportservices.vtabsquare.com/?workspace=1&report=8682b28d-7505-4fcf-a377-3df8664f6369'}
                   title="VTAB Reporting Services - Retail Sales Analysis Live Dashboard"
                   onLoad={() => setIframeLoading(false)}
-                  className="w-full h-full border-0 bg-[#070A14]"
+                  className={`${isFullscreen ? 'w-full h-full' : 'w-full min-w-[1150px] h-[820px] min-h-[820px]'} border-0 bg-[#070A14] block`}
                   allow="fullscreen; clipboard-read; clipboard-write"
                   sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-modals"
                 />
