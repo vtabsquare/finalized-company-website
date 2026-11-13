@@ -291,7 +291,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* Ambient Lighting Glows */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[500px] bg-gradient-to-tr from-cyan-500/10 via-indigo-500/10 to-purple-500/10 blur-3xl rounded-full pointer-events-none" />
 
-          <div className="relative z-10 max-w-7xl mx-auto space-y-6">
+          <div className="relative z-10 max-w-[1520px] w-full mx-auto space-y-6">
             
             {/* Header / Title Bar */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -357,7 +357,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </div>
 
               {/* Iframe Viewport Stage with Loading Spinner */}
-              <div className="relative w-full h-[650px] sm:h-[750px] lg:h-[850px] bg-black flex items-center justify-center">
+              <div className="relative w-full h-[750px] sm:h-[850px] lg:h-[920px] bg-black flex items-center justify-center">
                 {iframeLoading && (
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#020717]/95 backdrop-blur-sm gap-3">
                     <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
