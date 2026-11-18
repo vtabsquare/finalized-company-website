@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { useProjects } from '../hooks/useProjects';
 import { ProductSlideshow } from './ProductSlideshow';
 import { ScrollReveal } from './animations/ScrollReveal';
 import { getValidImageUrl, handleImageError } from '../utils/imageFallback';
@@ -23,20 +22,31 @@ interface PortfolioSectionProps {
   onSelectProduct: (product: Product) => void;
   onScheduleDemo: (productTitle?: string) => void;
   isLightMode?: boolean;
+  products: Product[];
+  loading: boolean;
 }
 
 export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
   onSelectProduct,
   onScheduleDemo,
-  isLightMode = false
+  isLightMode = false,
+  products,
+  loading,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const { projects: products, loading } = useProjects();
+
+  // Exclude BI dashboards — they have their own dedicated section below
+  const nonBiProducts = products.filter(
+    (p) =>
+      p.category !== 'BI dashboards' &&
+      !p.category.toLowerCase().includes('dashboard') &&
+      !(p.category.toLowerCase() === 'bi')
+  );
 
   const categoriesMap = new Map<string, Set<string>>();
-  products.forEach(p => {
+  nonBiProducts.forEach(p => {
     if (!categoriesMap.has(p.category)) {
       categoriesMap.set(p.category, new Set());
     }
@@ -47,7 +57,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
   
   const mainCategories = ['All', ...Array.from(categoriesMap.keys()).sort()];
 
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = nonBiProducts.filter((product) => {
     const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
     const matchesSub = !selectedSubcategory || product.subcategory === selectedSubcategory;
     const matchesSearch =

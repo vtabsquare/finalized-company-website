@@ -28,21 +28,32 @@ interface ProductVideoStreamingPlayerProps {
 }
 
 // High quality tech/AI video loops
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://wclpchjxdglhinoazxmr.supabase.co';
-const SUPABASE_MEDIA = `${SUPABASE_URL}/storage/v1/object/public/product-media`;
+// The production media bucket with all optimized dashboard & product demo videos is hosted at jqxqujrldlutwgkaqwkb.supabase.co
+const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
+const DEMO_MEDIA = 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos';
 
-// All entries point at the -web variants: <=1280 wide, 24fps, CRF 28 capped at
-// 1000k with +faststart. The un-suffixed originals run 4.6-7.9 Mbps and stall
-// for anyone without a fast connection.
+// All entries point at the -web variants or verified demo videos:
 const STREAMING_VIDEOS: Record<string, string> = {
   'ai-reporting-platform': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
   'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
+  'qlik-to-powerbi': `${DEMO_MEDIA}/qlik-to-powerbi-demo.mp4`,
   'gbti-smart-home-builder': '/media/videos/ai_smart_home_web.mp4',
   'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
+  'buildsmart-360-civil-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
+  'buildsmart': `${DEMO_MEDIA}/Buildsmart%20Demo%20Video.mp4`,
   'faceauth': `${SUPABASE_MEDIA}/faceauth-web.mp4`,
   'packaging-optimization-platform': '/media/videos/ai_logistics_web.mp4',
   'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent-web.mp4`,
-  'postgresql-to-sqlserver-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
+  'l1-automation': `${DEMO_MEDIA}/L1%20Automation%20Demo%20Video.mp4`,
+  'postgresql-to-sqlserver-migration': `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`,
+  'postgres-to-sql': `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`,
+  'qa-ai-autonomous-testing-platform': `${DEMO_MEDIA}/qa-testing-demo.mp4`,
+  'qa-testing-application': `${DEMO_MEDIA}/qa-testing-demo.mp4`,
+  'qa-testing': `${DEMO_MEDIA}/qa-testing-demo.mp4`,
+  'ai-migration-factory-databricks-control-plane': `${DEMO_MEDIA}/SQL%20Server%20To%20Databricks.mp4`,
+  'sql-server-databricks-migration-platform': `${DEMO_MEDIA}/SQL%20Server%20To%20Databricks.mp4`,
+  'smart-invoice-management-system': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
+  'invoice-flow': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
   'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard-web.mp4',
   'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
   'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
@@ -68,12 +79,36 @@ const DEFAULT_VIDEO_POOL = [
 ];
 
 const getVideoForProduct = (id: string, title?: string, customUrl?: string): string => {
-  if (customUrl && customUrl.trim() !== '') return customUrl;
+  // If customUrl is from the unreachable dead project (doazlhotvvzmsngjbfne), fallback to verified video
+  if (customUrl && customUrl.trim() !== '' && !customUrl.includes('doazlhotvvzmsngjbfne')) {
+    return customUrl;
+  }
   
   const cleanId = (id || '').toLowerCase().trim();
   if (STREAMING_VIDEOS[cleanId]) return STREAMING_VIDEOS[cleanId];
 
   const text = `${cleanId} ${title || ''}`.toLowerCase();
+  if (text.includes('qa') || text.includes('testing')) {
+    return `${DEMO_MEDIA}/qa-testing-demo.mp4`;
+  }
+  if (text.includes('databricks') || (text.includes('sql') && text.includes('databricks'))) {
+    return `${DEMO_MEDIA}/SQL%20Server%20To%20Databricks.mp4`;
+  }
+  if (text.includes('postgres') || text.includes('postgresql')) {
+    return `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`;
+  }
+  if (text.includes('buildsmart') || text.includes('civil') || text.includes('estimator') || text.includes('boq')) {
+    return `${SUPABASE_MEDIA}/buildsmart-web.mp4`;
+  }
+  if (text.includes('faceauth') || text.includes('biometric') || text.includes('face')) {
+    return `${SUPABASE_MEDIA}/faceauth-web.mp4`;
+  }
+  if (text.includes('l1') || text.includes('support agent')) {
+    return `${SUPABASE_MEDIA}/l1_agent-web.mp4`;
+  }
+  if (text.includes('qlik')) {
+    return `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`;
+  }
   if (text.includes('sql') || text.includes('db') || text.includes('database') || text.includes('migration')) {
     return `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`;
   }
@@ -222,8 +257,10 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
+        userPausedRef.current = true;
         videoRef.current.pause();
       } else {
+        userPausedRef.current = false;
         videoRef.current.play().catch(() => {});
       }
       setIsPlaying(!isPlaying);
@@ -302,19 +339,27 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       <video
         ref={videoRef}
         src={videoSource}
-        autoPlay={false}
+        autoPlay={true}
         loop={!onVideoEnded}
         onEnded={onVideoEnded}
         muted={isMuted}
         playsInline
-        preload="none"
+        preload="auto"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onLoadedMetadata={() => {
           if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration) && isFinite(videoRef.current.duration)) {
             setDuration(Math.min(30, videoRef.current.duration));
           }
+          if (videoRef.current && !userPausedRef.current) {
+            videoRef.current.play().catch(() => {});
+          }
         }}
         onCanPlay={() => {
           setIsBuffered(true);
+          if (videoRef.current && !userPausedRef.current) {
+            videoRef.current.play().catch(() => {});
+          }
         }}
         style={{
           willChange: 'transform',

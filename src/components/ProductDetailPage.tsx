@@ -1,23 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Product } from '../types';
 import { getValidImageUrl } from '../utils/imageFallback';
 import {
   ExternalLink,
-  ArrowLeft, 
-  Target, 
+  ArrowLeft,
+  ArrowUpRight,
+  Target,
   Zap,
   ShieldCheck,
-  Sparkles,
-  ArrowRight,
   ChevronDown,
   Download,
   RotateCcw,
   Loader2,
-  Globe
+  Globe,
+  Play,
+  FileText
 } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 import { VTABReportingDetailPage } from './VTABReportingDetailPage';
+import { DatabricksMigrationDetailPage } from './DatabricksMigrationDetailPage';
+import { MarketingAgentDetailPage } from './MarketingAgentDetailPage';
+import { L1AutomationAgentDetailPage } from './L1AutomationAgentDetailPage';
+import { FaceAuthDetailPage } from './FaceAuthDetailPage';
+import { HomeScapeDetailPage } from './HomeScapeDetailPage';
+import { QlikMigrationDetailPage } from './QlikMigrationDetailPage';
+import { PostgresMigrationDetailPage } from './PostgresMigrationDetailPage';
+import { BuildsmartEstimatorDetailPage } from './BuildsmartEstimatorDetailPage';
+import { InvoiceFlowDetailPage } from './InvoiceFlowDetailPage';
+import { QATestingDetailPage } from './QATestingDetailPage';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -42,234 +53,428 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     );
   }
 
+  if (product.id === 'ai-migration-factory-databricks-control-plane') {
+    return (
+      <DatabricksMigrationDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'ai-marketing-manager-agent' ||
+    product.id === 'ai-marketing-agent-application' ||
+    product.id === 'ai-marketing-agent' ||
+    product.id === 'ai-marketing-agent-' ||
+    product.id.startsWith('ai-marketing') ||
+    product.title.toLowerCase().includes('marketing agent')
+  ) {
+    return (
+      <MarketingAgentDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'ai-l1-support-agent' ||
+    product.id === 'l1-automation-agent' ||
+    product.id.startsWith('ai-l1') ||
+    product.id.startsWith('l1-') ||
+    product.title.toLowerCase().includes('l1 automation') ||
+    product.title.toLowerCase().includes('l1 support') ||
+    product.title.toLowerCase().includes('l1 agent')
+  ) {
+    return (
+      <L1AutomationAgentDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'faceauth' ||
+    product.id === 'faceauth-enterprise' ||
+    product.id.startsWith('faceauth') ||
+    product.title.toLowerCase().includes('faceauth')
+  ) {
+    return (
+      <FaceAuthDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'gbti-smart-home-builder' ||
+    product.id === 'homescape360' ||
+    product.id.includes('homescape') ||
+    product.id.includes('gbti') ||
+    product.title.toLowerCase().includes('homescape') ||
+    product.title.toLowerCase().includes('smart home builder')
+  ) {
+    return (
+      <HomeScapeDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'qlik-to-powerbi-migration' ||
+    product.id === 'qlik-to-power-bi-migration' ||
+    product.id.includes('qlik') ||
+    product.title.toLowerCase().includes('qlik')
+  ) {
+    return (
+      <QlikMigrationDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'postgresql-to-sqlserver-migration' ||
+    product.id === 'postgres-to-sqlserver-migration' ||
+    product.id.includes('postgresql') ||
+    product.id.includes('postgres') ||
+    product.title.toLowerCase().includes('postgresql') ||
+    product.title.toLowerCase().includes('postgres')
+  ) {
+    return (
+      <PostgresMigrationDetailPage
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  if (
+    product.id === 'buildsmart-estimator' ||
+    product.id === 'buildsmart-360-civil-estimator' ||
+    product.id.includes('buildsmart') ||
+    product.title.toLowerCase().includes('buildsmart') ||
+    product.title.toLowerCase().includes('civil estimator')
+  ) {
+    return (
+      <BuildsmartEstimatorDetailPage
+        onScheduleDemo={() => onScheduleDemo(product.title)}
+      />
+    );
+  }
+
+  if (
+    product.id === 'smart-invoice-management-system' ||
+    product.id === 'invoice-flow' ||
+    product.id === 'vtab-invoice' ||
+    product.id.includes('invoice') ||
+    product.title.toLowerCase().includes('invoice')
+  ) {
+    return (
+      <InvoiceFlowDetailPage
+        onScheduleDemo={() => onScheduleDemo(product.title)}
+      />
+    );
+  }
+
+  if (
+    product.id === 'qa-ai-autonomous-testing-platform' ||
+    product.id === 'qa-testing-application' ||
+    product.id.includes('qa-') ||
+    product.id.includes('qa-testing') ||
+    product.title.toLowerCase().includes('qa-ai') ||
+    product.title.toLowerCase().includes('qa testing') ||
+    product.title.toLowerCase().includes('autonomous testing')
+  ) {
+    return (
+      <QATestingDetailPage
+        onScheduleDemo={() => onScheduleDemo(product.title)}
+      />
+    );
+  }
+
   const liveUrls: Record<string, string> = {
     'vtab-meetscribe-ai': 'https://ai-meetscribewebsite-frontend.onrender.com/',
     'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/'
   };
-  const effectiveEmbedUrl = 
-    product.embedUrl || 
-    product.detailContent?.embedUrl || 
-    (product.demoSnippet as any)?.embedUrl || 
-    liveUrls[product.id] || 
+  const effectiveEmbedUrl =
+    product.embedUrl ||
+    product.detailContent?.embedUrl ||
+    (product.demoSnippet as any)?.embedUrl ||
+    liveUrls[product.id] ||
     '';
 
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeKey, setIframeKey] = useState(0);
 
+  const heroRootRef = useRef<HTMLElement>(null);
+  const heroTarget = useRef({ x: 0, y: 0 });
+
   // Scroll to top on mount
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.title = `${product.title} | VTAB Enterprise Intelligence`;
+  }, [product.title]);
+
+  // Subtle 3D cursor tilt on the hero
+  useEffect(() => {
+    const root = heroRootRef.current;
+    if (!root || (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    let raf = 0, cx = 0, cy = 0;
+    const tick = () => {
+      const { x, y } = heroTarget.current;
+      if (Math.abs(x - cx) > 0.001 || Math.abs(y - cy) > 0.001) {
+        cx += (x - cx) * 0.06;
+        cy += (y - cy) * 0.06;
+        root.style.setProperty('--mx', cx.toFixed(3));
+        root.style.setProperty('--my', cy.toFixed(3));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
-  const detail = product.detailContent;
+  const onHeroMouseMove = (e: React.PointerEvent) => {
+    heroTarget.current = {
+      x: (e.clientX / window.innerWidth - 0.5) * 2,
+      y: (e.clientY / window.innerHeight - 0.5) * 2
+    };
+  };
 
-  const bgClass = isLightMode ? 'bg-white' : 'bg-[#030712]';
+  const detail = product.detailContent;
+  const pptUrl = detail?.pptUrl;
+  const videoUrl = detail?.videoUrl || (product.demoSnippet as any)?.videoUrl;
+
+  const bgClass = isLightMode ? 'bg-slate-50 text-slate-900' : 'bg-[#06080F] text-slate-100';
   const textPrimary = isLightMode ? 'text-slate-900' : 'text-white';
   const textMuted = isLightMode ? 'text-slate-600' : 'text-slate-300';
-  const dividerClass = isLightMode ? 'border-slate-100' : 'border-[#1e293b]';
-  const tagBgClass = isLightMode ? 'bg-slate-100 text-slate-800' : 'bg-white/5 text-slate-200 border border-white/10';
-  
+  const dividerClass = isLightMode ? 'border-slate-200' : 'border-white/10';
+
   return (
-    <div className={`relative w-full min-h-screen font-sans animate-in fade-in duration-700 ${bgClass}`}>
+    <div className={`relative w-full min-h-screen font-sans selection:bg-cyan-500 selection:text-white transition-colors duration-300 ${bgClass}`}>
       
-      {/* Prominent Fixed Back Button */}
-      <div className="fixed top-6 left-4 sm:left-8 z-[100]">
-        <button
-          onClick={onBack}
-          className={`group flex items-center gap-3 px-5 py-2.5 rounded-full transition-all duration-300 cursor-pointer backdrop-blur-xl shadow-2xl ${
-            isLightMode 
-              ? 'bg-white/90 border border-slate-200 text-slate-800 hover:bg-white hover:text-blue-600 hover:border-blue-300 hover:shadow-blue-500/20 hover:-translate-x-1' 
-              : 'bg-slate-900/80 border border-cyan-500/30 text-cyan-50 hover:bg-slate-800 hover:border-cyan-400 hover:shadow-[0_0_25px_rgba(34,211,238,0.25)] hover:-translate-x-1'
-          }`}
-        >
-          <div className={`p-1.5 rounded-full transition-colors ${
-            isLightMode 
-              ? 'bg-slate-100 group-hover:bg-blue-50 text-slate-500 group-hover:text-blue-600' 
-              : 'bg-cyan-950/50 text-cyan-400 group-hover:bg-cyan-900 group-hover:text-cyan-300'
-          }`}>
-            <ArrowLeft className="w-4 h-4" />
-          </div>
-          <span className="text-[13px] font-extrabold tracking-widest uppercase">
-            Back to Portfolio
-          </span>
-        </button>
-      </div>
-
-      {/* HERO SECTION: Obsidian Cybernetic Canvas with Radial LED Light Sources */}
-      <div className="dark-hero-canvas relative w-full pt-20 pb-12 px-4 sm:px-8 bg-gradient-to-b from-[#020617] via-[#050d26] to-[#030712] overflow-hidden border-b border-white/10">
-
-        <div className="relative z-10 max-w-7xl mx-auto space-y-8">
+      {/* ── 1. FIXED FLOATING TOP NAVIGATION BAR (Exact Reporting Tool Pattern) ── */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-xl border-b py-3 px-4 sm:px-8 ${
+        isLightMode
+          ? 'bg-white/90 border-slate-200/80 shadow-sm'
+          : 'bg-[#030712]/85 border-white/10 shadow-2xl'
+      }`}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           
-          {/* AT THE TOP ONLY: PROJECT TITLE & SUMMARY */}
-          <ScrollReveal animation="fade-up" delay={0.1}>
-            <div className="text-center max-w-4xl mx-auto space-y-4">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-cyan-500/10 border border-cyan-500/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs font-extrabold tracking-widest uppercase">Enterprise Telemetry • {product.category}</span>
+          {/* Left: Back to Home + Product Indicator */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button
+              type="button"
+              onClick={onBack}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border ${
+                isLightMode
+                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                  : 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border-slate-700/80 hover:border-cyan-400/50'
+              }`}
+              aria-label="Back to Home"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Back to Home</span>
+            </button>
+
+            <div className="hidden sm:flex items-center gap-3">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.22em] text-cyan-400">
+                VTAB Enterprise Suite
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60" />
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-widest uppercase border border-cyan-400/40 bg-cyan-950/60 text-cyan-300">
+                {product.category || 'AI Solution'}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Action: Schedule Demo (Omitted Try Demo & Download Desktop as requested) */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <button
+              onClick={() => onScheduleDemo(product.title)}
+              className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full text-xs font-extrabold tracking-wider uppercase bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-white shadow-[0_0_20px_rgba(0,210,255,0.6)] hover:shadow-[0_0_28px_rgba(0,210,255,0.85)] transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <span>Schedule Demo</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+        </div>
+      </nav>
+
+      {/* ── 2. HERO SECTION: 2-COLUMN STAGE (MATCHING REPORTING TOOL HERO LAYOUT) ── */}
+      <section
+        ref={heroRootRef}
+        onPointerMove={onHeroMouseMove}
+        onPointerLeave={() => (heroTarget.current = { x: 0, y: 0 })}
+        className="relative overflow-hidden pt-24 pb-16 lg:pt-28 lg:pb-24 min-h-[720px] flex items-center border-b border-white/10"
+        style={{ background: '#020611' }}
+      >
+        {/* Background Radial LED Glows */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-[650px] h-[650px] rounded-full bg-cyan-500/10 blur-[130px]" />
+          <div className="absolute bottom-[-10%] left-[-5%] w-[550px] h-[550px] rounded-full bg-indigo-600/10 blur-[120px]" />
+          <div className="absolute top-[40%] left-[30%] w-[450px] h-[450px] rounded-full bg-purple-500/10 blur-[140px]" />
+          {/* Subtle horizontal laser streak */}
+          <div
+            className="absolute inset-x-[10%] top-[45%] h-px pointer-events-none"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(0,213,242,.25), transparent)', filter: 'blur(.5px)' }}
+          />
+          {/* Smooth bottom transition */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-28 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent, #06080F)' }}
+          />
+        </div>
+
+        <div className="relative z-30 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+
+            {/* ── LEFT COLUMN: TITLE, BADGE, PARAGRAPH, CTA BUTTONS, TECH BADGES ── */}
+            <div className="lg:col-span-4 text-left space-y-6">
+
+              {/* Top Tagline Pill */}
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/35 text-xs font-semibold text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="tracking-wider uppercase text-[11px] font-mono">
+                  ENTERPRISE SOLUTION · {product.category.toUpperCase()}
+                </span>
               </div>
-              
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent font-heading leading-tight drop-shadow-2xl">
+
+              {/* Main Headline */}
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-white tracking-tight leading-[1.14] text-pretty">
                 {product.title}
               </h1>
-              
-              <p className="text-base md:text-lg font-light leading-relaxed text-slate-300 max-w-3xl mx-auto">
-                {product.shortDescription}
+
+              {/* Description Paragraph */}
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
+                {product.fullDescription || product.shortDescription}
               </p>
 
-              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                {product.techStack.map((tech, idx) => (
-                  <span key={idx} className="px-3.5 py-1 text-xs font-bold tracking-wider uppercase rounded-full bg-gradient-to-b from-white/15 to-white/5 text-cyan-300 border border-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:border-cyan-400/50 hover:scale-105 transition-all">
-                    {tech}
+              {/* Impact Callout with Zap */}
+              {product.impactMetric && (
+                <div className="flex items-center gap-2.5 text-xs sm:text-sm text-cyan-300 font-medium">
+                  <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>{product.impactMetric}</span>
+                </div>
+              )}
+
+              {/* Action Buttons: Schedule Demo + (Optional PPT / Sandbox Link) */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => onScheduleDemo(product.title)}
+                  className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95"
+                >
+                  <span>Schedule Technical Demo</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </button>
+
+                {effectiveEmbedUrl && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById('live-demo-interactive');
+                      if (el) {
+                        const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-cyan-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95"
+                  >
+                    <Globe className="w-4 h-4 text-cyan-400" />
+                    <span>Live Interactive Sandbox</span>
+                  </button>
+                )}
+
+                {pptUrl && (
+                  <a
+                    href={pptUrl}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-purple-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95 no-underline"
+                  >
+                    <FileText className="w-4 h-4 text-purple-400" />
+                    <span>Download PPT</span>
+                  </a>
+                )}
+              </div>
+
+              {/* Tech Stack Pills Row */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
+                {product.techStack.map((badge) => (
+                  <span
+                    key={badge}
+                    className="px-3.5 py-1 rounded-full text-[11px] font-medium text-slate-300 border border-slate-700/70 bg-[#081224]/75 backdrop-blur-md"
+                  >
+                    {badge}
                   </span>
                 ))}
               </div>
-            </div>
-          </ScrollReveal>
 
-          {/* BELOW THAT: MASTER 2-COLUMN SHOWCASE (VIDEO LEFT + DETAILS RIGHT) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
-            
-            {/* Left Column (7 cols): Floating Video Frame */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden border border-white/20 bg-slate-950/80 shadow-xl transition-all duration-700 group">
+            </div>
+
+            {/* ── RIGHT COLUMN: HIGH-RES MEDIA / VIDEO STREAMING CONSOLE (ENLARGED) ── */}
+            <div className="lg:col-span-8 relative">
+
+              {/* Ambient Backlight Glow behind Media Stage */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-2xl rounded-3xl pointer-events-none" />
+
+              {/* Obsidian Glass Console Container - Enlarged Dimensions */}
+              <div className="relative rounded-2xl border border-cyan-500/40 bg-[#050c1e]/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(0,213,242,0.2)] overflow-hidden group hover:border-cyan-400/70 transition-all duration-300">
                 
-                {/* Video Stream Viewport */}
-                <div className="relative w-full aspect-video bg-slate-950 overflow-hidden">
+                {/* Console Top Chrome */}
+                <div className="flex items-center justify-between px-4 py-2.5 bg-[#030919]/90 border-b border-white/10 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                    <span className="ml-2 text-slate-400 text-[11px] truncate max-w-xs sm:max-w-md">
+                      {product.title} • Media Console
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-500/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      OPERATIONAL
+                    </span>
+                  </div>
+                </div>
+
+                {/* Media Viewport with min-height */}
+                <div className="relative aspect-video min-h-[380px] sm:min-h-[460px] lg:min-h-[520px] w-full bg-black flex items-center justify-center overflow-hidden">
                   <ProductVideoStreamingPlayer
                     productId={product.id}
                     productTitle={product.title}
                     imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
-                    videoUrl={detail?.videoUrl || (product.demoSnippet as any)?.videoUrl}
+                    videoUrl={videoUrl}
                     compactMode={false}
                   />
                 </div>
-              </div>
 
-              {/* Tabletop Surface Reflection */}
-              <div className="w-[85%] mx-auto h-4 bg-gradient-to-b from-cyan-500/20 via-purple-500/10 to-transparent blur-xl pointer-events-none opacity-70" />
-            </div>
-
-            {/* Right Column (5 cols): Comprehensive Project Details & Overview HUD */}
-            <div className="lg:col-span-5 space-y-6">
-              
-              {/* Executive Cyber Console Card */}
-              <div className="relative p-6 md:p-8 rounded-3xl bg-slate-900/85 border border-white/15 shadow-2xl space-y-6 overflow-hidden">
-                {/* Illuminated Top Neon Line */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 via-purple-500 to-emerald-500" />
-
-                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                  <div>
-                    <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-400">System Architecture</p>
-                    <h3 className="text-xl font-extrabold text-white">Project Overview & Specs</h3>
-                  </div>
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                    <Zap className="w-5 h-5" />
-                  </div>
-                </div>
-
-                {/* Interactive Telemetry Status Pill */}
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-black/50 border border-white/10">
-                  <div className="flex items-center gap-2">
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
-                    </span>
-                    <span className="text-[11px] font-bold text-emerald-400 font-mono tracking-wide">STATUS: OPERATIONAL</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 font-bold">
-                    99.99% SYNC
-                  </span>
-                </div>
-
-                {/* Detailed Explanation / Approach */}
-                <p className="text-sm md:text-base text-slate-200 font-light leading-relaxed">
-                  {detail?.approach || product.fullDescription}
-                </p>
-
-                {/* Key Capabilities Highlights */}
-                <div className="space-y-3 pt-2">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                    <span>Core System Capabilities</span>
-                  </p>
-                  <div className="space-y-2.5">
-                    {(detail?.features ? detail.features.map(f => f.title) : product.keyFeatures).slice(0, 3).map((feat, idx) => (
-                      <div key={idx} className="flex items-start gap-3">
-                        <div className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 shrink-0 text-xs font-bold shadow-[0_0_10px_rgba(16,185,129,0.3)]">✓</div>
-                        <span className="text-sm text-slate-200 font-medium leading-snug">{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* SLA Benchmarks Mini-Grid */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  {(detail?.benchmarks || [
-                    { val: '< 15 ms', label: 'API Latency' },
-                    { val: '99.99%', label: 'Uptime SLA' }
-                  ]).slice(0, 2).map((bm: any, idx: number) => {
-                    const col = idx === 0 ? 'text-cyan-400' : 'text-emerald-400';
-                    const bgCol = idx === 0 ? 'from-cyan-500/5' : 'from-emerald-500/5';
-                    return (
-                      <div key={idx} className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-0.5 relative overflow-hidden group/box">
-                        <div className={`absolute inset-0 bg-gradient-to-br ${bgCol} to-transparent opacity-0 group-hover/box:opacity-100 transition-opacity`} />
-                        <div className={`text-xl font-extrabold ${col} font-heading`}>{bm.val}</div>
-                        <div className="text-[11px] font-bold text-slate-300">{bm.label}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-2">
-                  {effectiveEmbedUrl && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const el = document.getElementById('live-demo-interactive');
-                        if (el) {
-                          const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
-                          window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                      }}
-                      className="w-full py-3.5 px-6 mb-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:shadow-[0_0_35px_rgba(16,185,129,0.5)] border border-emerald-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                    >
-                      <Globe className="w-4 h-4 text-emerald-100 animate-pulse" />
-                      <span>Launch Interactive Live Sandbox</span>
-                    </button>
-                  )}
-                  <button 
-                    onClick={() => onScheduleDemo(product.title)}
-                    className="w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] border border-cyan-400/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                  >
-                    <span>Schedule Technical Demo</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                  
-                  {product.detailContent?.pptUrl && (
-                    <a 
-                      href={product.detailContent.pptUrl}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`w-full py-3.5 px-6 mt-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
-                        isLightMode 
-                          ? 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm'
-                          : 'bg-slate-800/60 hover:bg-slate-700/80 text-slate-200 border border-slate-600/50'
-                      }`}
-                    >
-                      <span>Download Presentation</span>
-                      <Download className="w-4 h-4" />
-                    </a>
-                  )}
-                </div>
               </div>
 
             </div>
 
           </div>
 
-          {/* INTERACTIVE SCROLL FOR DEEP-DIVE INDICATOR */}
-          <div className="flex justify-center pt-6 pb-2">
+          {/* Interactive Scroll For Architecture Deep-Dive */}
+          <div className="flex justify-center pt-10 pb-2">
             <button
               onClick={() => {
                 const element = document.getElementById('architecture-details-section');
@@ -277,15 +482,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               }}
               className="group flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900/90 hover:bg-black border border-cyan-500/30 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
             >
-              <span className="text-xs font-extrabold tracking-widest uppercase">Scroll for Deep-Dive Architecture Specifications</span>
+              <span className="text-xs font-extrabold tracking-widest uppercase">Scroll for Architecture Specifications</span>
               <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
             </button>
           </div>
 
         </div>
-      </div>
+      </section>
 
-      {/* ── INTERACTIVE LIVE IFRAME APPLICATION / SANDBOX (BELOW HERO) ── */}
+      {/* ── 3. INTERACTIVE LIVE APPLICATION / SANDBOX (IF EMBED URL AVAILABLE) ── */}
       {effectiveEmbedUrl && (
         <section id="live-demo-interactive" className="relative w-full py-16 px-4 sm:px-8 border-b border-white/10 overflow-hidden bg-[#020716]">
           {/* Ambient Lighting Glows */}
@@ -382,15 +587,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         </section>
       )}
 
-      {/* CONTENT BODY: Clean Whitespace, Reduced Gaps */}
-      <div id="architecture-details-section" className="w-full max-w-4xl mx-auto px-6 py-10 md:py-14 space-y-12 md:space-y-20">
+      {/* ── 4. CONTENT BODY: EXECUTIVE BENTO GRID (THE CHALLENGE & THE APPROACH) ── */}
+      <div id="architecture-details-section" className="w-full max-w-6xl mx-auto px-4 sm:px-8 py-16 md:py-24 space-y-16 md:space-y-24">
 
-        {/* EXECUTIVE BENTO GRID: Challenge & Approach */}
+        {/* EXECUTIVE BENTO GRID */}
         <ScrollReveal animation="fade-up" delay={0.1}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Bento Card 1: The Challenge */}
-            <div className={`p-8 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(245,158,11,0.15)] hover:-translate-y-1.5 group ${isLightMode ? 'bg-amber-50/50 border-amber-200 shadow-sm' : 'bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/20 shadow-xl'}`}>
+            <div className={`p-8 sm:p-10 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(245,158,11,0.15)] hover:-translate-y-1.5 group ${
+              isLightMode ? 'bg-amber-50/50 border-amber-200 shadow-sm' : 'bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/20 shadow-xl'
+            }`}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 opacity-80 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-amber-500/20 transition-all" />
               
@@ -415,8 +622,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 ) : (
                   [
                     `Processing unstructured enterprise data at scale while maintaining strict SLA sub-second latency across distributed systems.`,
-                    `Eliminating manual operational bottlenecks and data silos without disrupting existing legacy database workflows.`,
-                    `Ensuring end-to-end security, regulatory compliance, and audit-ready data lineage across the entire engineering pipeline.`
+                    `Eliminating manual operational bottlenecks and data silos without disrupting existing legacy workflows.`,
+                    `Ensuring end-to-end security, regulatory compliance, and audit-ready data lineage across the entire pipeline.`
                   ].map((point, idx) => (
                     <div key={idx} className="flex items-start gap-3.5">
                       <div className="mt-2 w-2 h-2 rounded-full bg-amber-500 shrink-0 shadow-[0_0_10px_rgba(245,158,11,1)]" />
@@ -428,7 +635,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Bento Card 2: The Approach */}
-            <div className={`p-8 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] hover:-translate-y-1.5 group ${isLightMode ? 'bg-blue-50/50 border-blue-200 shadow-sm' : 'bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent border-blue-500/20 shadow-xl'}`}>
+            <div className={`p-8 sm:p-10 rounded-3xl border relative overflow-hidden space-y-6 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)] hover:-translate-y-1.5 group ${
+              isLightMode ? 'bg-blue-50/50 border-blue-200 shadow-sm' : 'bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent border-blue-500/20 shadow-xl'
+            }`}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 via-cyan-500 to-indigo-500 opacity-80 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:bg-blue-500/20 transition-all" />
               
@@ -444,7 +653,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
               <div className="space-y-4 relative z-10">
                 <p className={`text-base font-light leading-relaxed ${textMuted}`}>
-                  {detail?.approach || `${product.fullDescription} To architect this at an enterprise scale, our engineering team implemented a decoupled, cloud-native microservices topology. By integrating real-time event ingestion with asynchronous vector computation and distributed caching, the platform guarantees high throughput, resilient fault-tolerance, and seamless bidirectional data synchronization across all client endpoints.`}
+                  {detail?.approach || `${product.fullDescription || product.shortDescription} To architect this at an enterprise scale, our engineering team implemented a decoupled, cloud-native microservices topology. By integrating real-time event ingestion with asynchronous processing and distributed caching, the platform guarantees high throughput, resilient fault-tolerance, and seamless bidirectional data synchronization across all client endpoints.`}
                 </p>
               </div>
             </div>
@@ -454,40 +663,60 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
         <hr className={`w-full border-t ${dividerClass}`} />
 
-        {/* Bento Grid: Key Capabilities */}
+        {/* ── 5. CAPABILITIES MATRIX: SYSTEM INTELLIGENCE & FEATURES ── */}
         <ScrollReveal animation="fade-up" delay={0.1}>
-          <section className="space-y-8">
-            <div className="space-y-2 text-center max-w-2xl mx-auto">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500">Capabilities Matrix</p>
+          <section className="space-y-10">
+            <div className="space-y-3 text-center max-w-2xl mx-auto">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">Capabilities Matrix</p>
               <h2 className={`text-3xl md:text-4xl font-extrabold tracking-tight leading-tight ${textPrimary}`}>
                 System Intelligence & Features
               </h2>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {detail?.features && detail.features.length > 0 ? (
                 detail.features.map((feature, idx) => (
-                  <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
+                  <div
+                    key={idx}
+                    className={`p-6 sm:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${
+                      isLightMode
+                        ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50'
+                        : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'
+                    }`}
+                  >
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
-                      {feature.emoji ? feature.emoji : <ShieldCheck className="w-7 h-7" />}
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-2xl text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
+                      {feature.emoji ? feature.emoji : <ShieldCheck className="w-6 h-6" />}
                     </div>
                     <div className="space-y-2 relative z-10">
-                      <h3 className={`text-xl font-extrabold tracking-tight ${textPrimary} group-hover:text-emerald-400 transition-colors`}>{feature.title}</h3>
-                      <p className={`text-sm md:text-base font-light leading-relaxed ${textMuted}`}>{feature.description}</p>
+                      <h3 className={`text-lg font-extrabold tracking-tight ${textPrimary} group-hover:text-emerald-400 transition-colors`}>
+                        {feature.title}
+                      </h3>
+                      <p className={`text-sm font-light leading-relaxed ${textMuted}`}>
+                        {feature.description}
+                      </p>
                     </div>
                   </div>
                 ))
               ) : (
                 product.keyFeatures.map((feat, idx) => (
-                  <div key={idx} className={`p-6 md:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${isLightMode ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50' : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'}`}>
+                  <div
+                    key={idx}
+                    className={`p-6 sm:p-8 rounded-3xl border relative overflow-hidden space-y-4 transition-all duration-500 hover:-translate-y-1.5 group ${
+                      isLightMode
+                        ? 'bg-white border-slate-200 shadow-lg hover:border-emerald-500/50'
+                        : 'bg-gradient-to-b from-white/[0.05] to-white/[0.01] border-white/10 shadow-2xl hover:border-emerald-500/50 hover:shadow-[0_10px_30px_rgba(16,185,129,0.15)]'
+                    }`}
+                  >
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
-                      <ShieldCheck className="w-7 h-7" />
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform">
+                      <ShieldCheck className="w-6 h-6" />
                     </div>
-                    <p className={`text-lg font-extrabold tracking-tight ${textPrimary} relative z-10 group-hover:text-emerald-400 transition-colors`}>{feat}</p>
+                    <p className={`text-base font-extrabold tracking-tight ${textPrimary} relative z-10 group-hover:text-emerald-400 transition-colors`}>
+                      {feat}
+                    </p>
                   </div>
                 ))
               )}
@@ -497,11 +726,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
         <hr className={`w-full border-t ${dividerClass}`} />
 
-        {/* Architecture Specifications & Benchmarks - 100% Constructed */}
+        {/* ── 6. ARCHITECTURE SPECIFICATIONS & BENCHMARKS ── */}
         <ScrollReveal animation="fade-up" delay={0.1}>
           <section className="space-y-10">
-            <div className="space-y-3">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-500">System Performance</p>
+            <div className="space-y-3 text-center max-w-2xl mx-auto">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">System Performance</p>
               <h2 className={`text-3xl md:text-4xl font-extrabold tracking-tight leading-tight ${textPrimary}`}>
                 Architecture Specifications & Benchmarks
               </h2>
@@ -514,14 +743,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 { val: '10x', label: 'Throughput Scaling', desc: 'Auto-scaling worker pods handling burst data ingestion spikes.' }
               ]).slice(0, 3).map((bm: any, idx: number) => {
                 const colors = [
-                  { text: 'text-cyan-500' },
-                  { text: 'text-emerald-500' },
-                  { text: 'text-purple-500' }
+                  { text: 'text-cyan-400' },
+                  { text: 'text-emerald-400' },
+                  { text: 'text-purple-400' }
                 ];
                 const col = colors[idx % colors.length];
                 return (
-                  <div key={idx} className={`p-6 rounded-2xl border space-y-2 transition-all hover:-translate-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200 shadow-sm' : 'bg-white/5 border-white/10 shadow-xl'}`}>
-                    <div className={`text-2xl md:text-3xl font-extrabold ${col.text} font-heading`}>{bm.val}</div>
+                  <div
+                    key={idx}
+                    className={`p-6 rounded-2xl border space-y-2 transition-all hover:-translate-y-1 ${
+                      isLightMode ? 'bg-slate-50 border-slate-200 shadow-sm' : 'bg-white/5 border-white/10 shadow-xl'
+                    }`}
+                  >
+                    <div className={`text-2xl md:text-3xl font-extrabold ${col.text} font-mono`}>{bm.val}</div>
                     <div className={`text-sm font-bold ${textPrimary}`}>{bm.label}</div>
                     <div className={`text-xs ${textMuted}`}>{bm.desc || ''}</div>
                   </div>
@@ -533,49 +767,46 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
       </div>
 
-      {/* CALL TO ACTION BOTTOM */}
-      <div className={`w-full ${isLightMode ? 'bg-slate-50 border-t border-slate-100' : 'bg-[#050b1a] border-t border-[#1e293b]'}`}>
-        <div className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center space-y-10">
-          
-          <ScrollReveal animation="fade-up" delay={0.1}>
-            <div className="space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-cyan-500/10 text-cyan-500 mb-2">
-                <Sparkles className="w-8 h-8" />
-              </div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-500">Core Impact</p>
-              <h2 className={`text-4xl md:text-5xl font-extrabold tracking-tighter leading-tight ${textPrimary}`}>
-                {product.impactMetric}
-              </h2>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal animation="fade-up" delay={0.2}>
-            <div className="max-w-sm mx-auto pt-4 space-y-4">
-              <button 
-                onClick={() => onScheduleDemo(product.title)}
-                className="w-full py-4 rounded-full font-bold text-base flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] border border-cyan-400/30"
-              >
-                <span>Schedule a Demo</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={onBack}
-                className={`w-full py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer ${
-                  isLightMode 
-                    ? 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800' 
-                    : 'bg-transparent border border-white/20 text-slate-300 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back to Portfolio</span>
-              </button>
-            </div>
-          </ScrollReveal>
-
+      {/* ── 7. FINAL CALL TO ACTION (MATCHING REPORTING TOOL FOOTER BANNER) ── */}
+      <section className="relative w-full py-20 px-4 sm:px-8 overflow-hidden border-t border-white/10" style={{ background: '#030712' }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-t from-cyan-500/15 via-blue-600/10 to-transparent blur-3xl rounded-full" />
         </div>
-      </div>
-      
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-semibold">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span>ENTERPRISE READINESS</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+            Ready to integrate <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400">{product.title}</span> into your workflows?
+          </h2>
+
+          <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+            Speak with our enterprise solutions team for a deep technical walkthrough, live cluster benchmarking, or tailored pilot deployment.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              onClick={() => onScheduleDemo(product.title)}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-extrabold tracking-wider uppercase bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-white shadow-[0_0_25px_rgba(0,210,255,0.6)] hover:shadow-[0_0_35px_rgba(0,210,255,0.85)] transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <span>Schedule Technical Demo</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={onBack}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-semibold text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-500 transition-all duration-200 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Home</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };

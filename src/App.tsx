@@ -11,10 +11,13 @@ import { PRODUCTS_DATA } from './data/contentData';
 import { updateSeo, updateServiceSeo } from './lib/seo';
 import { SeoServicePage, SeoServiceSlug } from './components/SeoServicePage';
 import { MigrationFactoryCaseStudy } from './components/MigrationFactoryCaseStudy';
+import { useProjects } from './hooks/useProjects';
 
 const VisionMission = lazy(() => import('./components/VisionMission').then(m => ({ default: m.VisionMission })));
 const AiEmployeesBanner = lazy(() => import('./components/AiEmployeesBanner').then(m => ({ default: m.AiEmployeesBanner })));
 const PortfolioSection = lazy(() => import('./components/PortfolioSection').then(m => ({ default: m.PortfolioSection })));
+const BiDashboardsSection = lazy(() => import('./components/BiDashboardsSection').then(m => ({ default: m.BiDashboardsSection })));
+const AiAgentsSection = lazy(() => import('./components/AiAgentsSection').then(m => ({ default: m.AiAgentsSection })));
 const IoTSection = lazy(() => import('./components/IoTSection').then(m => ({ default: m.IoTSection })));
 const FutureInnovations = lazy(() => import('./components/FutureInnovations').then(m => ({ default: m.FutureInnovations })));
 const WhyChooseUs = lazy(() => import('./components/WhyChooseUs').then(m => ({ default: m.WhyChooseUs })));
@@ -29,6 +32,7 @@ export default function App() {
   const tabRoutes: Partial<Record<NavTab, string>> = {
     home: '/',
     products: '/',
+    agents: '/#ai-agents-section',
     iot: '/',
     solutions: '/solutions',
     industries: '/industries',
@@ -43,9 +47,25 @@ export default function App() {
     const architectureMatch = path.match(/^\/architecture\/([^/]+)$/);
     if (architectureMatch) {
       const productId = decodeURIComponent(architectureMatch[1]);
+      const matched = PRODUCTS_DATA.find(product => product.id === productId);
+      const fallbackProduct: Product = {
+        id: productId,
+        title: productId.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        shortDescription: 'Enterprise architecture and system specification overview.',
+        fullDescription: 'Comprehensive system architecture, capabilities, and deployment specifications.',
+        category: 'Enterprise Automation',
+        tags: ['Architecture', 'Enterprise', 'AI'],
+        impactMetric: '10x Faster Deployment',
+        keyFeatures: ['Architecture Deep Dive', 'Pipeline Stages', 'Studio Capabilities'],
+        techStack: ['React', 'Node.js', 'TypeScript'],
+        iconName: 'Cpu',
+        featured: true,
+        imageUrl: '/src/assets/images/ai_reporting_dashboard_1784778548313.jpg'
+      };
+
       return {
         tab: 'products' as NavTab,
-        product: PRODUCTS_DATA.find(product => product.id === productId) || null,
+        product: matched || fallbackProduct,
       };
     }
 
@@ -65,6 +85,9 @@ export default function App() {
   const initialRoute = readRoute();
   const [activeTab, setActiveTab] = useState<NavTab>(initialRoute.tab);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(initialRoute.product);
+
+  // Single shared products subscription – prevents duplicate Supabase Realtime channels
+  const { projects: allProducts, loading: productsLoading } = useProjects();
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [demoInterest, setDemoInterest] = useState('');
   const [demoSource, setDemoSource] = useState('website');
@@ -142,14 +165,13 @@ export default function App() {
 
   // ── Analytics: section time tracking ───────────────────────────────────
   useEffect(() => {
-    if (activeTab !== 'home' && activeTab !== 'products' && activeTab !== 'iot') return;
+    if (activeTab !== 'home' && activeTab !== 'products' && activeTab !== 'agents' && activeTab !== 'iot') return;
     const sections = [
-      ['section-hero',        'Hero'],
-      ['section-vision',      'Vision & Mission'],
-      ['section-employees',   'AI Employees'],
-      ['section-iot',         'IoT & Edge AI'],
-      ['section-demos',       'Live Demos'],
-      ['section-portfolio',   'AI Portfolio'],
+      ['section-hero',          'Hero'],
+      ['section-vision',        'Vision & Mission'],
+      ['section-portfolio',     'AI Portfolio'],
+      ['section-bi-dashboards', 'BI Dashboards'],
+      ['section-demos',         'Live Demos'],
       ['section-innovations', 'Future Innovations'],
       ['section-why',         'Why Choose Us'],
       ['section-stats',       'Impact Stats'],
@@ -263,6 +285,12 @@ export default function App() {
     setSelectedProduct(null);
     setActiveTab(tab);
 
+    if (tab === 'agents') {
+      setTimeout(() => {
+        document.getElementById('ai-agents-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
+
     if (tab === 'iot') {
       setTimeout(() => {
         document.getElementById('section-iot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -339,7 +367,29 @@ export default function App() {
             <Suspense fallback={<div className="min-h-screen"></div>}>
               <div id="section-vision"><VisionMission isLightMode={isLightMode} /></div>
 
-              {/* AI Employees Banner */}
+              {/* AI Portfolio (Accelerators) */}
+              <div id="section-portfolio">
+              <PortfolioSection
+                onSelectProduct={handleSelectProduct}
+                onScheduleDemo={handleOpenDemoModal}
+                isLightMode={isLightMode}
+                products={allProducts}
+                loading={productsLoading}
+              />
+              </div>
+
+              {/* Our Solutions • Enterprise BI Dashboards */}
+              <div id="section-bi-dashboards">
+              <BiDashboardsSection
+                onSelectProduct={handleSelectProduct}
+                onScheduleDemo={handleOpenDemoModal}
+                isLightMode={isLightMode}
+                products={allProducts}
+                loading={productsLoading}
+              />
+              </div>
+
+              {/* Temporarily commented out: Innovating Beyond Software (AI Employees Banner) & IoT & Edge AI
               <div id="section-employees">
               <AiEmployeesBanner
                 onScheduleDemo={handleOpenDemoModal}
@@ -348,23 +398,14 @@ export default function App() {
               />
               </div>
 
-              {/* IoT & Edge AI */}
               <div id="section-iot">
               <IoTSection onScheduleDemo={handleOpenDemoModal} isLightMode={isLightMode} />
               </div>
+              */}
 
               {/* Live Demo Showcase */}
               <div id="section-demos">
                 <DemoShowcaseSection isLightMode={isLightMode} />
-              </div>
-
-              {/* AI Portfolio */}
-              <div id="section-portfolio">
-              <PortfolioSection
-                onSelectProduct={handleSelectProduct}
-                onScheduleDemo={handleOpenDemoModal}
-                isLightMode={isLightMode}
-              />
               </div>
 
               {/* Future Innovations (Coming Soon) */}

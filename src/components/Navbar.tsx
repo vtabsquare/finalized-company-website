@@ -62,7 +62,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const primaryNavItems: { id: NavTab; label: string; badge?: string }[] = [
     { id: 'home', label: 'Home' },
     { id: 'products', label: 'Accelerators' },
-    { id: 'iot', label: 'IoT & Edge AI' },
     { id: 'solutions', label: 'Solutions' },
   ];
 
@@ -99,6 +98,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     } else if (tabId === 'products') {
       const el = document.getElementById('ai-portfolio');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else if (tabId === 'agents') {
+      setTimeout(() => {
+        document.getElementById('ai-agents-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
     } else if (tabId === 'iot') {
       setTimeout(() => {
         document.getElementById('industrial-iot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

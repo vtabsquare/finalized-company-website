@@ -152,12 +152,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   isBannerVisible = true,
   onDismissBanner,
 }) => {
-  const handleExploreReporting = () => {
-    const prod = PRODUCTS_DATA.find(p => p.id === 'ai-reporting-platform');
+  const handleSelectBannerProduct = (productId: string) => {
+    const prod = PRODUCTS_DATA.find(p => p.id === productId);
     if (prod && onSelectProduct) {
       onSelectProduct(prod);
     } else {
-      onScheduleDemo('AI Reporting Platform');
+      const fallbackTitle = productId === 'ai-migration-factory-databricks-control-plane'
+        ? 'AI Migration Factory & Databricks Control Plane'
+        : 'AI Reporting Platform';
+      onScheduleDemo(fallbackTitle);
     }
   };
   const [isMuted, setIsMuted] = useState(true);
@@ -223,16 +226,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Dedicated Floating Island Row for VTAB Reporting Announcement Banner */}
       <div className="relative z-20 w-full pt-[69px]">
         <ReportingAnnouncementBanner
-          onExploreReporting={handleExploreReporting}
+          onExploreReporting={() => handleSelectBannerProduct('ai-reporting-platform')}
+          onSelectProduct={handleSelectBannerProduct}
           isLightMode={isLightMode}
           isVisible={isBannerVisible}
           onDismiss={onDismissBanner}
         />
       </div>
 
-      {/* Desktop Full-Bleed Video Background (Right Aligned, below Banner) */}
+      {/* Desktop Full-Bleed Video Background (Right Aligned, behind and below Banner) */}
       {!isMobile && (
-        <div className="absolute top-[181px] bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
+        <div className="absolute top-0 bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
           {/* Left Gradient Mask for text readability */}
           <div className="absolute inset-0 z-10 w-full lg:w-[55%] bg-gradient-to-r from-[#030712] via-[#030712]/80 to-transparent pointer-events-none" />
           

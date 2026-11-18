@@ -72,7 +72,7 @@ export interface DemoFormState {
   message: string;
 }
 
-export type NavTab = 'home' | 'products' | 'iot' | 'solutions' | 'industries' | 'lab' | 'about' | 'careers' | 'contact';
+export type NavTab = 'home' | 'products' | 'agents' | 'iot' | 'solutions' | 'industries' | 'lab' | 'about' | 'careers' | 'contact';
 
 export interface IoTCapability {
   icon: string;

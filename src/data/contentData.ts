@@ -31,6 +31,83 @@ export const PRODUCTS_DATA: Product[] = [
     }
   },
   {
+    "id": "ai-migration-factory-databricks-control-plane",
+    "title": "AI Migration Factory & Databricks Control Plane",
+    "shortDescription": "An enterprise AI platform that automates end-to-end database migration from legacy SQL Server to Databricks Lakehouse with 3-tier Medallion architecture (Bronze, Silver, Gold), Unity Catalog governance, and prompt-native ETL generation.",
+    "fullDescription": "We engineered an autonomous, prompt-grounded Migration Factory with a multi-stage control plane. The system performs automated schema discovery over SQL Server sources, introspects primary/foreign keys and data distributions, and synthesizes 3-tier Medallion architecture (Bronze raw Delta Lake ingest, Silver cleansed/conformed views with surrogate key loaders, and Gold analytical marts/KPIs). Integrated directly with Databricks SQL Warehouses, REST APIs, and Unity Catalog, it features an AI Migration Studio capable of turning natural language migration prompts into grounded DDL, idempotent MERGE pipelines, automated DAG dependency graphs, and multi-environment deployment waves.",
+    "category": "Database & Migration",
+    "tags": [
+      "Databricks",
+      "Delta Lake",
+      "Unity Catalog",
+      "Medallion",
+      "Migration"
+    ],
+    "impactMetric": "85% Faster Cloud Migration",
+    "keyFeatures": [
+      "Autonomous Schema Discovery",
+      "Prompt-Native Medallion Studio",
+      "Unity Catalog Governance & Promotion"
+    ],
+    "techStack": [
+      "React",
+      "Node.js",
+      "Python",
+      "Supabase"
+    ],
+    "iconName": "Database",
+    "featured": true,
+    "imageUrl": "https://wclpchjxdglhinoazxmr.supabase.co/storage/v1/object/public/product-media/images/1794568013365-AI_Migration_Factory_Showcase.png",
+    "embedUrl": "https://databricks-migration-factory-9ym2.onrender.com/?embed=true",
+    "detailContent": {
+      "challenge": [
+        "Manual database migration from on-prem SQL Server to cloud lakehouses takes months of tedious schema conversion and script rewriting.",
+        "High operational risk, human error, and missing lineage when hand-crafting Bronze, Silver, and Gold Medallion pipelines.",
+        "Lack of centralized governance, Unity Catalog compliance, and automated validation across multi-stage environments (DEV, TEST, UAT, PROD).",
+        "Disjointed ETL maintenance with no automated drift detection, reconciliation, or prompt-driven change management."
+      ],
+      "approach": "We engineered an autonomous, prompt-grounded Migration Factory with a multi-stage control plane. The system performs automated schema discovery over SQL Server sources, introspects primary/foreign keys and data distributions, and synthesizes 3-tier Medallion architecture (Bronze raw Delta Lake ingest, Silver cleansed/conformed views with surrogate key loaders, and Gold analytical marts/KPIs). Integrated directly with Databricks SQL Warehouses, REST APIs, and Unity Catalog, it features an AI Migration Studio capable of turning natural language migration prompts into grounded DDL, idempotent MERGE pipelines, automated DAG dependency graphs, and multi-environment deployment waves.",
+      "features": [
+        {
+          "title": "Autonomous Schema Discovery",
+          "description": "Connects live or via lightweight agent to introspect tables, relationships, and metadata with sub-second dependency graphing."
+        },
+        {
+          "title": "Prompt-Native Medallion Studio",
+          "description": "Generates production-grade PySpark & SQL Delta Lake pipelines across Bronze, Silver, and Gold layers from high-level natural language prompts."
+        },
+        {
+          "title": "Unity Catalog Governance & Promotion",
+          "description": " Automates stage-by-stage deployment across DEV, TEST, UAT, and PROD with built-in reconciliation, schema validation, and audit logs."
+        }
+      ],
+      "benchmarks": [
+        {
+          "val": "85%",
+          "desc": "Accelerates multi-month manual ETL engineering to automated hours",
+          "label": "Migration Time Reduction"
+        },
+        {
+          "val": "99.9%",
+          "desc": "Zero syntax discrepancies across Bronze, Silver, and Gold transformations",
+          "label": "Schema & Data Accuracy"
+        },
+        {
+          "val": "10x",
+          "desc": "Parallel Delta Lake ingestion with automated idempotent MERGE execution",
+          "label": "Pipeline Throughput"
+        }
+      ],
+      "impact": [
+        "85% Faster Cloud Migration",
+        "99.9% Uptime Reliability"
+      ],
+      "embedUrl": "https://databricks-migration-factory-9ym2.onrender.com/?embed=true",
+      "videoUrl": "",
+      "pptUrl": ""
+    }
+  },
+  {
     id: 'qlik-to-powerbi-migration',
     title: 'Qlik to Power BI Migration',
     shortDescription: 'Automatically convert legacy Qlik applications into modern Power BI dashboards while preserving business logic, KPIs, and reporting structure.',
@@ -223,6 +300,42 @@ export const PRODUCTS_DATA: Product[] = [
         { label: 'Downtime', value: 'Near-Zero', color: 'text-blue-400' }
       ]
     }
+  },
+  {
+    id: 'smart-invoice-management-system',
+    title: 'Smart Invoice Management System',
+    shortDescription: 'The Invoice Application centralizes the complete billing workflow into a single web platform with automated calculations, PDF generation, and invoice storage.',
+    fullDescription: 'Centralize company profiles, client directories, and invoices while automating calculations, PDF generation, and storage. Built with React, Node.js, Express, Google Sheets, and vector PDF rendering.',
+    category: 'Enterprise Automation',
+    tags: ['Billing', 'Invoice', 'GST', 'Automation', 'Google Sheets'],
+    impactMetric: '80% Faster Invoice Processing',
+    keyFeatures: [
+      'Multi-Entity Master Data Sync',
+      'Automated GST & State Tax Routing',
+      'Vector PDF Document Rendering',
+      'Direct Corporate SMTP Dispatch'
+    ],
+    techStack: ['React', 'Node.js', 'Express', 'Google Sheets', 'Vector PDF'],
+    iconName: 'Receipt',
+    imageUrl: '/media/invoice-flow-console.png'
+  },
+  {
+    id: 'qa-ai-autonomous-testing-platform',
+    title: 'QA-AI Autonomous Testing Platform',
+    shortDescription: 'QA-AI uses artificial intelligence to transform natural-language testing instructions and screen recordings into structured Playwright and Windows UIA automation steps.',
+    fullDescription: 'Bridge natural language prompt ingestion and video workflow synthesis with dual-engine Playwright and Windows UIA execution and OpenTelemetry root-cause diagnostics.',
+    category: 'Enterprise Automation',
+    tags: ['Playwright', 'Windows UIA', 'OpenTelemetry', 'AI Testing', 'CI/CD'],
+    impactMetric: '65-80% Less Manual Testing Effort',
+    keyFeatures: [
+      'Gemini AI Plain-Text Parser',
+      'Multimodal Screen-Recording Synthesizer',
+      'Dual Playwright & Windows UIA Runner',
+      'OpenTelemetry Distributed Tracing'
+    ],
+    techStack: ['Playwright', 'Windows UIA', 'OpenTelemetry', 'Python', 'React'],
+    iconName: 'Terminal',
+    imageUrl: '/media/qa-ai-testing-console.png'
   }
 ];
 

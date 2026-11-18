@@ -6,10 +6,12 @@ import { getValidImageUrl } from '../utils/imageFallback';
 
 export function useProjects() {
   const [projects, setProjects] = useState<Product[]>(() =>
-    PRODUCTS_DATA.map(p => ({
-      ...p,
-      imageUrl: getValidImageUrl(p.imageUrl, p.category, p.title, p.id)
-    }))
+    PRODUCTS_DATA
+      .filter(p => !p.id.toLowerCase().includes('sentinel') && !p.title.toLowerCase().includes('sentinel'))
+      .map(p => ({
+        ...p,
+        imageUrl: getValidImageUrl(p.imageUrl, p.category, p.title, p.id)
+      }))
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -32,7 +34,14 @@ export function useProjects() {
         }
 
         if (data && data.length > 0) {
-          const formattedData: Product[] = data.map((item: any) => {
+          const formattedData: Product[] = data
+            .filter((item: any) => {
+              const id = (item.id || '').toLowerCase();
+              const title = (item.title || '').toLowerCase();
+              // Completely remove VTAB Sentinel Server Room from the website
+              return !id.includes('sentinel') && !title.includes('sentinel');
+            })
+            .map((item: any) => {
             let demoSnippet: any = item.demo_snippet || item.demoSnippet;
             if (typeof demoSnippet === 'string') {
               try { demoSnippet = JSON.parse(demoSnippet); } catch(e) {}
