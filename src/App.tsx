@@ -166,7 +166,7 @@ export default function App() {
 
   // ── Analytics: section time tracking ───────────────────────────────────
   useEffect(() => {
-    if (activeTab !== 'home' && activeTab !== 'products' && activeTab !== 'agents' && activeTab !== 'iot') return;
+    if (activeTab !== 'home' && activeTab !== 'products' && activeTab !== 'bi-dashboards' && activeTab !== 'agents' && activeTab !== 'iot') return;
     const sections = [
       ['section-hero',          'Hero'],
       ['section-vision',        'Vision & Mission'],
@@ -347,7 +347,7 @@ export default function App() {
               isLightMode={isLightMode}
             />
           </Suspense>
-        ) : activeTab !== 'home' && activeTab !== 'products' && activeTab !== 'iot' ? (
+        ) : activeTab !== 'home' && activeTab !== 'products' && activeTab !== 'bi-dashboards' && activeTab !== 'iot' ? (
           <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-white">Loading...</div>}>
             <PageViews
               activeTab={activeTab}
