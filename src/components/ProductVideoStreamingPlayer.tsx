@@ -27,114 +27,85 @@ interface ProductVideoStreamingPlayerProps {
   isActive?: boolean;
 }
 
-// High quality tech/AI video loops
-// The production media bucket with all optimized dashboard & product demo videos is hosted at jqxqujrldlutwgkaqwkb.supabase.co
-const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
-const DEMO_MEDIA = 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos';
-
-// All entries point at the -web variants or verified demo videos:
-const STREAMING_VIDEOS: Record<string, string> = {
-  'ai-reporting-platform': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
-  'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
-  'qlik-to-powerbi': `${DEMO_MEDIA}/qlik-to-powerbi-demo.mp4`,
+// Verified dedicated video streams for products that have actual demo videos:
+const DEDICATED_VIDEOS: Record<string, string> = {
+  'ai-reporting-platform': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/Reporting%20tool.mp4',
+  'qlik-to-powerbi-migration': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/qlik-to-powerbi-demo.mp4',
+  'qlik-to-powerbi': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/qlik-to-powerbi-demo.mp4',
+  'postgresql-to-sqlserver-migration': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/postgres-to-sqlserver-demo.mp4',
+  'postgres-to-sql': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/postgres-to-sqlserver-demo.mp4',
+  'ai-migration-factory-databricks-control-plane': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/SQL%20Server%20To%20Databricks.mp4',
+  'sql-server-databricks-migration-platform': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/SQL%20Server%20To%20Databricks.mp4',
+  'qa-ai-autonomous-testing-platform': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/qa-testing-demo.mp4',
+  'qa-testing-application': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/qa-testing-demo.mp4',
+  'qa-testing': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/qa-testing-demo.mp4',
+  'ai-l1-support-agent': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/L1%20Automation%20Demo%20Video.mp4',
+  'l1-automation': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/L1%20Automation%20Demo%20Video.mp4',
+  'buildsmart-estimator': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/Buildsmart%20Demo%20Video.mp4',
+  'buildsmart-360-civil-estimator': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/Buildsmart%20Demo%20Video.mp4',
+  'buildsmart': 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos/Buildsmart%20Demo%20Video.mp4',
+  'faceauth': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/faceauth-web.mp4',
   'gbti-smart-home-builder': '/media/videos/ai_smart_home_web.mp4',
-  'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
-  'buildsmart-360-civil-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
-  'buildsmart': `${DEMO_MEDIA}/Buildsmart%20Demo%20Video.mp4`,
-  'faceauth': `${SUPABASE_MEDIA}/faceauth-web.mp4`,
   'packaging-optimization-platform': '/media/videos/ai_logistics_web.mp4',
-  'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent-web.mp4`,
-  'l1-automation': `${DEMO_MEDIA}/L1%20Automation%20Demo%20Video.mp4`,
-  'postgresql-to-sqlserver-migration': `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`,
-  'postgres-to-sql': `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`,
-  'qa-ai-autonomous-testing-platform': `${DEMO_MEDIA}/qa-testing-demo.mp4`,
-  'qa-testing-application': `${DEMO_MEDIA}/qa-testing-demo.mp4`,
-  'qa-testing': `${DEMO_MEDIA}/qa-testing-demo.mp4`,
-  'ai-migration-factory-databricks-control-plane': `${DEMO_MEDIA}/SQL%20Server%20To%20Databricks.mp4`,
-  'sql-server-databricks-migration-platform': `${DEMO_MEDIA}/SQL%20Server%20To%20Databricks.mp4`,
-  'smart-invoice-management-system': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
-  'invoice-flow': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
+  // Verified Power BI Dashboards
   'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard-web.mp4',
-  'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
-  'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
-  'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`,
-  'hva-score-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`,
-  'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`,
-  'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard-web.mp4`,
-  'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard-web.mp4`,
-  'hr-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/hr-analytics-dashboard-web.mp4`,
+  'application-analysis-report': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/application-analysis-report-web.mp4',
+  'e-grow-analysis-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/e-grow-analysis-dashboard-web.mp4',
+  'google-analytics-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/google-analytics-dashboard-web.mp4',
+  'hva-score-analysis-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/hva-score-analysis-dashboard-web.mp4',
+  'final-quality-inspection-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/final-quality-inspection-dashboard-web.mp4',
+  'food-inspection-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/food-inspection-dashboard-web.mp4',
+  'energy-consumption-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/energy-consumption-dashboard-web.mp4',
+  'hr-analytics-dashboard': 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media/powerbi/hr-analytics-dashboard-web.mp4',
 };
 
-const DEFAULT_VIDEO_POOL = [
-  `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard-web.mp4`,
-  `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard-web.mp4`,
-  `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
-  `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
-  '/media/videos/ai_logistics_web.mp4',
-  '/media/videos/ai_smart_home_web.mp4',
-];
-
 const getVideoForProduct = (id: string, title?: string, customUrl?: string): string => {
-  // If customUrl is from the unreachable dead project (doazlhotvvzmsngjbfne), fallback to verified video
+  // 1. If explicit valid customUrl provided, use it (ignore decommissioned doazlhotvvzmsngjbfne host)
   if (customUrl && customUrl.trim() !== '' && !customUrl.includes('doazlhotvvzmsngjbfne')) {
-    return customUrl;
+    return customUrl.trim();
   }
-  
+
   const cleanId = (id || '').toLowerCase().trim();
-  if (STREAMING_VIDEOS[cleanId]) return STREAMING_VIDEOS[cleanId];
+  if (DEDICATED_VIDEOS[cleanId]) {
+    return DEDICATED_VIDEOS[cleanId];
+  }
 
+  // 2. Exact/keyword lookup ONLY for products with real dedicated videos:
   const text = `${cleanId} ${title || ''}`.toLowerCase();
-  if (text.includes('qa') || text.includes('testing')) {
-    return `${DEMO_MEDIA}/qa-testing-demo.mp4`;
+  if (text.includes('qlik') && text.includes('power bi')) {
+    return DEDICATED_VIDEOS['qlik-to-powerbi-migration'];
   }
-  if (text.includes('databricks') || (text.includes('sql') && text.includes('databricks'))) {
-    return `${DEMO_MEDIA}/SQL%20Server%20To%20Databricks.mp4`;
+  if (text.includes('postgres') && text.includes('sql server')) {
+    return DEDICATED_VIDEOS['postgresql-to-sqlserver-migration'];
   }
-  if (text.includes('postgres') || text.includes('postgresql')) {
-    return `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`;
+  if (text.includes('databricks') && (text.includes('migration') || text.includes('sql server'))) {
+    return DEDICATED_VIDEOS['ai-migration-factory-databricks-control-plane'];
   }
-  if (text.includes('buildsmart') || text.includes('civil') || text.includes('estimator') || text.includes('boq')) {
-    return `${SUPABASE_MEDIA}/buildsmart-web.mp4`;
+  if (text.includes('qa-ai') || text.includes('autonomous testing') || (text.includes('qa') && text.includes('testing'))) {
+    return DEDICATED_VIDEOS['qa-ai-autonomous-testing-platform'];
   }
-  if (text.includes('faceauth') || text.includes('biometric') || text.includes('face')) {
-    return `${SUPABASE_MEDIA}/faceauth-web.mp4`;
+  if (text.includes('l1') && (text.includes('automation') || text.includes('support agent'))) {
+    return DEDICATED_VIDEOS['ai-l1-support-agent'];
   }
-  if (text.includes('l1') || text.includes('support agent')) {
-    return `${SUPABASE_MEDIA}/l1_agent-web.mp4`;
+  if (text.includes('buildsmart')) {
+    return DEDICATED_VIDEOS['buildsmart-estimator'];
   }
-  if (text.includes('qlik')) {
-    return `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`;
+  if (text.includes('faceauth')) {
+    return DEDICATED_VIDEOS['faceauth'];
   }
-  if (text.includes('sql') || text.includes('db') || text.includes('database') || text.includes('migration')) {
-    return `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`;
+  if (text.includes('homescape') || text.includes('smart home')) {
+    return DEDICATED_VIDEOS['gbti-smart-home-builder'];
   }
-  if (text.includes('home') || text.includes('energy') || text.includes('builder') || text.includes('smart')) {
-    return '/media/videos/ai_smart_home_web.mp4';
+  if (text.includes('packaging optimization') || text.includes('logistics')) {
+    return DEDICATED_VIDEOS['packaging-optimization-platform'];
   }
-  if (text.includes('packaging') || text.includes('logistics') || text.includes('shipping') || text.includes('supply')) {
-    return '/media/videos/ai_logistics_web.mp4';
-  }
-  if (text.includes('inspection') || text.includes('quality') || text.includes('food')) {
-    return `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`;
-  }
-  if (text.includes('analytics') || text.includes('marketing') || text.includes('sales') || text.includes('customer') || text.includes('sample')) {
-    return `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`;
-  }
-  if (text.includes('score') || text.includes('hr') || text.includes('employee') || text.includes('support')) {
-    return `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`;
+  if (text.includes('reporting tool') || text.includes('reporting studio') || text.includes('ai reporting')) {
+    return DEDICATED_VIDEOS['ai-reporting-platform'];
   }
 
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    hash = (hash << 5) - hash + text.charCodeAt(i);
-    hash |= 0;
-  }
-  const index = Math.abs(hash) % DEFAULT_VIDEO_POOL.length;
-  return DEFAULT_VIDEO_POOL[index];
+  // 3. For any application WITHOUT a dedicated video (e.g. Invoice Flow, AI Marketing Agent, Insight AI),
+  // NEVER guess or assign a random/unrelated video! Return empty string.
+  return '';
 };
 
 interface ProductVideoStreamingPlayerProps {
@@ -303,6 +274,31 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   };
 
   const videoSource = getVideoForProduct(productId, productTitle, videoUrl);
+
+  // If no dedicated video exists for this product, render the high-res project showcase image cleanly (no video player, no buffering indicator, no random fallback video)
+  if (!videoSource) {
+    return (
+      <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none flex items-center justify-center group/image">
+        {/* Main High-Res Showcase Image */}
+        <img
+          src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
+          className="relative z-10 w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-105"
+          alt={productTitle}
+        />
+
+        {/* Ambient Blurred Glow */}
+        <img
+          src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
+          className="absolute inset-0 w-full h-full object-cover blur-md opacity-30 pointer-events-none scale-110"
+          alt=""
+          aria-hidden="true"
+        />
+
+        {/* Subtle Bottom Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none z-20" />
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
