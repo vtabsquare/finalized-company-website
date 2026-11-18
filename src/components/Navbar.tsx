@@ -62,6 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const primaryNavItems: { id: NavTab; label: string; badge?: string }[] = [
     { id: 'home', label: 'Home' },
     { id: 'products', label: 'Accelerators' },
+    { id: 'bi-dashboards', label: 'Data Intelligence' },
     { id: 'solutions', label: 'Solutions' },
   ];
 
@@ -98,6 +99,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     } else if (tabId === 'products') {
       const el = document.getElementById('ai-portfolio');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else if (tabId === 'bi-dashboards') {
+      setTimeout(() => {
+        const el = document.getElementById('bi-dashboards-section') || document.getElementById('section-bi-dashboards');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     } else if (tabId === 'agents') {
       setTimeout(() => {
         document.getElementById('ai-agents-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

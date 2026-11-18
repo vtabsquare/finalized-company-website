@@ -32,6 +32,7 @@ export default function App() {
   const tabRoutes: Partial<Record<NavTab, string>> = {
     home: '/',
     products: '/',
+    'bi-dashboards': '/#section-bi-dashboards',
     agents: '/#ai-agents-section',
     iot: '/',
     solutions: '/solutions',
@@ -291,6 +292,13 @@ export default function App() {
       }, 80);
     }
 
+    if (tab === 'bi-dashboards') {
+      setTimeout(() => {
+        const el = document.getElementById('bi-dashboards-section') || document.getElementById('section-bi-dashboards');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
+
     if (tab === 'iot') {
       setTimeout(() => {
         document.getElementById('section-iot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -316,7 +324,7 @@ export default function App() {
           onSelectProduct={handleSelectProduct}
           isLightMode={isLightMode}
           onToggleTheme={toggleTheme}
-          isOverHero={(activeTab === 'home' || activeTab === 'products') && !selectedProduct}
+          isOverHero={(activeTab === 'home' || activeTab === 'products' || activeTab === 'bi-dashboards') && !selectedProduct}
           showReportingPill={showReportingPill}
           isPillDockedPulse={pillDockedPulse}
         />
