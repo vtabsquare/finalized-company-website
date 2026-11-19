@@ -382,7 +382,7 @@ export const ProductPreviewFrame: React.FC<ProductPreviewFrameProps> = ({
         <div className="flex items-center gap-3 font-mono text-[10px] text-slate-400">
           <span>Row count: 4,821,904</span>
           <span>·</span>
-          <span className="text-cyan-400">VTAB Engine v5.0.22</span>
+          <span className="text-cyan-400">VTAB Engine v6.0.0</span>
         </div>
       </div>
     </div>

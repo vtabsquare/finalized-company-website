@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Check, Laptop, AlertCircle, Sparkles, ShieldCheck, Mail } from 'lucide-react';
 import { SITE_CONFIG } from '../data/reportingProductData';
+import { useDesktopRelease } from '../hooks/useDesktopRelease';
 
 interface DownloadModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface DownloadModalProps {
 }
 
 export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose }) => {
+  const { version } = useDesktopRelease();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -50,7 +52,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose })
           </h3>
 
           <p className="text-slate-300 text-sm leading-relaxed">
-            v5.0.22 binary package is currently in private staging for enterprise validation.
+            {version} binary package is currently in private staging for enterprise validation.
           </p>
         </div>
 

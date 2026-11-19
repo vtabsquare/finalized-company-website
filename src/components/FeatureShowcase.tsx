@@ -153,7 +153,7 @@ const FeatureMockup: React.FC<{ previewType: FeatureItem['previewType'] }> = ({ 
             {previewType === 'paginated' && 'VTAB Studio — Paginated Report Designer'}
           </span>
         </div>
-        <div className="text-[10px] text-cyan-400 font-mono">v5.0.22</div>
+        <div className="text-[10px] text-cyan-400 font-mono">v6.0.0</div>
       </div>
 
       {/* Mockup Canvas Area */}

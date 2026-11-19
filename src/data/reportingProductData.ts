@@ -5,7 +5,7 @@ export const SITE_CONFIG = {
   shortName: 'VTAB Studio',
   tagline: 'Transform data into clear decisions.',
   description: 'VTAB Reporting Studio — an integrated environment for data modelling, analytics, and interactive business reporting.',
-  version: 'Windows Desktop · v5.0.22',
+  version: 'Windows Desktop · v6.0.0',
   categoryLabel: 'BUSINESS INTELLIGENCE AND REPORTING',
   downloadUrl: '#download',
   demoUrl: '#demo',

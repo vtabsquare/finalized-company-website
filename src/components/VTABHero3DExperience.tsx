@@ -13,6 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
+import { useDesktopRelease } from '../hooks/useDesktopRelease';
 
 // ── Background video: same source as the homepage ──
 const HERO_VIDEO_SRC = '/media/videos/new-hero-video.mp4';
@@ -62,44 +63,8 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ── Desktop Release Configuration via Environment Variables (.env) ──
-  const ENV_DOWNLOAD_URL = (import.meta.env.VITE_REPORTING_TOOL_DOWNLOAD_URL as string | undefined)?.trim() || '';
-  const ENV_VERSION = (import.meta.env.VITE_REPORTING_TOOL_VERSION as string | undefined)?.trim() || '';
-  const ENV_REPO = (import.meta.env.VITE_REPORTING_TOOL_GITHUB_REPO as string | undefined)?.trim() || 'vtabsquare/Reporting-tool-desktop-releases';
-
-  const GITHUB_API = `https://api.github.com/repos/${ENV_REPO}/releases/latest`;
-  const DEFAULT_PAGE = ENV_DOWNLOAD_URL || `https://github.com/${ENV_REPO}/releases/latest`;
-
-  const [releaseUrl, setReleaseUrl] = useState(DEFAULT_PAGE);
-  const [releaseVersion, setReleaseVersion] = useState(ENV_VERSION || 'v5.0.22');
-  const [releaseLoading, setReleaseLoading] = useState(!ENV_DOWNLOAD_URL);
-
-  useEffect(() => {
-    // If a direct .exe link or custom download URL is specified in .env, use it directly!
-    if (ENV_DOWNLOAD_URL && !ENV_DOWNLOAD_URL.endsWith('/releases/latest')) {
-      setReleaseUrl(ENV_DOWNLOAD_URL);
-      if (ENV_VERSION) setReleaseVersion(ENV_VERSION);
-      setReleaseLoading(false);
-      return;
-    }
-
-    // Automatically fetch the latest .exe installer asset from GitHub Releases
-    fetch(GITHUB_API)
-      .then((res) => res.json())
-      .then((data) => {
-        const exeAsset = data.assets?.find((a: { name: string; browser_download_url: string }) =>
-          a.name.toLowerCase().endsWith('.exe')
-        );
-        if (exeAsset?.browser_download_url) {
-          setReleaseUrl(exeAsset.browser_download_url);
-        }
-        if (data.tag_name && !ENV_VERSION) {
-          setReleaseVersion(data.tag_name);
-        }
-      })
-      .catch(() => { /* fallback: keep releases page link */ })
-      .finally(() => setReleaseLoading(false));
-  }, [ENV_DOWNLOAD_URL, ENV_VERSION, GITHUB_API]);
+  // ── Desktop Release: dynamically fetched from GitHub Tags & Releases ──
+  const { version: releaseVersion, downloadUrl: releaseUrl } = useDesktopRelease();
 
   // ── Reporting PPT URL from Supabase ──
   const ENV_PPT_URL = (import.meta.env.VITE_REPORTING_TOOL_PPT_URL as string | undefined)?.trim() || '';
@@ -107,11 +72,13 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     const fetchPpt = () => {
-      supabase
-        .from('products')
-        .select('demo_snippet, detail_content')
-        .eq('id', 'ai-reporting-platform')
-        .single()
+      Promise.resolve(
+        supabase
+          .from('products')
+          .select('demo_snippet, detail_content')
+          .eq('id', 'ai-reporting-platform')
+          .single()
+      )
         .then(({ data }) => {
           const ppt = (data?.demo_snippet as { pptUrl?: string } | null)?.pptUrl 
                    || (data?.detail_content as { pptUrl?: string } | null)?.pptUrl 
