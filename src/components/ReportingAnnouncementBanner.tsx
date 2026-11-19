@@ -38,6 +38,7 @@ const ANNOUNCEMENT_ITEMS: AnnouncementItem[] = [
     ctaGradient: 'from-[#00aaf4] via-[#477ffc] to-[#db4ce7]',
     ctaShadow: 'shadow-[0_0_22px_rgba(112,84,247,.38)] hover:shadow-[0_0_30px_rgba(160,75,243,.6)]',
   },
+  /* Temporarily commented out as requested: AI Databricks Migration
   {
     id: 'databricks-migration',
     productId: 'ai-migration-factory-databricks-control-plane',
@@ -56,6 +57,7 @@ const ANNOUNCEMENT_ITEMS: AnnouncementItem[] = [
     ctaGradient: 'from-[#0284c7] via-[#0ea5e9] to-[#059669]',
     ctaShadow: 'shadow-[0_0_22px_rgba(14,165,233,.45)] hover:shadow-[0_0_30px_rgba(52,211,153,.65)]',
   },
+  */
 ];
 
 interface ReportingAnnouncementBannerProps {

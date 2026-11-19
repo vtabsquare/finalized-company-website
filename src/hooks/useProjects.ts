@@ -7,7 +7,14 @@ import { getValidImageUrl } from '../utils/imageFallback';
 export function useProjects() {
   const [projects, setProjects] = useState<Product[]>(() =>
     PRODUCTS_DATA
-      .filter(p => !p.id.toLowerCase().includes('sentinel') && !p.title.toLowerCase().includes('sentinel'))
+      .filter(p => {
+        const id = (p.id || '').toLowerCase();
+        const title = (p.title || '').toLowerCase();
+        // Exclude sentinel and temporarily exclude databricks migration application
+        if (id.includes('sentinel') || title.includes('sentinel')) return false;
+        if (id.includes('databricks-control-plane') || id.includes('ai-migration-factory')) return false;
+        return true;
+      })
       .map(p => ({
         ...p,
         imageUrl: getValidImageUrl(p.imageUrl, p.category, p.title, p.id)
@@ -39,7 +46,10 @@ export function useProjects() {
               const id = (item.id || '').toLowerCase();
               const title = (item.title || '').toLowerCase();
               // Completely remove VTAB Sentinel Server Room from the website
-              return !id.includes('sentinel') && !title.includes('sentinel');
+              if (id.includes('sentinel') || title.includes('sentinel')) return false;
+              // Temporarily comment out/hide AI Migration Factory & Databricks Control Plane
+              if (id.includes('databricks-control-plane') || id.includes('ai-migration-factory')) return false;
+              return true;
             })
             .map((item: any) => {
             let demoSnippet: any = item.demo_snippet || item.demoSnippet;
