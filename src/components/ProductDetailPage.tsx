@@ -43,6 +43,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   onScheduleDemo,
   isLightMode = false,
 }) => {
+  const liveUrls: Record<string, string> = {
+    'vtab-meetscribe-ai': 'https://ai-meetscribewebsite-frontend.onrender.com/',
+    'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/'
+  };
+  const effectiveEmbedUrl =
+    product.embedUrl ||
+    product.detailContent?.embedUrl ||
+    (product.demoSnippet as any)?.embedUrl ||
+    liveUrls[product.id] ||
+    '';
   if (product.id === 'ai-reporting-platform') {
     return (
       <VTABReportingDetailPage
@@ -140,6 +150,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       <QlikMigrationDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
+        embedUrl={effectiveEmbedUrl}
         isLightMode={isLightMode}
       />
     );
@@ -205,17 +216,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       />
     );
   }
-
-  const liveUrls: Record<string, string> = {
-    'vtab-meetscribe-ai': 'https://ai-meetscribewebsite-frontend.onrender.com/',
-    'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/'
-  };
-  const effectiveEmbedUrl =
-    product.embedUrl ||
-    product.detailContent?.embedUrl ||
-    (product.demoSnippet as any)?.embedUrl ||
-    liveUrls[product.id] ||
-    '';
 
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeKey, setIframeKey] = useState(0);

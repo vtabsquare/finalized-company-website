@@ -14,12 +14,16 @@ import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 interface QlikHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
   onExploreCapabilities?: () => void;
+  onExploreSandbox?: () => void;
+  hasSandbox?: boolean;
   isLightMode?: boolean;
 }
 
 export const QlikHero3DExperience: React.FC<QlikHero3DExperienceProps> = ({
   onScheduleDemo,
   onExploreCapabilities,
+  onExploreSandbox,
+  hasSandbox = false,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -139,6 +143,17 @@ export const QlikHero3DExperience: React.FC<QlikHero3DExperienceProps> = ({
                 className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-200 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700 hover:border-cyan-400/40 transition-all duration-300 cursor-pointer flex items-center gap-2"
               >
                 <span>Explore Capabilities</span>
+              </button>
+            )}
+
+            {hasSandbox && onExploreSandbox && (
+              <button
+                type="button"
+                onClick={onExploreSandbox}
+                className="px-6 py-3.5 rounded-xl font-bold text-sm text-cyan-300 hover:text-white bg-cyan-950/70 hover:bg-cyan-900/80 border border-cyan-500/50 hover:border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] transition-all duration-300 cursor-pointer flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span>Live Interactive Sandbox</span>
               </button>
             )}
           </div>

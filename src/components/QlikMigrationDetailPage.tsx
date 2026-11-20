@@ -9,17 +9,20 @@ import { QlikWorkflowSection } from './QlikWorkflowSection';
 import { QlikFeatureShowcase } from './QlikFeatureShowcase';
 import { QlikZigzagFeatures } from './QlikZigzagFeatures';
 import { QlikEditionsSection } from './QlikEditionsSection';
+import { QlikLiveSandbox } from './QlikLiveSandbox';
 import { QLIK_MIGRATION_CONFIG } from '../data/qlikMigrationData';
 
 interface QlikMigrationDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
+  embedUrl?: string;
   isLightMode?: boolean;
 }
 
 export const QlikMigrationDetailPage: React.FC<QlikMigrationDetailPageProps> = ({
   onBack,
   onScheduleDemo,
+  embedUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -29,6 +32,15 @@ export const QlikMigrationDetailPage: React.FC<QlikMigrationDetailPageProps> = (
 
   const scrollToCapabilities = () => {
     const el = document.getElementById('studio-capabilities');
+    if (el) {
+      const yOffset = -70;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToSandbox = () => {
+    const el = document.getElementById('interactive-sandbox');
     if (el) {
       const yOffset = -70;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
@@ -96,8 +108,19 @@ export const QlikMigrationDetailPage: React.FC<QlikMigrationDetailPageProps> = (
         <QlikHero3DExperience
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
+          onExploreSandbox={scrollToSandbox}
+          hasSandbox={Boolean(embedUrl)}
           isLightMode={isLightMode}
         />
+
+        {/* Live Interactive Application Sandbox (if configured in Admin Dashboard) */}
+        {embedUrl && (
+          <QlikLiveSandbox
+            embedUrl={embedUrl}
+            productTitle={QLIK_MIGRATION_CONFIG.name}
+            isLightMode={isLightMode}
+          />
+        )}
 
         {/* Screen 1 (Extended): End-to-End Pipeline Architecture (4 Stages) */}
         <QlikWorkflowSection />
