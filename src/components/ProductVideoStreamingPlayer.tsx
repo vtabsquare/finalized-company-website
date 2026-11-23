@@ -293,17 +293,17 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   // If there is no dedicated video for this application, display the high-res crisp media poster without video player HUD
   if (!videoSource) {
     return (
-      <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none flex items-center justify-center">
+      <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-transparent select-none flex items-center justify-center">
         {/* Ambient Blurred Background */}
         <img
           src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-          className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110"
+          className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110 z-0"
           alt="Ambient background"
         />
         {/* Crisp static media image with object-contain to prevent side cropping */}
         <img
           src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-          className="relative z-10 w-full h-full object-contain transition-transform duration-700"
+          className="absolute inset-0 w-full h-full object-contain transition-transform duration-700 z-10"
           alt={productTitle}
         />
         {/* Subtle bottom shadow vignette */}
@@ -313,7 +313,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   }
 
   return (
-    <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
+    <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-transparent select-none group/video flex items-center justify-center">
       {/* Ambient Blurred Background */}
       <img
         src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
@@ -324,7 +324,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       {/* Poster shown while buffering - instant image, object-contain to match video bounds */}
       <img
         src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-        className={`relative z-10 w-full h-full object-contain pointer-events-none transition-opacity duration-700 ${
+        className={`absolute inset-0 w-full h-full object-contain pointer-events-none z-20 transition-opacity duration-700 ${
           isBuffered ? 'opacity-0' : 'opacity-100'
         }`}
         alt=""
@@ -374,7 +374,7 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
           transform: 'translateZ(0)',
           backfaceVisibility: 'hidden'
         }}
-        className={`relative z-10 w-full h-full object-contain transition-opacity duration-700 ${
+        className={`absolute inset-0 w-full h-full object-contain z-10 transition-opacity duration-700 ${
           isBuffered ? 'opacity-100' : 'opacity-0'
         }`}
       />

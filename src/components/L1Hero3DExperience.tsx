@@ -5,7 +5,8 @@ import {
   ArrowUpRight,
   Headphones,
   CheckCircle2,
-  Maximize2
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { L1_AGENT_CONFIG } from '../data/l1AutomationAgentData';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
