@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Sparkles, ArrowRight, Shield, Layers, FileText } from 'lucide-react';
+import { Sparkles, ArrowRight, Shield, Layers, FileText, Maximize2, Minimize2 } from 'lucide-react';
 import { buildsmartEstimatorHero } from '../data/buildsmartEstimatorData';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 
@@ -12,34 +12,67 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
   onScheduleDemo,
   onExploreSpecs
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rX = ((y - centerY) / centerY) * -5;
-    const rY = ((x - centerX) / centerX) * 5;
-
-    setRotateX(rX);
-    setRotateY(rY);
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-  };
+  const [isCinematic, setIsCinematic] = useState(false);
 
   return (
-    <div className="relative pt-10 pb-16 lg:pt-14 lg:pb-20 overflow-hidden">
+    <div className="relative pt-10 pb-16 lg:pt-14 lg:pb-20 overflow-hidden bg-gradient-to-b from-[#030611] via-[#050B1B] to-[#030611]">
+      {/* Dynamic Background Glows */}
+      <div className="absolute top-1/4 left-1/4 w-[650px] h-[650px] bg-amber-600/10 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="absolute bottom-1/3 right-1/4 w-[550px] h-[550px] bg-orange-500/10 rounded-full blur-[130px] pointer-events-none z-0" />
+
+      {/* Full-Bleed Background Video (Matches AI Portfolio Showcase) */}
+      <div className="absolute inset-0 z-10 flex justify-end overflow-hidden">
+        {/* Left & Bottom Gradient Masks to ensure text readability */}
+        <div className={`absolute inset-0 z-20 w-full lg:w-[50%] transition-opacity duration-700 ${
+          isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        } bg-gradient-to-r from-[#030611] via-[#030611]/90 to-transparent pointer-events-none`} />
+        
+        <div className={`absolute inset-0 z-20 transition-opacity duration-700 ${
+          isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        } bg-gradient-to-t from-[#030611] via-[#030611]/50 to-transparent pointer-events-none`} />
+
+        {/* Video Player pushed to the right (65%) or expanded full-width */}
+        <div className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isCinematic 
+            ? 'w-full opacity-100 z-10' 
+            : 'w-full lg:w-[65%] opacity-100 z-10'
+        }`}
+          style={{
+            maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
+            WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
+          }}
+        >
+          <ProductVideoStreamingPlayer
+            productId="buildsmart-estimator"
+            productTitle={buildsmartEstimatorHero.title}
+            imageUrl={buildsmartEstimatorHero.mediaImage}
+            compactMode={false}
+            isCinematic={isCinematic}
+            onToggleCinematic={() => setIsCinematic(!isCinematic)}
+            isActive={true}
+          />
+        </div>
+      </div>
+
+      {/* Top-Right Video Controls (Matches AI Portfolio Showcase) */}
+      <div className="absolute top-24 lg:top-28 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={() => setIsCinematic(!isCinematic)}
+          className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
+            isCinematic
+              ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
+              : 'bg-gradient-to-r from-amber-600/30 to-orange-500/30 hover:from-amber-600/50 hover:to-orange-500/50 border-amber-400/50 text-amber-300 animate-pulse'
+          }`}
+          title={isCinematic ? 'Exit Full View (Show Text)' : 'Expand Video (Hide Text)'}
+        >
+          {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-amber-300" />}
+          <span className="hidden sm:inline text-xs font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
+        </button>
+      </div>
+
       {/* Top Breadcrumb & Status Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 relative z-20">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <a
             href="/"
@@ -54,116 +87,69 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Product Information & CTAs */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-950/20 text-purple-300 text-xs font-mono">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                ENTERPRISE SOLUTION · CIVIL ENGINEERING & ESTIMATION
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white font-sans">
-                BuildSmart <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200 bg-clip-text text-transparent">Estimator</span>
-              </h1>
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans pt-2">
-                {buildsmartEstimatorHero.description}
-              </p>
+      {/* Floating Hero Content (Left 54% - Matches AI Portfolio Showcase) */}
+      <div className={`relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center min-h-[580px] ${
+        isCinematic ? 'pointer-events-none' : ''
+      }`}>
+        <div className={`w-full lg:w-[54%] space-y-6 transition-all duration-700 ease-out fill-mode-both ${
+          isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+        }`}>
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-950/20 text-purple-300 text-xs font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+              ENTERPRISE SOLUTION · CIVIL ENGINEERING & ESTIMATION
             </div>
-
-            {/* Metrics */}
-            <div className="grid grid-cols-3 gap-4 pt-2">
-              {buildsmartEstimatorHero.metrics.map((metric, i) => (
-                <div key={i} className="p-3 rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-md">
-                  <div className="text-xl sm:text-2xl font-bold font-mono text-amber-400">
-                    {metric.value}
-                  </div>
-                  <div className="text-xs text-slate-400 font-mono mt-1">
-                    {metric.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* CTAs (No download buttons, strictly demo & explore) */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <button
-                onClick={onScheduleDemo}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-semibold font-sans text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all flex items-center gap-2 group cursor-pointer"
-              >
-                <span>{buildsmartEstimatorHero.primaryAction}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-
-              <button
-                onClick={onExploreSpecs}
-                className="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 hover:bg-slate-800/50 text-slate-200 font-medium font-sans text-sm transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <span>{buildsmartEstimatorHero.secondaryAction}</span>
-                <Layers className="w-4 h-4 text-slate-400" />
-              </button>
-            </div>
-
-            {/* Technology Tags */}
-            <div className="pt-2 flex flex-wrap gap-2">
-              {buildsmartEstimatorHero.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white font-sans">
+              BuildSmart <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200 bg-clip-text text-transparent">Estimator</span>
+            </h1>
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans pt-2 max-w-xl">
+              {buildsmartEstimatorHero.description}
+            </p>
           </div>
 
-          {/* Right Column: 3D Parallax Media Console */}
-          <div className="lg:col-span-6">
-            <div
-              ref={containerRef}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              style={{
-                perspective: '1000px'
-              }}
-              className="relative w-full"
-            >
-              <div
-                style={{
-                  transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="relative rounded-2xl border border-amber-500/30 bg-[#0B0F19]/90 shadow-2xl shadow-amber-500/10 backdrop-blur-xl overflow-hidden group"
-              >
-                {/* Console Header Bar */}
-                <div className="px-4 py-3 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/60">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-green-500/80 inline-block" />
-                    <span className="ml-2 text-xs font-mono text-slate-400">
-                      BuildSmart 360 Estimator · Structural Console
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider">
-                      OPERATIONAL
-                    </span>
-                  </div>
+          {/* Metrics */}
+          <div className="grid grid-cols-3 gap-3 max-w-xl">
+            {buildsmartEstimatorHero.metrics.map((metric, i) => (
+              <div key={i} className="p-3 rounded-xl border border-slate-800 bg-black/50 backdrop-blur-md">
+                <div className="text-xl sm:text-2xl font-bold font-mono text-amber-400">
+                  {metric.value}
                 </div>
-
-                {/* Console Media Preview / Video Player */}
-                <div className="relative aspect-video min-h-[340px] sm:min-h-[420px] w-full overflow-hidden bg-slate-950">
-                  <ProductVideoStreamingPlayer
-                    productId="buildsmart-estimator"
-                    productTitle={buildsmartEstimatorHero.title}
-                    imageUrl={buildsmartEstimatorHero.mediaImage}
-                    compactMode={false}
-                  />
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {metric.label}
                 </div>
               </div>
-            </div>
+            ))}
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <button
+              onClick={onScheduleDemo}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-semibold font-sans text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all flex items-center gap-2 group cursor-pointer"
+            >
+              <span>{buildsmartEstimatorHero.primaryAction}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+
+            <button
+              onClick={onExploreSpecs}
+              className="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 hover:bg-slate-800/50 text-slate-200 font-medium font-sans text-sm transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span>{buildsmartEstimatorHero.secondaryAction}</span>
+              <Layers className="w-4 h-4 text-slate-400" />
+            </button>
+          </div>
+
+          {/* Technology Tags */}
+          <div className="pt-2 flex flex-wrap gap-2">
+            {buildsmartEstimatorHero.tags.map((tag, i) => (
+              <span
+                key={i}
+                className="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </div>
