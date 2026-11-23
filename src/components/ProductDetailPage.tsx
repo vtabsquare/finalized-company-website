@@ -14,7 +14,9 @@ import {
   Loader2,
   Globe,
   Play,
-  FileText
+  FileText,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { ScrollReveal } from './animations/ScrollReveal';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
@@ -219,6 +221,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeKey, setIframeKey] = useState(0);
+  const [isCinematic, setIsCinematic] = useState(false);
 
   const heroRootRef = useRef<HTMLElement>(null);
   const heroTarget = useRef({ x: 0, y: 0 });
@@ -341,140 +344,151 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           />
         </div>
 
-        <div className="relative z-30 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        {/* Full-Bleed Cinematic Background (Matches AI Portfolio Showcase) */}
+        <div className="absolute inset-0 z-0 flex justify-end overflow-hidden">
+          {/* Left & Bottom Gradient Masks to ensure text readability */}
+          <div className={`absolute inset-0 z-10 w-full lg:w-2/3 transition-opacity duration-700 ${
+            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          } bg-gradient-to-r from-[#020611] via-[#020611]/95 to-transparent pointer-events-none`} />
+          
+          <div className={`absolute inset-0 z-10 transition-opacity duration-700 ${
+            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          } bg-gradient-to-t from-[#020611] via-[#020611]/60 to-transparent pointer-events-none`} />
+          
+          {/* Video / Media Player pushed to the right (65%) or expanded full-width */}
+          <div className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            isCinematic 
+              ? 'w-full opacity-100 z-10' 
+              : 'w-full lg:w-[65%] opacity-85 z-0'
+          }`}
+            style={{
+              maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+              WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+            }}
+          >
+            <ProductVideoStreamingPlayer
+              productId={product.id}
+              productTitle={product.title}
+              imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
+              videoUrl={videoUrl}
+              compactMode={false}
+              isCinematic={isCinematic}
+              onToggleCinematic={() => setIsCinematic(!isCinematic)}
+              isActive={true}
+            />
+          </div>
+        </div>
 
-            {/* ── LEFT COLUMN: TITLE, BADGE, PARAGRAPH, CTA BUTTONS, TECH BADGES ── */}
-            <div className="lg:col-span-4 text-left space-y-6">
+        {/* Top-Right Video Controls (Matches AI Portfolio Showcase) */}
+        <div className="absolute top-6 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+          {/* Expand Video / Show Text */}
+          <button
+            type="button"
+            onClick={() => setIsCinematic(!isCinematic)}
+            className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
+              isCinematic
+                ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
+                : 'bg-gradient-to-r from-blue-600/30 to-cyan-500/30 hover:from-blue-600/50 hover:to-cyan-500/50 border-cyan-400/50 text-cyan-300 animate-pulse'
+            }`}
+            title={isCinematic ? 'Exit Full View (Show Text)' : 'Expand Video (Hide Text)'}
+          >
+            {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-cyan-300" />}
+            <span className="hidden sm:inline text-xs font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
+          </button>
+        </div>
 
-              {/* Top Tagline Pill */}
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/35 text-xs font-semibold text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                <span className="tracking-wider uppercase text-[11px] font-mono">
-                  ENTERPRISE SOLUTION · {product.category.toUpperCase()}
-                </span>
-              </div>
+        {/* Floating Hero Content (Left 54% - Matches AI Portfolio Showcase) */}
+        <div className={`relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center min-h-[640px] ${
+          isCinematic ? 'pointer-events-none' : ''
+        }`}>
+          <div className={`w-full lg:w-[54%] space-y-6 transition-all duration-700 ease-out fill-mode-both ${
+            isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+          }`}>
 
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-white tracking-tight leading-[1.14] text-pretty">
-                {product.title}
-              </h1>
-
-              {/* Description Paragraph */}
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
-                {product.fullDescription || product.shortDescription}
-              </p>
-
-              {/* Impact Callout with Zap */}
-              {product.impactMetric && (
-                <div className="flex items-center gap-2.5 text-xs sm:text-sm text-cyan-300 font-medium">
-                  <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{product.impactMetric}</span>
-                </div>
-              )}
-
-              {/* Action Buttons: Schedule Demo + (Optional PPT / Sandbox Link) */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => onScheduleDemo(product.title)}
-                  className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95"
-                >
-                  <span>Schedule Technical Demo</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </button>
-
-                {effectiveEmbedUrl && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const el = document.getElementById('live-demo-interactive');
-                      if (el) {
-                        const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
-                        window.scrollTo({ top: y, behavior: 'smooth' });
-                      }
-                    }}
-                    className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-cyan-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95"
-                  >
-                    <Globe className="w-4 h-4 text-cyan-400" />
-                    <span>Live Interactive Sandbox</span>
-                  </button>
-                )}
-
-                {pptUrl && (
-                  <a
-                    href={pptUrl}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-purple-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95 no-underline"
-                  >
-                    <FileText className="w-4 h-4 text-purple-400" />
-                    <span>Download PPT</span>
-                  </a>
-                )}
-              </div>
-
-              {/* Tech Stack Pills Row */}
-              <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
-                {product.techStack.map((badge) => (
-                  <span
-                    key={badge}
-                    className="px-3.5 py-1 rounded-full text-[11px] font-medium text-slate-300 border border-slate-700/70 bg-[#081224]/75 backdrop-blur-md"
-                  >
-                    {badge}
-                  </span>
-                ))}
-              </div>
-
+            {/* Top Tagline Pill */}
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/35 text-xs font-semibold text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="tracking-wider uppercase text-[11px] font-mono">
+                ENTERPRISE SOLUTION · {product.category.toUpperCase()}
+              </span>
             </div>
 
-            {/* ── RIGHT COLUMN: HIGH-RES MEDIA / VIDEO STREAMING CONSOLE (ENLARGED) ── */}
-            <div className="lg:col-span-8 relative">
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-white tracking-tight leading-[1.14] text-pretty">
+              {product.title}
+            </h1>
 
-              {/* Ambient Backlight Glow behind Media Stage */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-2xl rounded-3xl pointer-events-none" />
+            {/* Description Paragraph */}
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
+              {product.fullDescription || product.shortDescription}
+            </p>
 
-              {/* Obsidian Glass Console Container - Enlarged Dimensions */}
-              <div className="relative rounded-2xl border border-cyan-500/40 bg-[#050c1e]/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(0,213,242,0.2)] overflow-hidden group hover:border-cyan-400/70 transition-all duration-300">
-                
-                {/* Console Top Chrome */}
-                <div className="flex items-center justify-between px-4 py-2.5 bg-[#030919]/90 border-b border-white/10 text-xs font-mono">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 text-slate-400 text-[11px] truncate max-w-xs sm:max-w-md">
-                      {product.title} • Media Console
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-500/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                      OPERATIONAL
-                    </span>
-                  </div>
-                </div>
-
-                {/* Media Viewport with min-height */}
-                <div className="relative aspect-video min-h-[380px] sm:min-h-[460px] lg:min-h-[520px] w-full bg-black flex items-center justify-center overflow-hidden">
-                  <ProductVideoStreamingPlayer
-                    productId={product.id}
-                    productTitle={product.title}
-                    imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
-                    videoUrl={videoUrl}
-                    compactMode={false}
-                  />
-                </div>
-
+            {/* Impact Callout with Zap */}
+            {product.impactMetric && (
+              <div className="flex items-center gap-2.5 text-xs sm:text-sm text-cyan-300 font-medium">
+                <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span>{product.impactMetric}</span>
               </div>
+            )}
 
+            {/* Action Buttons: Schedule Demo + (Optional PPT / Sandbox Link) */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <button
+                type="button"
+                onClick={() => onScheduleDemo(product.title)}
+                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95"
+              >
+                <span>Schedule Technical Demo</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
+
+              {effectiveEmbedUrl && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('live-demo-interactive');
+                    if (el) {
+                      const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-cyan-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95"
+                >
+                  <Globe className="w-4 h-4 text-cyan-400" />
+                  <span>Live Interactive Sandbox</span>
+                </button>
+              )}
+
+              {pptUrl && (
+                <a
+                  href={pptUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-purple-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95 no-underline"
+                >
+                  <FileText className="w-4 h-4 text-purple-400" />
+                  <span>Download PPT</span>
+                </a>
+              )}
+            </div>
+
+            {/* Tech Stack Pills Row */}
+            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
+              {product.techStack.map((badge) => (
+                <span
+                  key={badge}
+                  className="px-3.5 py-1 rounded-full text-[11px] font-medium text-slate-300 border border-slate-700/70 bg-[#081224]/75 backdrop-blur-md"
+                >
+                  {badge}
+                </span>
+              ))}
             </div>
 
           </div>
 
           {/* Interactive Scroll For Architecture Deep-Dive */}
-          <div className="flex justify-center pt-10 pb-2">
+          <div className="flex justify-center pt-8 pb-2">
             <button
               onClick={() => {
                 const element = document.getElementById('architecture-details-section');

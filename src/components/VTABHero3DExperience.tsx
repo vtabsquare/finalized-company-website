@@ -5,6 +5,7 @@ import {
   Volume2,
   VolumeX,
   Maximize2,
+  Minimize2,
   RotateCcw,
   Download,
   FileText,
@@ -15,9 +16,6 @@ import {
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
 import { useDesktopRelease } from '../hooks/useDesktopRelease';
 
-// ── Background video: same source as the homepage ──
-const HERO_VIDEO_SRC = '/media/videos/new-hero-video.mp4';
-const HERO_VIDEO_POSTER = '/media/videos/company-overview-poster.jpg';
 
 interface VTABHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
@@ -46,19 +44,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
 
-  // ── Background video state (matches homepage implementation) ──
-  const bgVideoRef = useRef<HTMLVideoElement>(null);
-  const [isBgMuted, setIsBgMuted] = useState(true);
-  const [isBgVideoReady, setIsBgVideoReady] = useState(false);
-
-  // Keep bg video muted prop in sync
-  useEffect(() => {
-    const v = bgVideoRef.current;
-    if (!v) return;
-    v.muted = isBgMuted;
-  }, [isBgMuted]);
-
-  // Respect prefers-reduced-motion — skip autoplay if user prefers it
+  // Respect prefers-reduced-motion
   const prefersReducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -98,6 +84,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isCinematic, setIsCinematic] = useState(false);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -195,82 +182,136 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
       style={{ background: '#020611' }}
     >
       {/* ─────────────────────────────────────────────────────────────
-          0. HOMEPAGE-STYLE FULL-BLEED BACKGROUND VIDEO
-             Same source, same treatment as HeroSection.tsx.
-             Sits at z-0, pointer-events-none so content stays interactive.
+          0. AI PORTFOLIO-STYLE FULL-BLEED BACKGROUND VIDEO
+             Application demo video plays directly across the right background
+             with dark gradient masks, expanding full-width in cinematic view.
          ───────────────────────────────────────────────────────────── */}
-      {!prefersReducedMotion && (
-        <div className="absolute inset-0 z-0 flex justify-end pointer-events-none">
-          {/* Left gradient mask — keeps the left content readable */}
-          <div className="absolute inset-0 z-10 w-full lg:w-[55%] bg-gradient-to-r from-[#020611] via-[#020611]/85 to-transparent pointer-events-none" />
+      <div 
+        className="absolute inset-0 z-0 flex justify-end overflow-hidden"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Left & Bottom Gradient Masks to ensure text readability */}
+        <div 
+          className={`absolute inset-0 z-10 w-full lg:w-2/3 transition-opacity duration-700 ${
+            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          } bg-gradient-to-r from-[#020611] via-[#020611]/95 to-transparent pointer-events-none`} 
+        />
+        
+        <div 
+          className={`absolute inset-0 z-10 transition-opacity duration-700 ${
+            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          } bg-gradient-to-t from-[#020611] via-[#020611]/60 to-transparent pointer-events-none`} 
+        />
 
-          {/* Bottom gradient fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-48 z-10 bg-gradient-to-t from-[#020611] via-[#020611]/60 to-transparent pointer-events-none" />
+        {/* Video Player pushed to the right (65%) or expanded full-width */}
+        <div 
+          className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            isCinematic 
+              ? 'w-full opacity-100 z-10' 
+              : 'w-full lg:w-[65%] opacity-85 z-0'
+          }`}
+          style={{
+            maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+            WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+          }}
+        >
+          <video
+            ref={videoRef}
+            src="/media/Reporting Tool AV.mp4"
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            preload="auto"
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleTimeUpdate}
+            onClick={togglePlay}
+            className="w-full h-full object-cover cursor-pointer"
+          />
 
-          {/* Video wrapper — right-aligned, masked on its left edge */}
-          <div
-            className="relative h-full w-full lg:w-[70%] z-0"
-            style={{
-              maskImage: 'linear-gradient(to right, transparent 0%, black 22%, black 100%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 22%, black 100%)',
-            }}
-          >
-            {/* Static poster shown until video is fully buffered */}
-            <img
-              src={HERO_VIDEO_POSTER}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                isBgVideoReady ? 'opacity-0' : 'opacity-100'
-              }`}
-              alt=""
-              aria-hidden="true"
-            />
-
-            {/* Background video — exact homepage treatment */}
-            <div
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                isBgVideoReady ? 'opacity-100' : 'opacity-0'
-              }`}
+          {/* Center Play Indicator when paused */}
+          {!isPlaying && (
+            <div 
+              onClick={togglePlay}
+              className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center cursor-pointer transition-opacity z-20 pointer-events-auto"
             >
-              <video
-                ref={bgVideoRef}
-                className="w-full h-full object-cover"
-                src={HERO_VIDEO_SRC}
-                loop
-                muted={isBgMuted}
-                playsInline
-                preload="auto"
-                aria-hidden="true"
-                onCanPlay={() => {
-                  setIsBgVideoReady(true);
-                  const v = bgVideoRef.current;
-                  if (!v) return;
-                  v.play().catch(() => {
-                    // Autoplay blocked; ensure we stay muted and retry
-                    setIsBgMuted(true);
-                    v.muted = true;
-                    v.play().catch(() => {});
-                  });
-                }}
-                style={{
-                  willChange: 'transform',
-                  transform: 'translateZ(0)',
-                  backfaceVisibility: 'hidden',
-                }}
-              />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center shadow-[0_0_30px_rgba(0,213,242,0.6)] transform hover:scale-110 active:scale-95 transition-transform cursor-pointer">
+                <Play className="w-7 h-7 fill-white ml-1 text-white" />
+              </div>
+            </div>
+          )}
+
+          {/* Floating Scrubber Bar on hover or pause or cinematic */}
+          <div 
+            className={`absolute bottom-4 right-6 left-6 lg:left-auto lg:w-[460px] p-3 rounded-xl bg-slate-950/80 border border-white/10 backdrop-blur-xl transition-all duration-300 z-30 pointer-events-auto ${
+              isHovered || !isPlaying || isCinematic ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
+          >
+            {/* Scrubber track */}
+            <div 
+              onClick={handleSeek}
+              className="relative w-full h-1.5 bg-white/20 hover:h-2 rounded-full cursor-pointer mb-2 transition-all group/scrubber"
+            >
+              <div 
+                className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full relative"
+                style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+              >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)] opacity-0 group-hover/scrubber:opacity-100 transition-opacity" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-white">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  className="p-1 rounded-md hover:bg-white/10 text-slate-200 hover:text-cyan-300 transition cursor-pointer"
+                  title={isPlaying ? 'Pause' : 'Play'}
+                >
+                  {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className="p-1 rounded-md hover:bg-white/10 text-slate-200 hover:text-cyan-300 transition cursor-pointer"
+                  title={isMuted ? 'Unmute' : 'Mute'}
+                >
+                  {isMuted ? <VolumeX className="w-3.5 h-3.5 text-slate-400" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
+                </button>
+                <span className="font-mono text-[11px] text-slate-300">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (videoRef.current) {
+                      videoRef.current.currentTime = 0;
+                      videoRef.current.play();
+                      setIsPlaying(true);
+                    }
+                  }}
+                  className="p-1 rounded-md hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition cursor-pointer"
+                  title="Replay from start"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  className="p-1 rounded-md hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition cursor-pointer"
+                  title="Fullscreen"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
-
-          {/* Sound toggle button — top-right, matches homepage style */}
-          <button
-            type="button"
-            onClick={() => setIsBgMuted(m => !m)}
-            className="absolute top-6 right-8 z-30 w-12 h-12 rounded-full bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl pointer-events-auto"
-            aria-label={isBgMuted ? 'Unmute background video' : 'Mute background video'}
-          >
-            {isBgMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
         </div>
-      )}
+      </div>
       {/* ─────────────────────────────────────────────────────────────
           1. 3D ATMOSPHERIC STAGE (WITH TASTEFUL DEPTH BLUR)
          ───────────────────────────────────────────────────────────── */}
@@ -330,236 +371,147 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. TWO-COLUMN HERO STAGE: CONTENT (LEFT) + LIVE DASHBOARD PLACEHOLDER (RIGHT)
+          1. TOP-RIGHT VIDEO CONTROLS (MATCHES AI PORTFOLIO SHOWCASE)
          ───────────────────────────────────────────────────────────── */}
-      <div className="relative z-30 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+      <div className="absolute top-6 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+        {/* Expand Video / Show Text */}
+        <button
+          type="button"
+          onClick={() => setIsCinematic(!isCinematic)}
+          className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
+            isCinematic
+              ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
+              : 'bg-gradient-to-r from-blue-600/30 to-cyan-500/30 hover:from-blue-600/50 hover:to-cyan-500/50 border-cyan-400/50 text-cyan-300 animate-pulse'
+          }`}
+          title={isCinematic ? 'Exit Full View (Show Text)' : 'Expand Video (Hide Text)'}
+        >
+          {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-cyan-300" />}
+          <span className="hidden sm:inline text-xs font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
+        </button>
 
-          {/* ── LEFT COLUMN: TITLE, PARAGRAPH, DOWNLOAD CTA, FEATURE BADGES ── */}
-          <div className="lg:col-span-5 text-left space-y-6">
+        {/* Play / Pause Toggle */}
+        <button
+          type="button"
+          onClick={togglePlay}
+          className="px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md bg-black/40 hover:bg-black/60 border-white/10 text-slate-300 hover:text-white"
+          title={isPlaying ? 'Pause Video' : 'Play Video'}
+        >
+          {isPlaying ? <Pause className="w-4 h-4 text-amber-400" /> : <Play className="w-4 h-4 text-emerald-400 fill-current" />}
+          <span className="hidden sm:inline text-xs font-semibold">{isPlaying ? 'Pause' : 'Play'}</span>
+        </button>
 
-            {/* Top Tagline Pill */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/35 text-xs font-semibold text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span className="tracking-wider uppercase text-[11px] font-mono">
-                24/7 ENTERPRISE REPORTING ENGINE · CL 100
-              </span>
-            </div>
+        {/* Mute / Unmute Toggle */}
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="w-10 h-10 rounded-2xl border transition-all flex items-center justify-center cursor-pointer shadow-xl backdrop-blur-md bg-black/40 hover:bg-black/60 border-white/10 text-slate-300 hover:text-white"
+          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+        >
+          {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
+        </button>
+      </div>
 
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.35rem] font-extrabold text-white tracking-tight leading-[1.12] text-pretty">
-              Transform business<br />
-              data into{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-purple-300 drop-shadow-[0_0_25px_rgba(168,85,247,0.45)]">
-                clear
-              </span><br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 drop-shadow-[0_0_25px_rgba(0,213,242,0.45)]">
-                decisions
-              </span>
-            </h1>
+      {/* ─────────────────────────────────────────────────────────────
+          2. FLOATING HERO CONTENT (LEFT 54% - MATCHES AI PORTFOLIO SHOWCASE)
+         ───────────────────────────────────────────────────────────── */}
+      <div className={`relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center min-h-[640px] ${
+        isCinematic ? 'pointer-events-none' : ''
+      }`}>
+        <div className={`w-full lg:w-[54%] space-y-6 transition-all duration-700 ease-out fill-mode-both ${
+          isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+        }`}>
 
-            {/* Description Paragraph */}
-            <p className="text-slate-300 text-sm sm:text-base lg:text-[1.05rem] leading-relaxed max-w-xl font-normal">
-              VTAB Reporting Studio is a complete business intelligence and report-authoring platform for transforming data, building semantic models, creating reusable business measures, designing interactive dashboards, and publishing reports.
-            </p>
-
-            {/* Feature Sub-bullet Callout with Zap */}
-            <div className="flex items-center gap-2.5 text-xs sm:text-sm text-cyan-300 font-medium">
-              <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span>Connect data, prepare it, model it, visualize it, and publish it from one environment.</span>
-            </div>
-
-            {/* Action Buttons: Download Desktop + Interactive Demo */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
-              <a
-                href={releaseUrl}
-                download
-                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95 no-underline"
-              >
-                <Download className="w-4 h-4" />
-                <span>
-                  Download Desktop {releaseVersion}
-                </span>
-                <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-white/20 text-white border border-white/30 backdrop-blur-sm">
-                  Win 64-bit
-                </span>
-              </a>
-
-              <button
-                type="button"
-                onClick={onWatchDemo || (() => {
-                  const el = document.getElementById('dashboards');
-                  if (el) {
-                    const yOffset = -70;
-                    const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                    window.scrollTo({ top: y, behavior: 'smooth' });
-                  }
-                })}
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-cyan-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95"
-              >
-                <Play className="w-4 h-4 text-cyan-400 fill-cyan-400/20" />
-                <span>Watch Interactive Demo</span>
-              </button>
-
-              <a
-                href={reportingPptUrl || '#'}
-                download={Boolean(reportingPptUrl)}
-                target={reportingPptUrl ? '_blank' : undefined}
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  if (!reportingPptUrl) {
-                    e.preventDefault();
-                    alert('Presentation deck (PPT) has not been configured yet. You can upload or link the PPT in the Admin Dashboard > Live Dashboards section.');
-                  }
-                }}
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-purple-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95 no-underline"
-              >
-                <FileText className="w-4 h-4 text-purple-400" />
-                <span>Download PPT</span>
-              </a>
-            </div>
-
-            {/* Feature Badges Row */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
-              {['CL 100 Compatibility', 'Measure Engine', 'Paginated Reports', 'Deterministic Sort'].map((badge) => (
-                <span
-                  key={badge}
-                  className="px-3.5 py-1 rounded-full text-[11px] font-medium text-slate-300 border border-slate-700/70 bg-[#081224]/75 backdrop-blur-md"
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
-
+          {/* Top Tagline Pill */}
+          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/35 text-xs font-semibold text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="tracking-wider uppercase text-[11px] font-mono">
+              24/7 ENTERPRISE REPORTING ENGINE · CL 100
+            </span>
           </div>
 
-          {/* ── RIGHT COLUMN: LIVE APPLICATION VIDEO STAGE ── */}
-          <div className="lg:col-span-7 relative">
+          {/* Main Headline */}
+          <h1 className="text-4xl sm:text-5xl lg:text-[3.35rem] font-extrabold text-white tracking-tight leading-[1.12] text-pretty">
+            Transform business<br />
+            data into{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-purple-300 drop-shadow-[0_0_25px_rgba(168,85,247,0.45)]">
+              clear
+            </span><br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 drop-shadow-[0_0_25px_rgba(0,213,242,0.45)]">
+              decisions
+            </span>
+          </h1>
 
-            {/* Ambient Backlight Glow behind Video Stage */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-2xl rounded-3xl pointer-events-none" />
+          {/* Description Paragraph */}
+          <p className="text-slate-300 text-sm sm:text-base lg:text-[1.05rem] leading-relaxed max-w-xl font-normal">
+            VTAB Reporting Studio is a complete business intelligence and report-authoring platform for transforming data, building semantic models, creating reusable business measures, designing interactive dashboards, and publishing reports.
+          </p>
 
-            {/* Obsidian Glass Console Container */}
-            <div 
-              className="relative rounded-2xl border border-cyan-500/40 bg-[#050c1e]/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(0,213,242,0.2)] overflow-hidden group hover:border-cyan-400/70 transition-all duration-300"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+          {/* Feature Sub-bullet Callout with Zap */}
+          <div className="flex items-center gap-2.5 text-xs sm:text-sm text-cyan-300 font-medium">
+            <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
+            <span>Connect data, prepare it, model it, visualize it, and publish it from one environment.</span>
+          </div>
+
+          {/* Action Buttons: Download Desktop + Interactive Demo + PPT */}
+          <div className="flex flex-wrap items-center gap-3.5 pt-2">
+            <a
+              href={releaseUrl}
+              download
+              className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#00D5F2] hover:brightness-105 shadow-[0_4px_16px_rgba(99,102,241,0.22)] hover:shadow-[0_6px_22px_rgba(99,102,241,0.35)] border border-white/15 transition-all duration-300 cursor-pointer active:scale-95 no-underline"
             >
-              
+              <Download className="w-4 h-4" />
+              <span>
+                Download Desktop {releaseVersion}
+              </span>
+              <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-white/20 text-white border border-white/30 backdrop-blur-sm">
+                Win 64-bit
+              </span>
+            </a>
 
-              {/* Video Player Stage */}
-              <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
-                <video
-                  ref={videoRef}
-                  src="/media/Reporting Tool AV.mp4"
-                  autoPlay
-                  loop
-                  muted={isMuted}
-                  playsInline
-                  preload="auto"
-                  onTimeUpdate={handleTimeUpdate}
-                  onLoadedMetadata={handleTimeUpdate}
-                  onClick={togglePlay}
-                  className="w-full h-full object-cover cursor-pointer"
-                />
+            <button
+              type="button"
+              onClick={onWatchDemo || (() => {
+                const el = document.getElementById('dashboards');
+                if (el) {
+                  const yOffset = -70;
+                  const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+              })}
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-cyan-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95"
+            >
+              <Play className="w-4 h-4 text-cyan-400 fill-cyan-400/20" />
+              <span>Watch Interactive Demo</span>
+            </button>
 
-                
+            <a
+              href={reportingPptUrl || '#'}
+              download={Boolean(reportingPptUrl)}
+              target={reportingPptUrl ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (!reportingPptUrl) {
+                  e.preventDefault();
+                  alert('Presentation deck (PPT) has not been configured yet. You can upload or link the PPT in the Admin Dashboard > Live Dashboards section.');
+                }
+              }}
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 hover:text-white bg-[#071426]/90 hover:bg-[#0c1f3d] border border-slate-700/80 hover:border-purple-400/50 shadow-lg transition-all duration-300 cursor-pointer active:scale-95 no-underline"
+            >
+              <FileText className="w-4 h-4 text-purple-400" />
+              <span>Download PPT</span>
+            </a>
+          </div>
 
-                {/* Center Play Indicator when paused */}
-                {!isPlaying && (
-                  <div 
-                    onClick={togglePlay}
-                    className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center cursor-pointer transition-opacity z-10"
-                  >
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center shadow-[0_0_30px_rgba(0,213,242,0.6)] transform hover:scale-110 active:scale-95 transition-transform cursor-pointer">
-                      <Play className="w-7 h-7 fill-white ml-1 text-white" />
-                    </div>
-                  </div>
-                )}
-
-                {/* Floating Interactive Video Controls Overlay */}
-                <div 
-                  className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent transition-opacity duration-300 z-20 ${
-                    isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
-                  {/* Progress Scrubber */}
-                  <div 
-                    onClick={handleSeek}
-                    className="relative w-full h-1.5 bg-white/20 hover:h-2.5 rounded-full cursor-pointer mb-2.5 transition-all group/scrubber"
-                  >
-                    <div 
-                      className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full relative"
-                      style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-                    >
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)] opacity-0 group-hover/scrubber:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-
-                  {/* Controls Row */}
-                  <div className="flex items-center justify-between text-xs text-white">
-                    <div className="flex items-center gap-3">
-                      {/* Play/Pause Button */}
-                      <button
-                        type="button"
-                        onClick={togglePlay}
-                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-200 hover:text-cyan-300 transition cursor-pointer"
-                        title={isPlaying ? 'Pause' : 'Play'}
-                      >
-                        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-                      </button>
-
-                      {/* Sound Mute/Unmute */}
-                      <button
-                        type="button"
-                        onClick={toggleMute}
-                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-200 hover:text-cyan-300 transition cursor-pointer"
-                        title={isMuted ? 'Unmute' : 'Mute'}
-                      >
-                        {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
-                      </button>
-
-                      {/* Time Code */}
-                      <span className="font-mono text-[11px] text-slate-300">
-                        {formatTime(currentTime)} / {formatTime(duration)}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {/* Replay */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (videoRef.current) {
-                            videoRef.current.currentTime = 0;
-                            videoRef.current.play();
-                            setIsPlaying(true);
-                          }
-                        }}
-                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition cursor-pointer"
-                        title="Replay from start"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                      </button>
-
-                      {/* Fullscreen */}
-                      <button
-                        type="button"
-                        onClick={toggleFullscreen}
-                        className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-cyan-300 transition cursor-pointer"
-                        title="Fullscreen"
-                      >
-                        <Maximize2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-
-            </div>
-
+          {/* Feature Badges Row */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
+            {['CL 100 Compatibility', 'Measure Engine', 'Paginated Reports', 'Deterministic Sort'].map((badge) => (
+              <span
+                key={badge}
+                className="px-3.5 py-1 rounded-full text-[11px] font-medium text-slate-300 border border-slate-700/70 bg-[#081224]/75 backdrop-blur-md"
+              >
+                {badge}
+              </span>
+            ))}
           </div>
 
         </div>
