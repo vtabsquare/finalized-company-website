@@ -1,62 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
+import {
+  fetchLiveAnnouncementBanners,
+  DEFAULT_ANNOUNCEMENTS,
+  type AnnouncementItem
+} from '../services/bannerService';
 
-export interface AnnouncementItem {
-  id: string;
-  productId: string;
-  badgeText: string;
-  headlinePrefix: string;
-  headlineHighlight: string;
-  description: string;
-  ctaText: string;
-  ctaMobileText: string;
-  bgGradient: string;
-  badgeBorderClass: string;
-  badgeBgClass: string;
-  badgePulseColor: string;
-  highlightGradient: string;
-  ctaGradient: string;
-  ctaShadow: string;
-}
-
-const ANNOUNCEMENT_ITEMS: AnnouncementItem[] = [
-  {
-    id: 'vtab-reporting',
-    productId: 'ai-reporting-platform',
-    badgeText: 'New Application',
-    headlinePrefix: 'Meet',
-    headlineHighlight: 'VTAB Reporting',
-    description: 'Turn complex data into clear, actionable insights.',
-    ctaText: 'Explore Reporting Tool',
-    ctaMobileText: 'Explore',
-    bgGradient:
-      'linear-gradient(103deg, rgba(6, 36, 84, 0.40) 0%, rgba(4, 20, 47, 0.35) 31%, rgba(4, 22, 49, 0.35) 58%, rgba(16, 26, 81, 0.45) 79%, rgba(60, 21, 93, 0.50) 100%)',
-    badgeBorderClass: 'border-cyan-400/70',
-    badgeBgClass: 'bg-[#031c45]/50',
-    badgePulseColor: 'bg-cyan-300',
-    highlightGradient: 'from-[#17c8fd] via-[#539bfc] to-[#e668e9]',
-    ctaGradient: 'from-[#00aaf4] via-[#477ffc] to-[#db4ce7]',
-    ctaShadow: 'shadow-[0_0_22px_rgba(112,84,247,.38)] hover:shadow-[0_0_30px_rgba(160,75,243,.6)]',
-  },
-  {
-    id: 'databricks-migration',
-    productId: 'ai-migration-factory-databricks-control-plane',
-    badgeText: 'New Application',
-    headlinePrefix: 'Meet',
-    headlineHighlight: 'AI Databricks Migration',
-    description: 'Automate SQL Server to Databricks Lakehouse with 3-tier Medallion pipelines.',
-    ctaText: 'Explore Migration Factory',
-    ctaMobileText: 'Explore',
-    bgGradient:
-      'linear-gradient(103deg, rgba(2, 26, 56, 0.40) 0%, rgba(4, 23, 56, 0.35) 28%, rgba(3, 43, 73, 0.38) 55%, rgba(5, 59, 88, 0.45) 78%, rgba(9, 74, 76, 0.50) 100%)',
-    badgeBorderClass: 'border-emerald-400/70',
-    badgeBgClass: 'bg-[#032e3b]/50',
-    badgePulseColor: 'bg-emerald-300',
-    highlightGradient: 'from-[#22d3ee] via-[#38bdf8] to-[#34d399]',
-    ctaGradient: 'from-[#0284c7] via-[#0ea5e9] to-[#059669]',
-    ctaShadow: 'shadow-[0_0_22px_rgba(14,165,233,.45)] hover:shadow-[0_0_30px_rgba(52,211,153,.65)]',
-  },
-];
+export type { AnnouncementItem };
+export const ANNOUNCEMENT_ITEMS = DEFAULT_ANNOUNCEMENTS;
 
 interface ReportingAnnouncementBannerProps {
   onExploreReporting?: () => void;
@@ -73,20 +25,73 @@ export const ReportingAnnouncementBanner: React.FC<
   onSelectProduct,
   isLightMode = false,
 }) => {
+  const [items, setItems] = useState<AnnouncementItem[]>(DEFAULT_ANNOUNCEMENTS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const bannerRef = useRef<HTMLElement>(null);
 
+  // Load live banners from Supabase
+  const loadBanners = useCallback(async () => {
+    try {
+      const live = await fetchLiveAnnouncementBanners();
+      if (live && live.length > 0) {
+        setItems(live);
+        setCurrentIndex(prev => (prev >= live.length ? 0 : prev));
+      }
+    } catch (e) {
+      console.warn('Could not load live banners:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadBanners();
+
+    // Re-check on window focus (e.g. after editing in admin dashboard in another tab)
+    const handleFocus = () => {
+      loadBanners();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    // Subscribe to realtime updates if enabled
+    const channel1 = supabase
+      .channel('public:announcement_banners_live')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'announcement_banners' },
+        () => {
+          loadBanners();
+        }
+      )
+      .subscribe();
+
+    const channel2 = supabase
+      .channel('public:product_dashboards_banners')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'product_dashboards' },
+        () => {
+          loadBanners();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      supabase.removeChannel(channel1);
+      supabase.removeChannel(channel2);
+    };
+  }, [loadBanners]);
+
   // Auto-rotate every 5 seconds (5000ms), paused on hover
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || items.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ANNOUNCEMENT_ITEMS.length);
+      setCurrentIndex(prev => (prev + 1) % items.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, items.length]);
 
-  const currentItem = ANNOUNCEMENT_ITEMS[currentIndex];
+  const currentItem = items[currentIndex] || items[0] || DEFAULT_ANNOUNCEMENTS[0];
 
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     const banner = bannerRef.current;
@@ -108,12 +113,31 @@ export const ReportingAnnouncementBanner: React.FC<
   };
 
   const handleCtaClick = () => {
+    if (
+      currentItem.productId?.startsWith('http://') ||
+      currentItem.productId?.startsWith('https://')
+    ) {
+      window.open(currentItem.productId, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
     if (onSelectProduct) {
       onSelectProduct(currentItem.productId);
     } else if (onExploreReporting) {
       onExploreReporting();
     }
   };
+
+  // Fallback border gradients if not set
+  const topBorder =
+    currentItem.topBorderGradient ||
+    'linear-gradient(90deg, rgba(0,229,255,.12) 0%, #00dfff 16%, #3895ff 47%, #986bff 74%, #f060e8 94%, rgba(240,96,232,.2) 100%)';
+  const bottomBorder =
+    currentItem.bottomBorderGradient ||
+    'linear-gradient(90deg, rgba(0,229,255,.15) 0%, #05cbf6 20%, #4777ff 52%, #b75dff 79%, #ee67dd 96%, rgba(240,96,232,.18) 100%)';
+  const glow =
+    currentItem.glowGradient ||
+    'linear-gradient(90deg, rgba(0,225,255,.25), rgba(55,134,255,.50) 47%, rgba(223,72,244,.48))';
 
   return (
     <aside
@@ -154,9 +178,9 @@ export const ReportingAnnouncementBanner: React.FC<
       `}</style>
 
       {/* Layered Animated Backgrounds for each item */}
-      {ANNOUNCEMENT_ITEMS.map((item, idx) => (
+      {items.map((item, idx) => (
         <div
-          key={item.id}
+          key={`bg-grad-${item.id}`}
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out"
           style={{
@@ -166,62 +190,40 @@ export const ReportingAnnouncementBanner: React.FC<
         />
       ))}
 
-      {/* Color atmosphere */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-1000"
-        style={{
-          background:
-            currentIndex === 0
-              ? 'radial-gradient(ellipse 44% 115% at -5% 0%, rgba(0,176,255,.16), transparent 73%), radial-gradient(ellipse 35% 130% at 100% -24%, rgba(218,69,252,.16), transparent 78%)'
-              : 'radial-gradient(ellipse 44% 115% at -5% 0%, rgba(6,182,212,.18), transparent 73%), radial-gradient(ellipse 35% 130% at 100% -24%, rgba(16,185,129,.18), transparent 78%)',
-        }}
-      />
+      {/* Layered Background Graphics / Images */}
+      {items.map((item, idx) => {
+        if (!item.backgroundImage) return null;
+        const isCurrent = idx === currentIndex;
+        const isAnalytics = item.backgroundImage.includes('analytics-bg');
+        return (
+          <div
+            key={`bg-img-${item.id}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-0 left-[36%] right-[14%] top-0 z-0 hidden sm:block transition-all duration-700 ease-in-out"
+            style={{
+              backgroundImage: `url('${item.backgroundImage}')`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center 50%',
+              backgroundSize: isAnalytics ? '100% 100%' : 'cover',
+              filter: isAnalytics ? 'blur(0px)' : 'blur(1.5px)',
+              WebkitMaskImage:
+                'linear-gradient(to right, transparent 0%, #000 25%, #000 80%, transparent 100%)',
+              maskImage:
+                'linear-gradient(to right, transparent 0%, #000 25%, #000 80%, transparent 100%)',
+              opacity: isCurrent ? (isAnalytics ? 0.75 : 0.82) : 0,
+              transform: isCurrent ? 'scale(1)' : 'scale(0.97)',
+            }}
+          />
+        );
+      })}
 
-      {/* Slide 1: Reporting Visual Analytics Chart Graphic */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-[39%] right-[15%] top-0 z-0 hidden sm:block transition-opacity duration-700 ease-in-out"
-        style={{
-          backgroundImage: "url('/media/vtab-reporting-analytics-bg.png')",
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center 54%',
-          backgroundSize: '100% 100%',
-          filter: 'blur(0px)',
-          WebkitMaskImage:
-            'linear-gradient(to right, transparent 0%, #000 29%, #000 82%, transparent 100%)',
-          maskImage:
-            'linear-gradient(to right, transparent 0%, #000 29%, #000 82%, transparent 100%)',
-          opacity: currentIndex === 0 ? 0.75 : 0,
-        }}
-      />
-
-      {/* Slide 2: Databricks Migration Medallion Architecture Background Illustration */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-[36%] right-[14%] top-0 z-0 hidden sm:block transition-all duration-700 ease-in-out"
-        style={{
-          backgroundImage: "url('/media/sql-to-databricks-migration-flow.jpg')",
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center 50%',
-          backgroundSize: 'cover',
-          filter: 'blur(1.5px)',
-          WebkitMaskImage:
-            'linear-gradient(to right, transparent 0%, #000 25%, #000 80%, transparent 100%)',
-          maskImage:
-            'linear-gradient(to right, transparent 0%, #000 25%, #000 80%, transparent 100%)',
-          opacity: currentIndex === 1 ? 0.82 : 0,
-          transform: currentIndex === 1 ? 'scale(1)' : 'scale(0.97)',
-        }}
-      />
-
-      {/* Keep the heading sharp and legible over both backgrounds */}
+      {/* Contrast Overlay for Text Legibility */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            'linear-gradient(to right, rgba(2,11,32,.20) 0%, rgba(2,11,32,.10) 42%, transparent 72%)',
+            'linear-gradient(to right, rgba(2,11,32,.25) 0%, rgba(2,11,32,.12) 42%, transparent 72%)',
         }}
       />
 
@@ -240,41 +242,23 @@ export const ReportingAnnouncementBanner: React.FC<
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-[2px] transition-all duration-700"
-        style={{
-          background:
-            currentIndex === 0
-              ? 'linear-gradient(90deg, rgba(0,229,255,.12) 0%, #00dfff 16%, #3895ff 47%, #986bff 74%, #f060e8 94%, rgba(240,96,232,.2) 100%)'
-              : 'linear-gradient(90deg, rgba(34,211,238,.12) 0%, #06b6d4 16%, #0ea5e9 47%, #10b981 74%, #34d399 94%, rgba(52,211,153,.2) 100%)',
-        }}
+        style={{ background: topBorder }}
       />
       <div
         aria-hidden="true"
-        className="vtab-banner-border-glow pointer-events-none absolute inset-x-0 -top-[8px] z-[4] h-[20px] blur-[9px]"
-        style={{
-          background:
-            currentIndex === 0
-              ? 'linear-gradient(90deg, rgba(0,225,255,.25), rgba(55,134,255,.50) 47%, rgba(223,72,244,.48))'
-              : 'linear-gradient(90deg, rgba(6,182,212,.28), rgba(14,165,233,.50) 47%, rgba(16,185,129,.48))',
-        }}
+        className="vtab-banner-border-glow pointer-events-none absolute inset-x-0 -top-[8px] z-[4] h-[20px] blur-[9px] transition-all duration-700"
+        style={{ background: glow }}
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[2px]"
-        style={{
-          background:
-            currentIndex === 0
-              ? 'linear-gradient(90deg, rgba(0,229,255,.15) 0%, #05cbf6 20%, #4777ff 52%, #b75dff 79%, #ee67dd 96%, rgba(240,96,232,.18) 100%)'
-              : 'linear-gradient(90deg, rgba(34,211,238,.15) 0%, #06b6d4 20%, #0284c7 52%, #059669 79%, #34d399 96%, rgba(52,211,153,.18) 100%)',
-        }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[2px] transition-all duration-700"
+        style={{ background: bottomBorder }}
       />
       <div
         aria-hidden="true"
-        className="vtab-banner-border-glow pointer-events-none absolute -bottom-[9px] inset-x-0 z-[4] h-[21px] blur-[9px]"
+        className="vtab-banner-border-glow pointer-events-none absolute -bottom-[9px] inset-x-0 z-[4] h-[21px] blur-[9px] transition-all duration-700"
         style={{
-          background:
-            currentIndex === 0
-              ? 'linear-gradient(90deg, rgba(0,225,255,.28), rgba(78,124,255,.48) 47%, rgba(223,72,244,.48))'
-              : 'linear-gradient(90deg, rgba(6,182,212,.28), rgba(2,132,199,.48) 47%, rgba(16,185,129,.48))',
+          background: glow,
           animationDelay: '-2s',
         }}
       />
@@ -303,7 +287,6 @@ export const ReportingAnnouncementBanner: React.FC<
       {/* Foreground Content */}
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[1840px] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 lg:gap-7 lg:px-10">
         <div className="flex min-w-0 items-center gap-4 sm:gap-5 lg:gap-6">
-          
           {/* Badge */}
           <div
             className={`hidden shrink-0 items-center gap-2.5 rounded-full border ${currentItem.badgeBorderClass} ${currentItem.badgeBgClass} px-3.5 py-2 shadow-[0_0_15px_rgba(0,187,255,.09)] backdrop-blur-sm md:inline-flex transition-all duration-500`}
@@ -339,27 +322,28 @@ export const ReportingAnnouncementBanner: React.FC<
 
         {/* Right CTA and Rotation Indicators */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          
-          {/* Subtle Carousel Dots / Progress Pills */}
-          <div className="hidden lg:flex items-center gap-1.5 bg-black/40 px-2.5 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
-            {ANNOUNCEMENT_ITEMS.map((item, idx) => {
-              const active = idx === currentIndex;
-              return (
-                <button
-                  key={`dot-${item.id}`}
-                  type="button"
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`transition-all duration-300 rounded-full cursor-pointer ${
-                    active
-                      ? 'w-6 h-1.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee]'
-                      : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/60'
-                  }`}
-                  aria-label={`Switch to ${item.headlineHighlight}`}
-                  title={item.headlineHighlight}
-                />
-              );
-            })}
-          </div>
+          {/* Carousel Dots / Progress Pills */}
+          {items.length > 1 && (
+            <div className="hidden lg:flex items-center gap-1.5 bg-black/40 px-2.5 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+              {items.map((item, idx) => {
+                const active = idx === currentIndex;
+                return (
+                  <button
+                    key={`dot-${item.id}-${idx}`}
+                    type="button"
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`transition-all duration-300 rounded-full cursor-pointer ${
+                      active
+                        ? 'w-6 h-1.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee]'
+                        : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/60'
+                    }`}
+                    aria-label={`Switch to ${item.headlineHighlight}`}
+                    title={item.headlineHighlight}
+                  />
+                );
+              })}
+            </div>
+          )}
 
           <button
             id="explore-reporting-tool-btn"

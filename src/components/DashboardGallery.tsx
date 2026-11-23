@@ -51,6 +51,7 @@ export const DashboardGallery: React.FC = () => {
         .from('product_dashboards')
         .select('*')
         .eq('is_active', true)
+        .neq('category', 'announcement_banner')
         .order('display_order', { ascending: true });
 
       if (!error && data && data.length > 0) {
