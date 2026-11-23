@@ -244,7 +244,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
 
         {/* Video Player pushed to the right (65%) or expanded full-width */}
         <div 
-          className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center ${
             isCinematic 
               ? 'w-full opacity-100 z-10' 
               : 'w-full lg:w-[65%] opacity-100 z-10'
@@ -254,6 +254,13 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
             WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
           }}
         >
+          {/* Ambient Blurred Background matching L1 agent design */}
+          <img
+            src="/media/vtab-reporting-dashboard-hd.png"
+            className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110"
+            alt="Ambient background"
+          />
+
           <video
             ref={videoRef}
             src="/media/Reporting Tool AV.mp4"
@@ -265,7 +272,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleTimeUpdate}
             onClick={togglePlay}
-            className="w-full h-full object-cover object-left cursor-pointer"
+            className="relative z-10 w-full h-full object-contain cursor-pointer"
           />
 
           {/* Center Play Indicator when paused */}

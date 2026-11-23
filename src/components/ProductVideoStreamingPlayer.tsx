@@ -47,6 +47,8 @@ const STREAMING_VIDEOS: Record<string, string> = {
   'hr-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/hr-analytics-dashboard-web.mp4`,
 
   // Verified Applications
+  'ai-reporting-platform': '/media/Reporting Tool AV.mp4',
+  'vtab-reporting': '/media/Reporting Tool AV.mp4',
   'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
   'qlik-to-powerbi': `${DEMO_MEDIA}/qlik-to-powerbi-demo.mp4`,
   'gbti-smart-home-builder': '/media/videos/ai_smart_home_web.mp4',
@@ -78,8 +80,6 @@ const getVideoForProduct = (id: string, title?: string, customUrl?: string): str
     cleanId === 'ai-migration-factory-databricks-control-plane' ||
     cleanId === 'sql-server-databricks-migration-platform' ||
     text.includes('databricks') ||
-    cleanId === 'ai-reporting-platform' ||
-    text.includes('insight ai') ||
     cleanId === 'qa-ai-autonomous-testing-platform' ||
     cleanId === 'qa-testing-application' ||
     cleanId === 'qa-testing' ||
@@ -294,34 +294,40 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
   if (!videoSource) {
     return (
       <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none flex items-center justify-center">
-        {/* Crisp static media image */}
+        {/* Ambient Blurred Background */}
         <img
           src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
+          className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110"
+          alt="Ambient background"
+        />
+        {/* Crisp static media image with object-contain to prevent side cropping */}
+        <img
+          src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
+          className="relative z-10 w-full h-full object-contain transition-transform duration-700"
           alt={productTitle}
         />
         {/* Subtle bottom shadow vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none z-20" />
       </div>
     );
   }
 
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-slate-950 select-none group/video flex items-center justify-center">
-      {/* Poster shown while buffering - instant image, no flicker */}
-      <img
-        src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-        className={`absolute inset-0 w-full h-full object-cover pointer-events-none z-20 transition-opacity duration-700 ${
-          isBuffered ? 'opacity-0' : 'opacity-100'
-        }`}
-        alt=""
-      />
-
       {/* Ambient Blurred Background */}
       <img
         src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
-        className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110"
+        className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 pointer-events-none scale-110 z-0"
         alt="Ambient background"
+      />
+
+      {/* Poster shown while buffering - instant image, object-contain to match video bounds */}
+      <img
+        src={getValidImageUrl(imageUrl, undefined, productTitle, productId)}
+        className={`relative z-10 w-full h-full object-contain pointer-events-none transition-opacity duration-700 ${
+          isBuffered ? 'opacity-0' : 'opacity-100'
+        }`}
+        alt=""
       />
 
       {/* Loading pulse indicator - only while buffering */}

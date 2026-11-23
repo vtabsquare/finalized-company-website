@@ -344,26 +344,26 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           />
         </div>
 
-        {/* Full-Bleed Cinematic Background (Matches AI Portfolio Showcase) */}
-        <div className="absolute inset-0 z-0 flex justify-end overflow-hidden">
+        {/* Full-Bleed Cinematic Background (Matches AI Portfolio Showcase & L1 Agent) */}
+        <div className="absolute inset-0 z-10 flex justify-end overflow-hidden">
           {/* Left & Bottom Gradient Masks to ensure text readability */}
-          <div className={`absolute inset-0 z-10 w-full lg:w-2/3 transition-opacity duration-700 ${
+          <div className={`absolute inset-0 z-20 w-full lg:w-[50%] transition-opacity duration-700 ${
             isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          } bg-gradient-to-r from-[#020611] via-[#020611]/95 to-transparent pointer-events-none`} />
+          } bg-gradient-to-r from-[#020611] via-[#020611]/90 to-transparent pointer-events-none`} />
           
-          <div className={`absolute inset-0 z-10 transition-opacity duration-700 ${
+          <div className={`absolute inset-0 z-20 transition-opacity duration-700 ${
             isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          } bg-gradient-to-t from-[#020611] via-[#020611]/60 to-transparent pointer-events-none`} />
+          } bg-gradient-to-t from-[#020611] via-[#020611]/50 to-transparent pointer-events-none`} />
           
           {/* Video / Media Player pushed to the right (65%) or expanded full-width */}
-          <div className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          <div className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center ${
             isCinematic 
               ? 'w-full opacity-100 z-10' 
-              : 'w-full lg:w-[65%] opacity-85 z-0'
+              : 'w-full lg:w-[65%] opacity-100 z-10'
           }`}
             style={{
-              maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
-              WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+              maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
+              WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
             }}
           >
             <ProductVideoStreamingPlayer
