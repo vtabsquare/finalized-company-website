@@ -234,6 +234,27 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         />
       </div>
 
+      {/* Floating Sound Toggle Button (Desktop) - Positioned at z-30 safely above video and cleanly below banner */}
+      {!isMobile && (
+        <div 
+          className="absolute z-30 pointer-events-auto transition-all duration-500" 
+          style={{ 
+            top: isBannerVisible ? '198px' : '90px', 
+            right: '32px' 
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setIsMuted(!isMuted)}
+            className="w-12 h-12 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-2xl cursor-pointer hover:scale-105 active:scale-95"
+            aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+            title={isMuted ? 'Unmute video sound' : 'Mute video sound'}
+          >
+            {isMuted ? <VolumeX className="w-5 h-5 text-slate-300" /> : <Volume2 className="w-5 h-5 text-cyan-400" />}
+          </button>
+        </div>
+      )}
+
       {/* Desktop Full-Bleed Video Background (Right Aligned, behind and below Banner) */}
       {!isMobile && (
         <div className="absolute top-0 bottom-0 left-0 right-0 z-0 flex justify-end pointer-events-none">
@@ -297,14 +318,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Sound Toggle Button (Desktop) */}
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className="absolute top-6 right-8 z-30 w-12 h-12 rounded-full bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white transition-all duration-300 shadow-xl"
-              aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
+
           </div>
         </div>
       )}
