@@ -25,16 +25,7 @@ interface VTABHero3DExperienceProps {
   isLightMode?: boolean;
 }
 
-/** Put the file at public/media/vtab-hero-plate.webp */
-const PLATE = '/media/vtab-hero-plate.webp';
-
 const cv = (o: Record<string, string | number>) => o as React.CSSProperties;
-
-// Mask helpers: the same render is used three times so the side panels can move
-// independently of the background (real parallax) without ghosting.
-const BASE_MASK = 'linear-gradient(to right, transparent 0%, transparent 22%, #000 30%, #000 70%, transparent 78%, transparent 100%)';
-const LEFT_MASK = 'linear-gradient(to right, #000 0%, #000 23%, transparent 31%)';
-const RIGHT_MASK = 'linear-gradient(to left, #000 0%, #000 23%, transparent 31%)';
 
 export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({ 
   onScheduleDemo,
@@ -154,24 +145,26 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
     target.current = { x: (e.clientX / window.innerWidth - 0.5) * 2, y: (e.clientY / window.innerHeight - 0.5) * 2 };
   };
 
-  const layer = (mask: string, px: number, py: number, scale: number, bob?: string) => (
-    <div className="absolute inset-0 pointer-events-none"
-      style={{ transform: `translate3d(calc(var(--mx,0) * ${px}px), calc(var(--my,0) * ${py}px), 0) scale(${scale})` }}>
-      <img 
-        src={PLATE} 
-        alt="VTAB Analytics Suite 3D Stage" 
-        draggable={false}
-        onError={(e) => {
-          const t = e.currentTarget;
-          if (!t.dataset.triedFallback) {
-            t.dataset.triedFallback = 'true';
-            t.src = '/media/vtab-hero-plate.webp.png';
-          }
-        }}
-        className={`w-full h-full object-cover filter blur-[2.5px] ${bob ? 'vtab-bob' : ''}`}
-        style={cv({ maskImage: mask, WebkitMaskImage: mask, '--dur': bob ?? '0s' })} />
-    </div>
-  );
+  // Autoplay video on load
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = isMuted;
+    const playPromise = v.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        v.muted = true;
+        setIsMuted(true);
+        v.play().catch(() => {});
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
 
   return (
     <section
@@ -182,26 +175,71 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
       style={{ background: '#020611' }}
     >
       {/* ─────────────────────────────────────────────────────────────
-          0. AI PORTFOLIO-STYLE FULL-BLEED BACKGROUND VIDEO
+          0. ATMOSPHERIC AMBIENT GLOW & PARTICLES (BEHIND VIDEO, z-0)
+         ───────────────────────────────────────────────────────────── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Soft radial glow in the background */}
+        <div 
+          className="absolute left-1/4 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[450px] pointer-events-none blur-3xl opacity-40"
+          style={{ background: 'radial-gradient(ellipse, rgba(147, 51, 234, 0.25) 0%, rgba(0, 213, 242, 0.18) 40%, transparent 75%)' }} 
+        />
+        <div 
+          className="absolute right-1/4 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none blur-3xl opacity-40"
+          style={{ background: 'radial-gradient(ellipse, rgba(0, 213, 242, 0.2) 0%, rgba(40, 123, 255, 0.15) 45%, transparent 75%)' }} 
+        />
+
+        {/* Drifting micro-particles */}
+        {Array.from({ length: 14 }).map((_, i) => (
+          <span 
+            key={i} 
+            className="vtab-p absolute rounded-full bg-cyan-300 pointer-events-none"
+            style={cv({ 
+              top: `${(i * 37 + 11) % 84}%`, 
+              left: `${(i * 53 + 7) % 96}%`, 
+              width: 2 + (i % 3), 
+              height: 2 + (i % 3), 
+              opacity: 0.25 + (i % 4) * 0.1, 
+              '--dur': `${9 + (i % 5) * 2}s`, 
+              '--delay': `${-i * 1.3}s`, 
+              boxShadow: '0 0 10px #00D5F2, 0 0 20px #287BFF' 
+            })} 
+          />
+        ))}
+
+        {/* Subtle horizontal laser streak */}
+        <div 
+          className="absolute inset-x-[10%] top-[45%] h-px pointer-events-none"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(0,213,242,.25), transparent)', filter: 'blur(.5px)' }} 
+        />
+
+        {/* Smooth bottom transition */}
+        <div 
+          className="absolute inset-x-0 bottom-0 h-28 pointer-events-none" 
+          style={{ background: 'linear-gradient(to bottom, transparent, #020611)' }} 
+        />
+      </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          1. AI PORTFOLIO-STYLE FULL-BLEED BACKGROUND VIDEO (z-10)
              Application demo video plays directly across the right background
              with dark gradient masks, expanding full-width in cinematic view.
          ───────────────────────────────────────────────────────────── */}
       <div 
-        className="absolute inset-0 z-0 flex justify-end overflow-hidden"
+        className="absolute inset-0 z-10 flex justify-end overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Left & Bottom Gradient Masks to ensure text readability */}
         <div 
-          className={`absolute inset-0 z-10 w-full lg:w-2/3 transition-opacity duration-700 ${
+          className={`absolute inset-0 z-20 w-full lg:w-[50%] transition-opacity duration-700 ${
             isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          } bg-gradient-to-r from-[#020611] via-[#020611]/95 to-transparent pointer-events-none`} 
+          } bg-gradient-to-r from-[#020611] via-[#020611]/90 to-transparent pointer-events-none`} 
         />
         
         <div 
-          className={`absolute inset-0 z-10 transition-opacity duration-700 ${
+          className={`absolute inset-0 z-20 transition-opacity duration-700 ${
             isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          } bg-gradient-to-t from-[#020611] via-[#020611]/60 to-transparent pointer-events-none`} 
+          } bg-gradient-to-t from-[#020611] via-[#020611]/50 to-transparent pointer-events-none`} 
         />
 
         {/* Video Player pushed to the right (65%) or expanded full-width */}
@@ -209,11 +247,11 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
           className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isCinematic 
               ? 'w-full opacity-100 z-10' 
-              : 'w-full lg:w-[65%] opacity-85 z-0'
+              : 'w-full lg:w-[65%] opacity-100 z-10'
           }`}
           style={{
-            maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
-            WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+            maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
+            WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
           }}
         >
           <video
@@ -227,7 +265,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleTimeUpdate}
             onClick={togglePlay}
-            className="w-full h-full object-cover cursor-pointer"
+            className="w-full h-full object-cover object-left cursor-pointer"
           />
 
           {/* Center Play Indicator when paused */}
@@ -244,7 +282,7 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
 
           {/* Floating Scrubber Bar on hover or pause or cinematic */}
           <div 
-            className={`absolute bottom-4 right-6 left-6 lg:left-auto lg:w-[460px] p-3 rounded-xl bg-slate-950/80 border border-white/10 backdrop-blur-xl transition-all duration-300 z-30 pointer-events-auto ${
+            className={`absolute bottom-4 right-6 left-6 lg:left-auto lg:w-[460px] p-3 rounded-xl bg-slate-950/85 border border-white/10 backdrop-blur-xl transition-all duration-300 z-30 pointer-events-auto ${
               isHovered || !isPlaying || isCinematic ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
             }`}
           >
@@ -312,68 +350,11 @@ export const VTABHero3DExperience: React.FC<VTABHero3DExperienceProps> = ({
           </div>
         </div>
       </div>
-      {/* ─────────────────────────────────────────────────────────────
-          1. 3D ATMOSPHERIC STAGE (WITH TASTEFUL DEPTH BLUR)
-         ───────────────────────────────────────────────────────────── */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-
-        {/* DEPTH 1 — background + floor (moves least) */}
-        {layer(BASE_MASK, -5, -2, 1.02)}
-
-        {/* DEPTH 2/3 — side panel stacks (move more, bob on their own rhythm) */}
-        <div className="hidden lg:block opacity-75">
-          {layer(LEFT_MASK, 12, 6, 1.025, '9s')}
-          {layer(RIGHT_MASK, 12, 6, 1.025, '11s')}
-        </div>
-
-        {/* Soft atmospheric ambient glow & backdrop filter */}
-        <div className="absolute inset-0 bg-[#020611]/55 backdrop-blur-[2px] pointer-events-none" />
-
-        {/* Central blue-cyan atmospheric illumination */}
-        <div 
-          className="absolute left-1/4 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[450px] pointer-events-none blur-3xl"
-          style={{ background: 'radial-gradient(ellipse, rgba(147, 51, 234, 0.18) 0%, rgba(0, 213, 242, 0.14) 40%, rgba(40, 110, 255, 0.06) 70%, transparent 80%)' }} 
-        />
-        <div 
-          className="absolute right-1/4 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none blur-3xl"
-          style={{ background: 'radial-gradient(ellipse, rgba(0, 213, 242, 0.18) 0%, rgba(40, 123, 255, 0.12) 45%, transparent 75%)' }} 
-        />
-
-        {/* Drifting micro-particles */}
-        {Array.from({ length: 14 }).map((_, i) => (
-          <span 
-            key={i} 
-            className="vtab-p absolute rounded-full bg-cyan-300 pointer-events-none"
-            style={cv({ 
-              top: `${(i * 37 + 11) % 84}%`, 
-              left: `${(i * 53 + 7) % 96}%`, 
-              width: 2 + (i % 3), 
-              height: 2 + (i % 3), 
-              opacity: 0.25 + (i % 4) * 0.1, 
-              '--dur': `${9 + (i % 5) * 2}s`, 
-              '--delay': `${-i * 1.3}s`, 
-              boxShadow: '0 0 10px #00D5F2, 0 0 20px #287BFF' 
-            })} 
-          />
-        ))}
-
-        {/* Subtle horizontal laser streak */}
-        <div 
-          className="absolute inset-x-[10%] top-[45%] h-px pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(0,213,242,.25), transparent)', filter: 'blur(.5px)' }} 
-        />
-
-        {/* Smooth bottom transition */}
-        <div 
-          className="absolute inset-x-0 bottom-0 h-28 pointer-events-none" 
-          style={{ background: 'linear-gradient(to bottom, transparent, #06080F)' }} 
-        />
-      </div>
 
       {/* ─────────────────────────────────────────────────────────────
           1. TOP-RIGHT VIDEO CONTROLS (MATCHES AI PORTFOLIO SHOWCASE)
          ───────────────────────────────────────────────────────────── */}
-      <div className="absolute top-6 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+      <div className="absolute top-24 lg:top-28 right-6 lg:right-10 z-40 flex items-center gap-2.5">
         {/* Expand Video / Show Text */}
         <button
           type="button"

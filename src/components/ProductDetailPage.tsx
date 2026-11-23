@@ -380,7 +380,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         </div>
 
         {/* Top-Right Video Controls (Matches AI Portfolio Showcase) */}
-        <div className="absolute top-6 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+        <div className="absolute top-24 lg:top-28 right-6 lg:right-10 z-40 flex items-center gap-2.5">
           {/* Expand Video / Show Text */}
           <button
             type="button"
