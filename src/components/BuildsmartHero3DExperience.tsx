@@ -6,11 +6,15 @@ import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 interface BuildsmartHero3DExperienceProps {
   onScheduleDemo?: () => void;
   onExploreSpecs?: () => void;
+  onExploreSandbox?: () => void;
+  hasSandbox?: boolean;
 }
 
 export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProps> = ({
   onScheduleDemo,
-  onExploreSpecs
+  onExploreSpecs,
+  onExploreSandbox,
+  hasSandbox = false,
 }) => {
   const [isCinematic, setIsCinematic] = useState(false);
 
@@ -138,6 +142,17 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
               <span>{buildsmartEstimatorHero.secondaryAction}</span>
               <Layers className="w-4 h-4 text-slate-400" />
             </button>
+
+            {hasSandbox && onExploreSandbox && (
+              <button
+                type="button"
+                onClick={onExploreSandbox}
+                className="px-6 py-3 rounded-xl font-bold font-sans text-sm text-amber-300 hover:text-white bg-amber-950/70 hover:bg-amber-900/80 border border-amber-500/50 hover:border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.25)] transition-all duration-300 cursor-pointer flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Live Interactive Sandbox</span>
+              </button>
+            )}
           </div>
 
           {/* Technology Tags */}

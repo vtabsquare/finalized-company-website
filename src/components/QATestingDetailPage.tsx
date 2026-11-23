@@ -4,16 +4,28 @@ import { QATestingWorkflowSection } from './QATestingWorkflowSection';
 import { QATestingFeatureShowcase } from './QATestingFeatureShowcase';
 import { QATestingZigzagFeatures } from './QATestingZigzagFeatures';
 import { QATestingEditionsSection } from './QATestingEditionsSection';
+import { LiveApplicationSandbox } from './LiveApplicationSandbox';
 
 interface QATestingDetailPageProps {
   onScheduleDemo?: () => void;
+  embedUrl?: string;
+  isLightMode?: boolean;
 }
 
 export const QATestingDetailPage: React.FC<QATestingDetailPageProps> = ({
-  onScheduleDemo
+  onScheduleDemo,
+  embedUrl,
+  isLightMode = false,
 }) => {
   const scrollToSpecs = () => {
     const el = document.getElementById('pipeline-architecture');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToSandbox = () => {
+    const el = document.getElementById('interactive-sandbox');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -25,10 +37,25 @@ export const QATestingDetailPage: React.FC<QATestingDetailPageProps> = ({
       <QATestingHero3DExperience
         onScheduleDemo={onScheduleDemo}
         onExploreSpecs={scrollToSpecs}
+        onExploreSandbox={scrollToSandbox}
+        hasSandbox={Boolean(embedUrl)}
       />
 
+      {/* Live Interactive Application Sandbox (if configured in Admin Dashboard) */}
+      {embedUrl && (
+        <LiveApplicationSandbox
+          embedUrl={embedUrl}
+          productTitle="QA-AI Autonomous Testing Platform"
+          subtitle="Direct live application telemetry deployed from our production cluster. Execute autonomous test cases, inspect multi-agent test runs, and test the platform in real time below."
+          themeColor="cyan"
+          isLightMode={isLightMode}
+        />
+      )}
+
       {/* Screen 1 (cont.): End-to-End Pipeline Architecture (4 stages) */}
-      <QATestingWorkflowSection />
+      <div id="pipeline-architecture">
+        <QATestingWorkflowSection />
+      </div>
 
       {/* Screen 2: Interactive Studio Capabilities (6 interactive tabs + specs) */}
       <QATestingFeatureShowcase />

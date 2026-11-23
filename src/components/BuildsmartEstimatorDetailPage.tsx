@@ -4,16 +4,28 @@ import { BuildsmartWorkflowSection } from './BuildsmartWorkflowSection';
 import { BuildsmartFeatureShowcase } from './BuildsmartFeatureShowcase';
 import { BuildsmartZigzagFeatures } from './BuildsmartZigzagFeatures';
 import { BuildsmartEditionsSection } from './BuildsmartEditionsSection';
+import { LiveApplicationSandbox } from './LiveApplicationSandbox';
 
 interface BuildsmartEstimatorDetailPageProps {
   onScheduleDemo?: () => void;
+  embedUrl?: string;
+  isLightMode?: boolean;
 }
 
 export const BuildsmartEstimatorDetailPage: React.FC<BuildsmartEstimatorDetailPageProps> = ({
-  onScheduleDemo
+  onScheduleDemo,
+  embedUrl,
+  isLightMode = false,
 }) => {
   const scrollToSpecs = () => {
     const el = document.getElementById('pipeline-architecture');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToSandbox = () => {
+    const el = document.getElementById('interactive-sandbox');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -25,10 +37,25 @@ export const BuildsmartEstimatorDetailPage: React.FC<BuildsmartEstimatorDetailPa
       <BuildsmartHero3DExperience
         onScheduleDemo={onScheduleDemo}
         onExploreSpecs={scrollToSpecs}
+        onExploreSandbox={scrollToSandbox}
+        hasSandbox={Boolean(embedUrl)}
       />
 
+      {/* Live Interactive Application Sandbox (if configured in Admin Dashboard) */}
+      {embedUrl && (
+        <LiveApplicationSandbox
+          embedUrl={embedUrl}
+          productTitle="BuildSmart Estimator"
+          subtitle="Direct live application telemetry deployed from our production cluster. Test automated quantity calculations, pricing intelligence, and dynamic BOQ formulation in real time below."
+          themeColor="amber"
+          isLightMode={isLightMode}
+        />
+      )}
+
       {/* Screen 1 (cont.): End-to-End Pipeline Architecture (4 stages) */}
-      <BuildsmartWorkflowSection />
+      <div id="pipeline-architecture">
+        <BuildsmartWorkflowSection />
+      </div>
 
       {/* Screen 2: Interactive Studio Capabilities (6 interactive tabs + specs) */}
       <BuildsmartFeatureShowcase />

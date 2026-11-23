@@ -180,6 +180,7 @@ export const PRODUCTS_DATA: Product[] = [
     techStack: ['Python PyMuPDF', 'PyTorch', 'FastAPI', 'Pandas', 'React'],
     iconName: 'Calculator',
     featured: true,
+    embedUrl: 'https://build-smart-application.onrender.com/demo',
     imageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
     demoSnippet: {
       type: 'chart',

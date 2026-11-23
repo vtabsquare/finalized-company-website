@@ -47,7 +47,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 }) => {
   const liveUrls: Record<string, string> = {
     'vtab-meetscribe-ai': 'https://ai-meetscribewebsite-frontend.onrender.com/',
-    'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/'
+    'qa-ai-autonomous-testing-platform': 'https://qa-testing-application-new-1.onrender.com/',
+    'buildsmart-estimator': 'https://build-smart-application.onrender.com/demo'
   };
   const effectiveEmbedUrl =
     product.embedUrl ||
@@ -185,6 +186,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     return (
       <BuildsmartEstimatorDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
+        embedUrl={effectiveEmbedUrl}
+        isLightMode={isLightMode}
       />
     );
   }
@@ -215,6 +218,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     return (
       <QATestingDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
+        embedUrl={effectiveEmbedUrl}
+        isLightMode={isLightMode}
       />
     );
   }
