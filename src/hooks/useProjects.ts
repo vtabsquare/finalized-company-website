@@ -7,11 +7,28 @@ import { getValidImageUrl } from '../utils/imageFallback';
 export function useProjects() {
   const [projects, setProjects] = useState<Product[]>(() =>
     PRODUCTS_DATA
-      .filter(p => !p.id.toLowerCase().includes('sentinel') && !p.title.toLowerCase().includes('sentinel'))
-      .map(p => ({
-        ...p,
-        imageUrl: getValidImageUrl(p.imageUrl, p.category, p.title, p.id)
-      }))
+      .filter(p => {
+        const id = p.id.toLowerCase();
+        const title = p.title.toLowerCase();
+        // Remove Sentinel and duplicate Vtab Reporting tool (insight-ai)
+        if (id.includes('sentinel') || title.includes('sentinel')) return false;
+        if (id === 'insight-ai' || title.includes('vtab reporting tool')) return false;
+        return true;
+      })
+      .map(p => {
+        if (p.id === 'ai-reporting-platform') {
+          return {
+            ...p,
+            category: 'Enterprise Automation',
+            subcategory: undefined,
+            imageUrl: getValidImageUrl(p.imageUrl, 'Enterprise Automation', p.title, p.id)
+          };
+        }
+        return {
+          ...p,
+          imageUrl: getValidImageUrl(p.imageUrl, p.category, p.title, p.id)
+        };
+      })
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -38,11 +55,19 @@ export function useProjects() {
             .filter((item: any) => {
               const id = (item.id || '').toLowerCase();
               const title = (item.title || '').toLowerCase();
-              // Completely remove VTAB Sentinel Server Room from the website
-              return !id.includes('sentinel') && !title.includes('sentinel');
+              // Completely remove VTAB Sentinel Server Room and duplicate Vtab Reporting tool (insight-ai) from the website
+              if (id.includes('sentinel') || title.includes('sentinel')) return false;
+              if (id === 'insight-ai' || title.includes('vtab reporting tool')) return false;
+              return true;
             })
             .map((item: any) => {
-            let demoSnippet: any = item.demo_snippet || item.demoSnippet;
+              // Ensure AI Reporting Platform is always categorized under Enterprise Automation in the Applications section
+              if (item.id === 'ai-reporting-platform') {
+                item.category = 'Enterprise Automation';
+                item.subcategory = null;
+              }
+
+              let demoSnippet: any = item.demo_snippet || item.demoSnippet;
             if (typeof demoSnippet === 'string') {
               try { demoSnippet = JSON.parse(demoSnippet); } catch(e) {}
             }

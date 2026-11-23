@@ -35,12 +35,16 @@ export const BiDashboardsSection: React.FC<BiDashboardsSectionProps> = ({
     const id = p.id.toLowerCase();
     const title = p.title.toLowerCase();
 
-    // Explicitly exclude AI Marketing Agent and Sentinel Server Room from the BI dashboards section
+    // Explicitly exclude AI Marketing Agent, Sentinel, AI Reporting Platform (in Applications), and duplicate Vtab Reporting tool
     if (
       id.includes('marketing') ||
       title.includes('marketing') ||
       id.includes('sentinel') ||
-      title.includes('sentinel')
+      title.includes('sentinel') ||
+      id.includes('ai-reporting-platform') ||
+      title.includes('ai reporting') ||
+      id === 'insight-ai' ||
+      title.includes('vtab reporting tool')
     ) {
       return false;
     }
