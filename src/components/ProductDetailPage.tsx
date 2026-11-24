@@ -31,6 +31,8 @@ import { PostgresMigrationDetailPage } from './PostgresMigrationDetailPage';
 import { BuildsmartEstimatorDetailPage } from './BuildsmartEstimatorDetailPage';
 import { InvoiceFlowDetailPage } from './InvoiceFlowDetailPage';
 import { QATestingDetailPage } from './QATestingDetailPage';
+import { DynamicArchitectureDetailPage } from './DynamicArchitectureDetailPage';
+import { FiveScreenArchitectureData } from '../types/architecture';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -218,6 +220,32 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     return (
       <QATestingDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
+        embedUrl={effectiveEmbedUrl}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
+  // Dynamic 5-Screen Architecture Presentation Suite (configured via Admin Dashboard)
+  const rawArch =
+    product.detailContent?.architectureData ||
+    (product.demoSnippet as any)?.architectureData ||
+    (product as any).architectureData;
+  const directArch =
+    (product.detailContent as any)?.pipelineStages?.length
+      ? (product.detailContent as any)
+      : (product.demoSnippet as any)?.pipelineStages?.length
+      ? (product.demoSnippet as any)
+      : undefined;
+  const archData = ((rawArch?.pipelineStages?.length ? rawArch : directArch) || rawArch) as FiveScreenArchitectureData | undefined;
+
+  if (archData?.pipelineStages && archData.pipelineStages.length > 0) {
+    return (
+      <DynamicArchitectureDetailPage
+        product={product}
+        architectureData={archData}
+        onBack={onBack}
+        onScheduleDemo={onScheduleDemo}
         embedUrl={effectiveEmbedUrl}
         isLightMode={isLightMode}
       />

@@ -97,6 +97,25 @@ export default function App() {
 
   const isLightMode = theme === 'light';
 
+  // Synchronize selectedProduct with full live Supabase product details whenever allProducts updates
+  useEffect(() => {
+    if (!allProducts || allProducts.length === 0) return;
+
+    const architectureMatch = window.location.pathname.match(/^\/architecture\/([^/]+)/);
+    const targetId = architectureMatch
+      ? decodeURIComponent(architectureMatch[1])
+      : selectedProduct?.id;
+
+    if (targetId) {
+      const liveProduct = allProducts.find(
+        p => p.id === targetId || p.id.toLowerCase() === targetId.toLowerCase()
+      );
+      if (liveProduct) {
+        setSelectedProduct(liveProduct);
+      }
+    }
+  }, [allProducts]);
+
   // ── Analytics: init once on mount ──────────────────────────────────────
   useEffect(() => {
     initSession('home');

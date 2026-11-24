@@ -1,3 +1,5 @@
+import { FiveScreenArchitectureData } from './types/architecture';
+
 export interface Product {
   id: string;
   title: string;
@@ -13,19 +15,16 @@ export interface Product {
   featured?: boolean;
   imageUrl?: string;
   embedUrl?: string;
-  demoSnippet?: {
-    type: 'chart' | 'code' | 'blueprint' | 'biometric' | 'chat' | '3d';
-    previewHeadline: string;
-    metrics: { label: string; value: string; color?: string }[];
-  };
+  demoSnippet?: any;
   detailContent?: {
-    challenge: string[];
-    approach: string;
-    features: { title: string; emoji: string; description: string }[];
-    impact: string[];
+    challenge?: string[];
+    approach?: string;
+    features?: { title: string; emoji: string; description: string }[];
+    impact?: string[];
     videoUrl?: string;
     pptUrl?: string;
     embedUrl?: string;
+    architectureData?: FiveScreenArchitectureData;
   };
 }
 
