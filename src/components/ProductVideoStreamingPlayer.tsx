@@ -45,7 +45,7 @@ const STREAMING_VIDEOS: Record<string, string> = {
   'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`,
   'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard-web.mp4`,
   'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard-web.mp4`,
-  'hr-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/hr-analytics-dashboard-web.mp4`,
+  'hr-analytics-dashboard': '/media/videos/powerbi/hr-analytics-dashboard.mp4',
 
   // Verified Applications
   'ai-reporting-platform': '/media/Reporting Tool AV.mp4',
