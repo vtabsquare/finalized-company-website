@@ -118,6 +118,87 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
   const videoUrl = product.detailContent?.videoUrl || (product as any).videoUrl;
   const pptUrl = product.detailContent?.pptUrl;
 
+  const isBiDashboard =
+    (product.category || '').toLowerCase().includes('bi dashboard') ||
+    product.id.toLowerCase().includes('dashboard') ||
+    product.id.toLowerCase().includes('analysis-report');
+
+  const renderMediaConsole = (large = false) => (
+    <div className={`relative rounded-2xl ${large ? 'md:rounded-3xl p-3.5 sm:p-4' : 'p-3'} border border-cyan-500/30 bg-[#070D1B]/90 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(6,182,212,0.15)] overflow-hidden group`}>
+      {/* Console Chrome Top Bar */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/80 text-xs font-mono text-slate-400 mb-2">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+          <span className={`ml-2 text-[11px] text-slate-400 font-mono truncate ${large ? 'max-w-xs sm:max-w-md' : 'max-w-[180px]'}`}>
+            {product.title}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {videoUrl && (
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+              title={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
+            </button>
+          )}
+          <button
+            onClick={() => setIsCinematic(true)}
+            className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            title="Expand Preview"
+          >
+            <Maximize2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Media Stage: Video or Image */}
+      <div className="relative rounded-xl overflow-hidden bg-black/90 aspect-video flex items-center justify-center">
+        {videoUrl ? (
+          <SmartVideo
+            src={videoUrl}
+            title={product.title}
+            autoPlay
+            loop
+            muted={isMuted}
+            controls={large}
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        ) : product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-3 p-6 text-center">
+            <Cpu className="w-12 h-12 text-cyan-400/60 animate-pulse" />
+            <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+              Interactive Architecture Topology
+            </span>
+          </div>
+        )}
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#070D1B]/60 via-transparent to-transparent pointer-events-none" />
+      </div>
+
+      {/* Live Console Footer */}
+      <div className="mt-3 px-3 py-2 rounded-lg bg-slate-950/80 border border-slate-800/80 flex items-center justify-between text-xs font-mono">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-slate-300">CLUSTER STATUS</span>
+        </div>
+        <span className="text-emerald-400 font-semibold">ONLINE · 99.98% SLA</span>
+      </div>
+    </div>
+  );
+
   return (
     <div
       className={`relative w-full min-h-screen font-sans selection:bg-cyan-500/30 selection:text-cyan-200 transition-colors duration-300 ${
@@ -198,163 +279,173 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
         <div className="absolute top-[30%] -left-[10%] w-[600px] h-[500px] bg-indigo-600/15 blur-[150px] rounded-full pointer-events-none mix-blend-screen" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            {/* Left Column: Narrative Headline & Actions */}
-            <div className="lg:col-span-7 space-y-6">
-              
-              {/* Eyebrow Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/40 text-cyan-300 text-xs font-mono tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-                <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-                <span className="uppercase font-semibold">
-                  {architectureData.eyebrow || `ENTERPRISE SOLUTION · ${product.category || 'ARCHITECTURE'}`}
-                </span>
-              </div>
-
-              {/* Product Title */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-sans leading-[1.1]">
-                {product.title}
-              </h1>
-
-              {/* Description */}
-              <p className="text-base sm:text-lg text-slate-300 font-sans leading-relaxed max-w-2xl">
-                {product.fullDescription || product.shortDescription || architectureData.pipelineDescription}
-              </p>
-
-              {/* Impact Metric (if present) */}
-              {product.impactMetric && (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
-                  <Zap className="w-3.5 h-3.5" />
-                  <span>{product.impactMetric}</span>
+          {isBiDashboard ? (
+            <>
+              {/* Centered BI Dashboard Hero Content */}
+              <div className="max-w-4xl mx-auto text-center flex flex-col items-center space-y-6">
+                {/* Eyebrow Pill */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/40 text-cyan-300 text-xs font-mono tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                  <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                  <span className="uppercase font-semibold">
+                    {architectureData.eyebrow || `ENTERPRISE SOLUTION · ${product.category || 'ARCHITECTURE'}`}
+                  </span>
                 </div>
-              )}
 
-              {/* CTAs */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <button
-                  onClick={() => onScheduleDemo(product.title)}
-                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-white font-bold font-sans text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all cursor-pointer inline-flex items-center gap-2 active:scale-95"
-                >
-                  <span>Schedule Technical Demo</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </button>
+                {/* Product Title */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-sans leading-[1.1]">
+                  {product.title}
+                </h1>
 
-                {stages.length > 0 && (
+                {/* Description */}
+                <p className="text-base sm:text-lg text-slate-300 font-sans leading-relaxed max-w-3xl">
+                  {product.fullDescription || product.shortDescription || architectureData.pipelineDescription}
+                </p>
+
+                {/* Impact Metric (if present) */}
+                {product.impactMetric && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{product.impactMetric}</span>
+                  </div>
+                )}
+
+                {/* CTAs */}
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
                   <button
-                    onClick={() => scrollToSection('pipeline-architecture')}
-                    className="px-6 py-3.5 rounded-xl border border-slate-700 hover:border-cyan-400/60 bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 hover:text-white font-semibold font-sans text-sm transition-all cursor-pointer inline-flex items-center gap-2"
+                    onClick={() => onScheduleDemo(product.title)}
+                    className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-white font-bold font-sans text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all cursor-pointer inline-flex items-center gap-2 active:scale-95"
                   >
-                    <span>Explore Specifications</span>
-                    <Layers className="w-4 h-4 text-cyan-400" />
+                    <span>Schedule Technical Demo</span>
+                    <ArrowUpRight className="w-4 h-4" />
                   </button>
-                )}
 
-                {pptUrl && (
-                  <a
-                    href={pptUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-5 py-3.5 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 text-slate-300 hover:text-white font-mono text-xs transition-all inline-flex items-center gap-2"
-                  >
-                    <Download className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Download PPT</span>
-                  </a>
-                )}
-              </div>
-
-              {/* Tech Stack Pills */}
-              {product.techStack && product.techStack.length > 0 && (
-                <div className="pt-4 flex flex-wrap gap-2">
-                  {product.techStack.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Right Column: Visual Console Preview */}
-            <div className="lg:col-span-5">
-              <div className="relative rounded-2xl border border-cyan-500/30 bg-[#070D1B]/90 backdrop-blur-xl p-3 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(6,182,212,0.15)] overflow-hidden group">
-                
-                {/* Console Chrome Top Bar */}
-                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/80 text-xs font-mono text-slate-400 mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 text-[11px] text-slate-400 font-mono truncate max-w-[180px]">
-                      {product.title}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {videoUrl && (
-                      <button
-                        onClick={() => setIsMuted(!isMuted)}
-                        className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                        title={isMuted ? 'Unmute' : 'Mute'}
-                      >
-                        {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
-                      </button>
-                    )}
+                  {stages.length > 0 && (
                     <button
-                      onClick={() => setIsCinematic(true)}
-                      className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                      title="Expand Preview"
+                      onClick={() => scrollToSection('pipeline-architecture')}
+                      className="px-6 py-3.5 rounded-xl border border-slate-700 hover:border-cyan-400/60 bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 hover:text-white font-semibold font-sans text-sm transition-all cursor-pointer inline-flex items-center gap-2"
                     >
-                      <Maximize2 className="w-3.5 h-3.5" />
+                      <span>Explore Specifications</span>
+                      <Layers className="w-4 h-4 text-cyan-400" />
                     </button>
-                  </div>
-                </div>
-
-                {/* Media Stage: Video or Image */}
-                <div className="relative rounded-xl overflow-hidden bg-black/90 aspect-video flex items-center justify-center">
-                  {videoUrl ? (
-                    <SmartVideo
-                      src={videoUrl}
-                      title={product.title}
-                      autoPlay
-                      loop
-                      muted={isMuted}
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  ) : product.imageUrl ? (
-                    <img
-                      src={product.imageUrl}
-                      alt={product.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-3 p-6 text-center">
-                      <Cpu className="w-12 h-12 text-cyan-400/60 animate-pulse" />
-                      <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
-                        Interactive Architecture Topology
-                      </span>
-                    </div>
                   )}
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#070D1B]/60 via-transparent to-transparent pointer-events-none" />
+                  {pptUrl && (
+                    <a
+                      href={pptUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-3.5 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 text-slate-300 hover:text-white font-mono text-xs transition-all inline-flex items-center gap-2"
+                    >
+                      <Download className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Download PPT</span>
+                    </a>
+                  )}
                 </div>
 
-                {/* Live Console Footer */}
-                <div className="mt-3 px-3 py-2 rounded-lg bg-slate-950/80 border border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-slate-300">CLUSTER STATUS</span>
+                {/* Tech Stack Pills */}
+                {product.techStack && product.techStack.length > 0 && (
+                  <div className="pt-4 flex flex-wrap justify-center gap-2">
+                    {product.techStack.map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+                      >
+                        {tech}
+                      </span>
+                    ))}
                   </div>
-                  <span className="text-emerald-400 font-semibold">ONLINE · 99.98% SLA</span>
+                )}
+              </div>
+
+              {/* Large Video / Dashboard Container Below Hero */}
+              <div className="mt-14 max-w-6xl mx-auto">
+                {renderMediaConsole(true)}
+              </div>
+            </>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+              {/* Left Column: Narrative Headline & Actions */}
+              <div className="lg:col-span-7 space-y-6">
+                {/* Eyebrow Pill */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/40 text-cyan-300 text-xs font-mono tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                  <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                  <span className="uppercase font-semibold">
+                    {architectureData.eyebrow || `ENTERPRISE SOLUTION · ${product.category || 'ARCHITECTURE'}`}
+                  </span>
                 </div>
+
+                {/* Product Title */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-sans leading-[1.1]">
+                  {product.title}
+                </h1>
+
+                {/* Description */}
+                <p className="text-base sm:text-lg text-slate-300 font-sans leading-relaxed max-w-2xl">
+                  {product.fullDescription || product.shortDescription || architectureData.pipelineDescription}
+                </p>
+
+                {/* Impact Metric (if present) */}
+                {product.impactMetric && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{product.impactMetric}</span>
+                  </div>
+                )}
+
+                {/* CTAs */}
+                <div className="pt-2 flex flex-wrap items-center gap-4">
+                  <button
+                    onClick={() => onScheduleDemo(product.title)}
+                    className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-white font-bold font-sans text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all cursor-pointer inline-flex items-center gap-2 active:scale-95"
+                  >
+                    <span>Schedule Technical Demo</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+
+                  {stages.length > 0 && (
+                    <button
+                      onClick={() => scrollToSection('pipeline-architecture')}
+                      className="px-6 py-3.5 rounded-xl border border-slate-700 hover:border-cyan-400/60 bg-slate-900/60 hover:bg-slate-800/80 text-slate-200 hover:text-white font-semibold font-sans text-sm transition-all cursor-pointer inline-flex items-center gap-2"
+                    >
+                      <span>Explore Specifications</span>
+                      <Layers className="w-4 h-4 text-cyan-400" />
+                    </button>
+                  )}
+
+                  {pptUrl && (
+                    <a
+                      href={pptUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-3.5 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 text-slate-300 hover:text-white font-mono text-xs transition-all inline-flex items-center gap-2"
+                    >
+                      <Download className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Download PPT</span>
+                    </a>
+                  )}
+                </div>
+
+                {/* Tech Stack Pills */}
+                {product.techStack && product.techStack.length > 0 && (
+                  <div className="pt-4 flex flex-wrap gap-2">
+                    {product.techStack.map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Visual Console Preview */}
+              <div className="lg:col-span-5">
+                {renderMediaConsole(false)}
               </div>
             </div>
-
-          </div>
+          )}
         </div>
       </section>
 
