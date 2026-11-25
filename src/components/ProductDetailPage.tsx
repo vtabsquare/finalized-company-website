@@ -62,6 +62,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.detailContent?.pptUrl ||
     (product.demoSnippet as any)?.pptUrl ||
     '';
+
+  const withPptButton = (node: React.ReactNode) => (
+    <>
+      {node}
+      {effectivePptUrl && (
+        <a
+          href={effectivePptUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 left-6 z-40 inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold tracking-wider uppercase bg-slate-950/90 hover:bg-slate-900 text-cyan-300 hover:text-white border border-cyan-500/40 hover:border-cyan-400 shadow-[0_8px_30px_rgba(0,0,0,0.6),0_0_20px_rgba(6,182,212,0.25)] backdrop-blur-xl transition-all duration-200 hover:scale-105"
+        >
+          <Download className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Download PPT</span>
+        </a>
+      )}
+    </>
+  );
   if (product.id === 'ai-reporting-platform') {
     return (
       <VTABReportingDetailPage
@@ -73,7 +90,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   }
 
   if (product.id === 'ai-migration-factory-databricks-control-plane') {
-    return (
+    return withPptButton(
       <DatabricksMigrationDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
@@ -90,7 +107,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.startsWith('ai-marketing') ||
     product.title.toLowerCase().includes('marketing agent')
   ) {
-    return (
+    return withPptButton(
       <MarketingAgentDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
@@ -108,7 +125,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('l1 support') ||
     product.title.toLowerCase().includes('l1 agent')
   ) {
-    return (
+    return withPptButton(
       <L1AutomationAgentDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
@@ -123,7 +140,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.startsWith('faceauth') ||
     product.title.toLowerCase().includes('faceauth')
   ) {
-    return (
+    return withPptButton(
       <FaceAuthDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
@@ -140,7 +157,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('homescape') ||
     product.title.toLowerCase().includes('smart home builder')
   ) {
-    return (
+    return withPptButton(
       <HomeScapeDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
@@ -155,7 +172,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.includes('qlik') ||
     product.title.toLowerCase().includes('qlik')
   ) {
-    return (
+    return withPptButton(
       <QlikMigrationDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
@@ -190,7 +207,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('buildsmart') ||
     product.title.toLowerCase().includes('civil estimator')
   ) {
-    return (
+    return withPptButton(
       <BuildsmartEstimatorDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
         embedUrl={effectiveEmbedUrl}
@@ -206,7 +223,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.includes('invoice') ||
     product.title.toLowerCase().includes('invoice')
   ) {
-    return (
+    return withPptButton(
       <InvoiceFlowDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
       />
@@ -222,7 +239,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('qa testing') ||
     product.title.toLowerCase().includes('autonomous testing')
   ) {
-    return (
+    return withPptButton(
       <QATestingDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
         embedUrl={effectiveEmbedUrl}
