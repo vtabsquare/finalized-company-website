@@ -33,6 +33,7 @@ import { InvoiceFlowDetailPage } from './InvoiceFlowDetailPage';
 import { QATestingDetailPage } from './QATestingDetailPage';
 import { DynamicArchitectureDetailPage } from './DynamicArchitectureDetailPage';
 import { FiveScreenArchitectureData } from '../types/architecture';
+import { SmartVideo } from './SmartVideo';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -264,7 +265,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     );
   }
 
-  // Dynamic 5-Screen Architecture Presentation Suite (configured via Admin Dashboard)
+  const isBiDashboard =
+    (product.category || '').toLowerCase().includes('bi dashboard') ||
+    product.id.toLowerCase().includes('dashboard') ||
+    product.id.toLowerCase().includes('analysis-report');
+
+  // Dynamic 5-Screen Architecture Presentation Suite (for Applications, not BI Dashboards)
   const rawArch =
     product.detailContent?.architectureData ||
     (product.demoSnippet as any)?.architectureData ||
@@ -277,7 +283,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       : undefined;
   const archData = ((rawArch?.pipelineStages?.length ? rawArch : directArch) || rawArch) as FiveScreenArchitectureData | undefined;
 
-  if (archData?.pipelineStages && archData.pipelineStages.length > 0) {
+  if (!isBiDashboard && archData?.pipelineStages && archData.pipelineStages.length > 0) {
     return (
       <DynamicArchitectureDetailPage
         product={product}
@@ -415,65 +421,72 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           />
         </div>
 
-        {/* Full-Bleed Cinematic Background (Matches AI Portfolio Showcase & L1 Agent) */}
-        <div className="absolute inset-0 z-10 flex justify-end overflow-hidden">
-          {/* Left & Bottom Gradient Masks to ensure text readability */}
-          <div className={`absolute inset-0 z-20 w-full lg:w-[50%] transition-opacity duration-700 ${
-            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          } bg-gradient-to-r from-[#020611] via-[#020611]/90 to-transparent pointer-events-none`} />
-          
-          <div className={`absolute inset-0 z-20 transition-opacity duration-700 ${
-            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          } bg-gradient-to-t from-[#020611] via-[#020611]/50 to-transparent pointer-events-none`} />
-          
-          {/* Video / Media Player pushed to the right (65%) or expanded full-width */}
-          <div className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center ${
-            isCinematic 
-              ? 'w-full opacity-100 z-10' 
-              : 'w-full lg:w-[65%] opacity-100 z-10'
-          }`}
-            style={{
-              maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
-              WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
-            }}
-          >
-            <ProductVideoStreamingPlayer
-              productId={product.id}
-              productTitle={product.title}
-              imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
-              videoUrl={videoUrl}
-              compactMode={false}
-              isCinematic={isCinematic}
-              onToggleCinematic={() => setIsCinematic(!isCinematic)}
-              isActive={true}
-            />
-          </div>
-        </div>
+        {/* Full-Bleed Cinematic Background (Non-BI products only) */}
+        {!isBiDashboard && (
+          <>
+            <div className="absolute inset-0 z-10 flex justify-end overflow-hidden">
+              {/* Left & Bottom Gradient Masks to ensure text readability */}
+              <div className={`absolute inset-0 z-20 w-full lg:w-[50%] transition-opacity duration-700 ${
+                isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              } bg-gradient-to-r from-[#020611] via-[#020611]/90 to-transparent pointer-events-none`} />
+              
+              <div className={`absolute inset-0 z-20 transition-opacity duration-700 ${
+                isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              } bg-gradient-to-t from-[#020611] via-[#020611]/50 to-transparent pointer-events-none`} />
+              
+              {/* Video / Media Player pushed to the right (65%) or expanded full-width */}
+              <div className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center ${
+                isCinematic 
+                  ? 'w-full opacity-100 z-10' 
+                  : 'w-full lg:w-[65%] opacity-100 z-10'
+              }`}
+                style={{
+                  maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
+                  WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 15%, black 100%)',
+                }}
+              >
+                <ProductVideoStreamingPlayer
+                  productId={product.id}
+                  productTitle={product.title}
+                  imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
+                  videoUrl={videoUrl}
+                  compactMode={false}
+                  isCinematic={isCinematic}
+                  onToggleCinematic={() => setIsCinematic(!isCinematic)}
+                  isActive={true}
+                />
+              </div>
+            </div>
 
-        {/* Top-Right Video Controls (Matches AI Portfolio Showcase) */}
-        <div className="absolute top-24 lg:top-28 right-6 lg:right-10 z-40 flex items-center gap-2.5">
-          {/* Expand Video / Show Text */}
-          <button
-            type="button"
-            onClick={() => setIsCinematic(!isCinematic)}
-            className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
-              isCinematic
-                ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
-                : 'bg-gradient-to-r from-blue-600/30 to-cyan-500/30 hover:from-blue-600/50 hover:to-cyan-500/50 border-cyan-400/50 text-cyan-300 animate-pulse'
-            }`}
-            title={isCinematic ? 'Exit Full View (Show Text)' : 'Expand Video (Hide Text)'}
-          >
-            {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-cyan-300" />}
-            <span className="hidden sm:inline text-xs font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
-          </button>
-        </div>
+            {/* Top-Right Video Controls (Matches AI Portfolio Showcase) */}
+            <div className="absolute top-24 lg:top-28 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsCinematic(!isCinematic)}
+                className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
+                  isCinematic
+                    ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
+                    : 'bg-gradient-to-r from-blue-600/30 to-cyan-500/30 hover:from-blue-600/50 hover:to-cyan-500/50 border-cyan-400/50 text-cyan-300 animate-pulse'
+                }`}
+                title={isCinematic ? 'Exit Full View (Show Text)' : 'Expand Video (Hide Text)'}
+              >
+                {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-cyan-300" />}
+                <span className="hidden sm:inline text-xs font-bold">{isCinematic ? 'Show Text' : 'Expand Video'}</span>
+              </button>
+            </div>
+          </>
+        )}
 
-        {/* Floating Hero Content (Left 54% - Matches AI Portfolio Showcase) */}
-        <div className={`relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center min-h-[640px] ${
-          isCinematic ? 'pointer-events-none' : ''
-        }`}>
-          <div className={`w-full lg:w-[54%] space-y-6 transition-all duration-700 ease-out fill-mode-both ${
-            isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+        {/* Hero Content */}
+        <div className={`relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center ${
+          isBiDashboard ? '' : 'min-h-[640px]'
+        } ${isCinematic ? 'pointer-events-none' : ''}`}>
+          <div className={`${
+            isBiDashboard
+              ? 'max-w-4xl mx-auto text-center flex flex-col items-center space-y-6'
+              : `w-full lg:w-[54%] space-y-6 transition-all duration-700 ease-out fill-mode-both ${
+                  isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+                }`
           }`}>
 
             {/* Top Tagline Pill */}
@@ -485,12 +498,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-white tracking-tight leading-[1.14] text-pretty">
+            <h1 className={`${isBiDashboard ? 'text-4xl sm:text-5xl lg:text-6xl' : 'text-3xl sm:text-4xl lg:text-[2.75rem]'} font-extrabold text-white tracking-tight leading-[1.14] text-pretty`}>
               {product.title}
             </h1>
 
             {/* Description Paragraph */}
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
+            <p className={`text-slate-300 text-sm sm:text-base leading-relaxed font-normal ${isBiDashboard ? 'max-w-3xl' : 'max-w-xl'}`}>
               {product.fullDescription || product.shortDescription}
             </p>
 
@@ -503,7 +516,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             )}
 
             {/* Action Buttons: Schedule Demo + (Optional PPT / Sandbox Link) */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+            <div className={`flex flex-wrap items-center gap-3.5 pt-2 ${isBiDashboard ? 'justify-center' : ''}`}>
               <button
                 type="button"
                 onClick={() => onScheduleDemo(product.title)}
@@ -545,7 +558,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Tech Stack Pills Row */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
+            <div className={`flex flex-wrap items-center gap-2 pt-2 text-xs ${isBiDashboard ? 'justify-center' : ''}`}>
               {product.techStack.map((badge) => (
                 <span
                   key={badge}
@@ -557,6 +570,49 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
           </div>
+
+          {/* Large Video Showcase Container Below Centered Hero (BI Dashboards) */}
+          {isBiDashboard && (
+            <div className="mt-12 max-w-6xl mx-auto w-full">
+              <div className="relative rounded-2xl md:rounded-3xl p-3.5 sm:p-4 border border-cyan-500/35 bg-[#070D1B]/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(6,182,212,0.18)] overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/80 text-xs font-mono text-slate-400 mb-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                    <span className="ml-2 text-[11px] text-slate-300 font-mono truncate max-w-xs sm:max-w-md">
+                      {product.title} — Interactive Dashboard Preview
+                    </span>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    LIVE PREVIEW
+                  </span>
+                </div>
+
+                <div className="relative rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+                  {videoUrl ? (
+                    <SmartVideo
+                      src={videoUrl}
+                      title={product.title}
+                      autoPlay
+                      loop
+                      muted
+                      controls
+                      playsInline
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <img
+                      src={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
+                      alt={product.title}
+                      className="w-full h-full object-contain"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Interactive Scroll For Architecture Deep-Dive */}
           <div className="flex justify-center pt-8 pb-2">
