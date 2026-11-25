@@ -9,12 +9,14 @@ import { LiveApplicationSandbox } from './LiveApplicationSandbox';
 interface BuildsmartEstimatorDetailPageProps {
   onScheduleDemo?: () => void;
   embedUrl?: string;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
 export const BuildsmartEstimatorDetailPage: React.FC<BuildsmartEstimatorDetailPageProps> = ({
   onScheduleDemo,
   embedUrl,
+  pptUrl,
   isLightMode = false,
 }) => {
   const scrollToSpecs = () => {
@@ -39,6 +41,7 @@ export const BuildsmartEstimatorDetailPage: React.FC<BuildsmartEstimatorDetailPa
         onExploreSpecs={scrollToSpecs}
         onExploreSandbox={scrollToSandbox}
         hasSandbox={Boolean(embedUrl)}
+        pptUrl={pptUrl}
       />
 
       {/* Live Interactive Application Sandbox (if configured in Admin Dashboard) */}

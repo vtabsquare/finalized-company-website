@@ -8,7 +8,8 @@ import {
   Layers,
   FileCode,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Download
 } from 'lucide-react';
 import { QLIK_MIGRATION_CONFIG } from '../data/qlikMigrationData';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
@@ -18,6 +19,7 @@ interface QlikHero3DExperienceProps {
   onExploreCapabilities?: () => void;
   onExploreSandbox?: () => void;
   hasSandbox?: boolean;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -26,6 +28,7 @@ export const QlikHero3DExperience: React.FC<QlikHero3DExperienceProps> = ({
   onExploreCapabilities,
   onExploreSandbox,
   hasSandbox = false,
+  pptUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -230,6 +233,18 @@ export const QlikHero3DExperience: React.FC<QlikHero3DExperienceProps> = ({
                 <Sparkles className="w-4 h-4 text-cyan-400" />
                 <span>Live Interactive Sandbox</span>
               </button>
+            )}
+
+            {pptUrl && (
+              <a
+                href={pptUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3.5 rounded-xl font-bold text-sm text-cyan-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300 cursor-pointer flex items-center gap-2"
+              >
+                <Download className="w-4 h-4 text-cyan-400" />
+                <span>Download PPT</span>
+              </a>
             )}
           </div>
 

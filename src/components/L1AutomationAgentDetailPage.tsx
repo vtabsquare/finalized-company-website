@@ -14,12 +14,14 @@ import { L1_AGENT_CONFIG } from '../data/l1AutomationAgentData';
 interface L1AutomationAgentDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
 export const L1AutomationAgentDetailPage: React.FC<L1AutomationAgentDetailPageProps> = ({
   onBack,
   onScheduleDemo,
+  pptUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -96,6 +98,7 @@ export const L1AutomationAgentDetailPage: React.FC<L1AutomationAgentDetailPagePr
         <L1Hero3DExperience
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
+          pptUrl={pptUrl}
           isLightMode={isLightMode}
         />
 

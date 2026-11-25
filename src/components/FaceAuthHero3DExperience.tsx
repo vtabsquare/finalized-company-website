@@ -8,7 +8,8 @@ import {
   MapPin,
   CheckCircle2,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Download
 } from 'lucide-react';
 import { FACEAUTH_CONFIG } from '../data/faceAuthData';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
@@ -16,12 +17,14 @@ import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 interface FaceAuthHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
   onExploreCapabilities?: () => void;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
 export const FaceAuthHero3DExperience: React.FC<FaceAuthHero3DExperienceProps> = ({
   onScheduleDemo,
   onExploreCapabilities,
+  pptUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -215,6 +218,18 @@ export const FaceAuthHero3DExperience: React.FC<FaceAuthHero3DExperienceProps> =
               >
                 <span>Explore Capabilities</span>
               </button>
+            )}
+
+            {pptUrl && (
+              <a
+                href={pptUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3.5 rounded-xl font-bold text-sm text-cyan-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300 cursor-pointer flex items-center gap-2"
+              >
+                <Download className="w-4 h-4 text-cyan-400" />
+                <span>Download PPT</span>
+              </a>
             )}
           </div>
 

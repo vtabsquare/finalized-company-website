@@ -14,12 +14,14 @@ import { HOMESCAPE_CONFIG } from '../data/homeScapeData';
 interface HomeScapeDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
 export const HomeScapeDetailPage: React.FC<HomeScapeDetailPageProps> = ({
   onBack,
   onScheduleDemo,
+  pptUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -96,6 +98,7 @@ export const HomeScapeDetailPage: React.FC<HomeScapeDetailPageProps> = ({
         <HomeScapeHero3DExperience
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
+          pptUrl={pptUrl}
           isLightMode={isLightMode}
         />
 

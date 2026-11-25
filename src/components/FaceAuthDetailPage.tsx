@@ -14,12 +14,14 @@ import { FACEAUTH_CONFIG } from '../data/faceAuthData';
 interface FaceAuthDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
 export const FaceAuthDetailPage: React.FC<FaceAuthDetailPageProps> = ({
   onBack,
   onScheduleDemo,
+  pptUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -96,6 +98,7 @@ export const FaceAuthDetailPage: React.FC<FaceAuthDetailPageProps> = ({
         <FaceAuthHero3DExperience
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
+          pptUrl={pptUrl}
           isLightMode={isLightMode}
         />
 

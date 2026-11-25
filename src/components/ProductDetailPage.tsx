@@ -125,10 +125,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('l1 support') ||
     product.title.toLowerCase().includes('l1 agent')
   ) {
-    return withPptButton(
+    return (
       <L1AutomationAgentDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
+        pptUrl={effectivePptUrl}
         isLightMode={isLightMode}
       />
     );
@@ -140,10 +141,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.startsWith('faceauth') ||
     product.title.toLowerCase().includes('faceauth')
   ) {
-    return withPptButton(
+    return (
       <FaceAuthDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
+        pptUrl={effectivePptUrl}
         isLightMode={isLightMode}
       />
     );
@@ -157,10 +159,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('homescape') ||
     product.title.toLowerCase().includes('smart home builder')
   ) {
-    return withPptButton(
+    return (
       <HomeScapeDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
+        pptUrl={effectivePptUrl}
         isLightMode={isLightMode}
       />
     );
@@ -172,11 +175,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.includes('qlik') ||
     product.title.toLowerCase().includes('qlik')
   ) {
-    return withPptButton(
+    return (
       <QlikMigrationDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
         embedUrl={effectiveEmbedUrl}
+        pptUrl={effectivePptUrl}
         isLightMode={isLightMode}
       />
     );
@@ -207,10 +211,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('buildsmart') ||
     product.title.toLowerCase().includes('civil estimator')
   ) {
-    return withPptButton(
+    return (
       <BuildsmartEstimatorDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
         embedUrl={effectiveEmbedUrl}
+        pptUrl={effectivePptUrl}
         isLightMode={isLightMode}
       />
     );

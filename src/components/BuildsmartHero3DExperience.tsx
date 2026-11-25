@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Sparkles, ArrowRight, Shield, Layers, FileText, Maximize2, Minimize2 } from 'lucide-react';
+import { Sparkles, ArrowRight, Shield, Layers, FileText, Maximize2, Minimize2, Download } from 'lucide-react';
 import { buildsmartEstimatorHero } from '../data/buildsmartEstimatorData';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 
@@ -8,6 +8,7 @@ interface BuildsmartHero3DExperienceProps {
   onExploreSpecs?: () => void;
   onExploreSandbox?: () => void;
   hasSandbox?: boolean;
+  pptUrl?: string;
 }
 
 export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProps> = ({
@@ -15,6 +16,7 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
   onExploreSpecs,
   onExploreSandbox,
   hasSandbox = false,
+  pptUrl,
 }) => {
   const [isCinematic, setIsCinematic] = useState(false);
 
@@ -152,6 +154,18 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 <span>Live Interactive Sandbox</span>
               </button>
+            )}
+
+            {pptUrl && (
+              <a
+                href={pptUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-xl font-bold font-sans text-sm text-amber-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-amber-500/30 hover:border-amber-400/60 transition-all duration-300 cursor-pointer flex items-center gap-2"
+              >
+                <Download className="w-4 h-4 text-amber-400" />
+                <span>Download PPT</span>
+              </a>
             )}
           </div>
 

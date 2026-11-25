@@ -16,6 +16,7 @@ interface QlikMigrationDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
   embedUrl?: string;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -23,6 +24,7 @@ export const QlikMigrationDetailPage: React.FC<QlikMigrationDetailPageProps> = (
   onBack,
   onScheduleDemo,
   embedUrl,
+  pptUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -110,6 +112,7 @@ export const QlikMigrationDetailPage: React.FC<QlikMigrationDetailPageProps> = (
           onExploreCapabilities={scrollToCapabilities}
           onExploreSandbox={scrollToSandbox}
           hasSandbox={Boolean(embedUrl)}
+          pptUrl={pptUrl}
           isLightMode={isLightMode}
         />
 
