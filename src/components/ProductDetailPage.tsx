@@ -62,6 +62,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.detailContent?.pptUrl ||
     (product.demoSnippet as any)?.pptUrl ||
     '';
+  const effectiveVideoUrl =
+    product.detailContent?.videoUrl ||
+    (product.demoSnippet as any)?.videoUrl ||
+    (product as any).videoUrl ||
+    '';
 
   const withPptButton = (node: React.ReactNode) => (
     <>
@@ -130,6 +135,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
         pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );
@@ -146,6 +152,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
         pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );
@@ -164,6 +171,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
         pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );
@@ -181,6 +189,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         onScheduleDemo={onScheduleDemo}
         embedUrl={effectiveEmbedUrl}
         pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );
@@ -199,6 +208,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
         pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );
@@ -216,6 +226,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         onScheduleDemo={() => onScheduleDemo(product.title)}
         embedUrl={effectiveEmbedUrl}
         pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );

@@ -17,6 +17,7 @@ interface PostgresHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
   onExploreCapabilities?: () => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const PostgresHero3DExperience: React.FC<PostgresHero3DExperienceProps> =
   onScheduleDemo,
   onExploreCapabilities,
   pptUrl,
+  videoUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -114,6 +116,7 @@ export const PostgresHero3DExperience: React.FC<PostgresHero3DExperienceProps> =
             productId="postgresql-to-sqlserver-migration"
             productTitle={POSTGRES_MIGRATION_CONFIG.shortName}
             imageUrl="/media/postgres-to-sqlserver-console.png"
+            videoUrl={videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

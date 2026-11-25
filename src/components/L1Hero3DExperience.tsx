@@ -16,6 +16,7 @@ interface L1Hero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
   onExploreCapabilities?: () => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -23,6 +24,7 @@ export const L1Hero3DExperience: React.FC<L1Hero3DExperienceProps> = ({
   onScheduleDemo,
   onExploreCapabilities,
   pptUrl,
+  videoUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -113,6 +115,7 @@ export const L1Hero3DExperience: React.FC<L1Hero3DExperienceProps> = ({
             productId="ai-l1-support-agent"
             productTitle={L1_AGENT_CONFIG.shortName}
             imageUrl="/media/ai-l1-support-agent-full.jpg"
+            videoUrl={videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

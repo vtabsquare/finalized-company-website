@@ -9,6 +9,7 @@ interface BuildsmartHero3DExperienceProps {
   onExploreSandbox?: () => void;
   hasSandbox?: boolean;
   pptUrl?: string;
+  videoUrl?: string;
 }
 
 export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProps> = ({
@@ -17,6 +18,7 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
   onExploreSandbox,
   hasSandbox = false,
   pptUrl,
+  videoUrl,
 }) => {
   const [isCinematic, setIsCinematic] = useState(false);
 
@@ -52,6 +54,7 @@ export const BuildsmartHero3DExperience: React.FC<BuildsmartHero3DExperienceProp
             productId="buildsmart-estimator"
             productTitle={buildsmartEstimatorHero.title}
             imageUrl={buildsmartEstimatorHero.mediaImage}
+            videoUrl={videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

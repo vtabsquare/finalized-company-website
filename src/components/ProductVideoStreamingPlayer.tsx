@@ -317,9 +317,9 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       {/* Main Video Stream Element */}
       {isYouTubeUrl(videoSource) ? (
         <iframe
-          src={getYouTubeEmbedUrl(videoSource, { autoplay: true, mute: isMuted, loop: !onVideoEnded, controls: true }) || videoSource}
+          src={getYouTubeEmbedUrl(videoSource, { autoplay: true, mute: isMuted, loop: !onVideoEnded, controls: isCinematic }) || videoSource}
           title={productTitle}
-          className="absolute inset-0 w-full h-full border-0 z-20"
+          className={`absolute inset-0 w-full h-full border-0 z-10 ${isCinematic ? '' : 'pointer-events-none scale-[1.08]'}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           onLoad={() => {

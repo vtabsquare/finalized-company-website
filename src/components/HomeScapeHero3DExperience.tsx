@@ -17,6 +17,7 @@ interface HomeScapeHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
   onExploreCapabilities?: () => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const HomeScapeHero3DExperience: React.FC<HomeScapeHero3DExperienceProps>
   onScheduleDemo,
   onExploreCapabilities,
   pptUrl,
+  videoUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -114,6 +116,7 @@ export const HomeScapeHero3DExperience: React.FC<HomeScapeHero3DExperienceProps>
             productId="gbti-smart-home-builder"
             productTitle={HOMESCAPE_CONFIG.shortName}
             imageUrl="/media/homescape360-hero.jpg"
+            videoUrl={videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

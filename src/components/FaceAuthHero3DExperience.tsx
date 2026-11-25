@@ -18,6 +18,7 @@ interface FaceAuthHero3DExperienceProps {
   onScheduleDemo: (interestArea?: string) => void;
   onExploreCapabilities?: () => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -25,6 +26,7 @@ export const FaceAuthHero3DExperience: React.FC<FaceAuthHero3DExperienceProps> =
   onScheduleDemo,
   onExploreCapabilities,
   pptUrl,
+  videoUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -115,6 +117,7 @@ export const FaceAuthHero3DExperience: React.FC<FaceAuthHero3DExperienceProps> =
             productId="faceauth"
             productTitle={FACEAUTH_CONFIG.shortName}
             imageUrl="/media/faceauth-biometric-hero.jpg"
+            videoUrl={videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

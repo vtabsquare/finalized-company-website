@@ -20,6 +20,7 @@ interface QlikHero3DExperienceProps {
   onExploreSandbox?: () => void;
   hasSandbox?: boolean;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -29,6 +30,7 @@ export const QlikHero3DExperience: React.FC<QlikHero3DExperienceProps> = ({
   onExploreSandbox,
   hasSandbox = false,
   pptUrl,
+  videoUrl,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -119,6 +121,7 @@ export const QlikHero3DExperience: React.FC<QlikHero3DExperienceProps> = ({
             productId="qlik-to-powerbi-migration"
             productTitle={QLIK_MIGRATION_CONFIG.shortName}
             imageUrl="/media/qlik-to-powerbi-console.png"
+            videoUrl={videoUrl}
             compactMode={false}
             isCinematic={isCinematic}
             onToggleCinematic={() => setIsCinematic(!isCinematic)}

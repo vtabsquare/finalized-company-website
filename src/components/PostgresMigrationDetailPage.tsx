@@ -15,6 +15,7 @@ interface PostgresMigrationDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const PostgresMigrationDetailPage: React.FC<PostgresMigrationDetailPagePr
   onBack,
   onScheduleDemo,
   pptUrl,
+  videoUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -99,6 +101,7 @@ export const PostgresMigrationDetailPage: React.FC<PostgresMigrationDetailPagePr
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
           pptUrl={pptUrl}
+          videoUrl={videoUrl}
           isLightMode={isLightMode}
         />
 

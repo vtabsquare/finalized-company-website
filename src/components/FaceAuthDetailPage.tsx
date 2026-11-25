@@ -15,6 +15,7 @@ interface FaceAuthDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const FaceAuthDetailPage: React.FC<FaceAuthDetailPageProps> = ({
   onBack,
   onScheduleDemo,
   pptUrl,
+  videoUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -99,6 +101,7 @@ export const FaceAuthDetailPage: React.FC<FaceAuthDetailPageProps> = ({
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
           pptUrl={pptUrl}
+          videoUrl={videoUrl}
           isLightMode={isLightMode}
         />
 

@@ -15,6 +15,7 @@ interface L1AutomationAgentDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
   pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
@@ -22,6 +23,7 @@ export const L1AutomationAgentDetailPage: React.FC<L1AutomationAgentDetailPagePr
   onBack,
   onScheduleDemo,
   pptUrl,
+  videoUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -99,6 +101,7 @@ export const L1AutomationAgentDetailPage: React.FC<L1AutomationAgentDetailPagePr
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
           pptUrl={pptUrl}
+          videoUrl={videoUrl}
           isLightMode={isLightMode}
         />
 
