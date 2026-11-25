@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Database, Layers, Cpu, Bot, TestTube } from 'lucide-react';
 import type { ElementType } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+
+// ─── Demo app's Supabase — public anon key (read-only, safe to expose) ─────────
+const DEMO_SB_URL = 'https://pxkwgedplrygvqxbckxf.supabase.co';
+const DEMO_SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4a3dnZWRwbHJ5Z3ZxeGJja3hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MjEzMDMsImV4cCI6MjEwMzM5NzMwM30.eGbb6fAhcT1EExswyq1r8ihVB3xhqoMFz-CEU_DrI7g';
 
 // ─── Raw shape returned from Supabase ─────────────────────────────────────────
 export interface DemoVideoRow {
@@ -68,52 +71,34 @@ export function useDemoVideos(fallback: DemoProduct[]): UseDemoVideosResult {
   const [error, setError]       = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setLoading(false);
-      return;
-    }
+    const controller = new AbortController();
 
-    let cancelled = false;
-    supabase
-      .from('products')
-      .select('id, title, category, short_description, tags, detail_content, demo_snippet')
-      .order('id', { ascending: true })
-      .then(({ data, error: sbErr }) => {
-        if (cancelled) return;
-        if (sbErr) {
-          setError(sbErr.message);
-          setLoading(false);
-          return;
-        }
-        const withVideos: DemoProduct[] = (data || [])
-          .map((row: any) => {
-            const videoUrl =
-              row.detail_content?.videoUrl ||
-              row.demo_snippet?.videoUrl ||
-              '';
-            if (!videoUrl) return null;
-            return {
-              id: row.id,
-              name: row.title,
-              category: row.category || 'Enterprise AI',
-              description: row.short_description || '',
-              tags: Array.isArray(row.tags) ? row.tags : [],
-              videoUrl,
-              accent: 'cyan',
-              Icon: resolveIcon(row.id, row.category || ''),
-            } as DemoProduct;
-          })
-          .filter(Boolean) as DemoProduct[];
-
-        if (withVideos.length > 0) {
-          setProducts(withVideos);
-        }
+    fetch(
+      `${DEMO_SB_URL}/rest/v1/demo_videos?select=*&is_active=eq.true&order=display_order.asc`,
+      {
+        headers: {
+          apikey: DEMO_SB_ANON,
+          Authorization: `Bearer ${DEMO_SB_ANON}`,
+        },
+        signal: controller.signal,
+      }
+    )
+      .then(res => {
+        if (!res.ok) throw new Error(`Supabase returned HTTP ${res.status}`);
+        return res.json() as Promise<DemoVideoRow[]>;
+      })
+      .then(rows => {
+        if (rows.length > 0) setProducts(rows.map(rowToProduct));
         setLoading(false);
+      })
+      .catch(err => {
+        if (err.name === 'AbortError') return;
+        console.warn('[useDemoVideos] Falling back to local list:', err.message);
+        setError(err.message);
+        setLoading(false); // fallback already set as initial state
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, []);
 
   return { products, loading, error };
