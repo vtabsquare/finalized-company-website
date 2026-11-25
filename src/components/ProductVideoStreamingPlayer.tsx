@@ -28,40 +28,18 @@ interface ProductVideoStreamingPlayerProps {
   isActive?: boolean;
 }
 
-// High quality tech/AI video loops
-// The production media bucket with all optimized dashboard & product demo videos is hosted at jqxqujrldlutwgkaqwkb.supabase.co
-const SUPABASE_MEDIA = 'https://jqxqujrldlutwgkaqwkb.supabase.co/storage/v1/object/public/product-media';
-const DEMO_MEDIA = 'https://pxkwgedplrygvqxbckxf.supabase.co/storage/v1/object/public/videos';
-
-// Only map applications and dashboards that have dedicated, verified videos.
-// Applications without dedicated demo videos are intentionally left empty/undefined.
+// Local static video loops served from public/media/ (zero Supabase egress)
+// All custom/new project videos are configured via YouTube links in the Admin Dashboard.
 const STREAMING_VIDEOS: Record<string, string> = {
-  // BI Dashboards
+  // BI Dashboards (local static assets)
   'all-phase-dashboard': '/media/videos/powerbi/all-phase-dashboard-web.mp4',
-  'application-analysis-report': `${SUPABASE_MEDIA}/powerbi/application-analysis-report-web.mp4`,
-  'e-grow-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/e-grow-analysis-dashboard-web.mp4`,
-  'google-analytics-dashboard': `${SUPABASE_MEDIA}/powerbi/google-analytics-dashboard-web.mp4`,
-  'hva-score-analysis-dashboard': `${SUPABASE_MEDIA}/powerbi/hva-score-analysis-dashboard-web.mp4`,
-  'final-quality-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/final-quality-inspection-dashboard-web.mp4`,
-  'food-inspection-dashboard': `${SUPABASE_MEDIA}/powerbi/food-inspection-dashboard-web.mp4`,
-  'energy-consumption-dashboard': `${SUPABASE_MEDIA}/powerbi/energy-consumption-dashboard-web.mp4`,
   'hr-analytics-dashboard': '/media/videos/powerbi/hr-analytics-dashboard.mp4',
 
-  // Verified Applications
+  // Verified Applications (local static assets)
   'ai-reporting-platform': '/media/Reporting Tool AV.mp4',
   'vtab-reporting': '/media/Reporting Tool AV.mp4',
-  'qlik-to-powerbi-migration': `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`,
-  'qlik-to-powerbi': `${DEMO_MEDIA}/qlik-to-powerbi-demo.mp4`,
   'gbti-smart-home-builder': '/media/videos/ai_smart_home_web.mp4',
-  'buildsmart-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
-  'buildsmart-360-civil-estimator': `${SUPABASE_MEDIA}/buildsmart-web.mp4`,
-  'buildsmart': `${DEMO_MEDIA}/Buildsmart%20Demo%20Video.mp4`,
-  'faceauth': `${SUPABASE_MEDIA}/faceauth-web.mp4`,
   'packaging-optimization-platform': '/media/videos/ai_logistics_web.mp4',
-  'ai-l1-support-agent': `${SUPABASE_MEDIA}/l1_agent-web.mp4`,
-  'l1-automation': `${DEMO_MEDIA}/L1%20Automation%20Demo%20Video.mp4`,
-  'postgresql-to-sqlserver-migration': `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`,
-  'postgres-to-sql': `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`,
 };
 
 // Returns a video URL ONLY if there is a verified dedicated video.
@@ -90,31 +68,23 @@ const getVideoForProduct = (id: string, title?: string, customUrl?: string): str
     return undefined;
   }
 
-  // If customUrl is a valid non-dead URL
-  if (customUrl && customUrl.trim() !== '' && !customUrl.includes('doazlhotvvzmsngjbfne')) {
+  // If customUrl is a valid non-dead URL (YouTube link or active asset)
+  if (
+    customUrl &&
+    customUrl.trim() !== '' &&
+    !customUrl.includes('doazlhotvvzmsngjbfne') &&
+    !customUrl.includes('wclpchjxdglhinoazxmr') &&
+    !customUrl.includes('jqxqujrldlutwgkaqwkb') &&
+    !customUrl.includes('pxkwgedplrygvqxbckxf')
+  ) {
     return customUrl;
   }
-  
+
   if (STREAMING_VIDEOS[cleanId]) return STREAMING_VIDEOS[cleanId];
 
-  // Verified applications by explicit keyword
-  if (text.includes('l1') || text.includes('support agent')) {
-    return `${SUPABASE_MEDIA}/l1_agent-web.mp4`;
-  }
-  if (text.includes('buildsmart') || text.includes('civil estimator')) {
-    return `${SUPABASE_MEDIA}/buildsmart-web.mp4`;
-  }
-  if (text.includes('faceauth') || text.includes('biometric')) {
-    return `${SUPABASE_MEDIA}/faceauth-web.mp4`;
-  }
+  // Verified local static loops by explicit keyword
   if (text.includes('home') || text.includes('homescape')) {
     return '/media/videos/ai_smart_home_web.mp4';
-  }
-  if (text.includes('qlik')) {
-    return `${SUPABASE_MEDIA}/qlik2powerbi-web.mp4`;
-  }
-  if (text.includes('postgresql') || (text.includes('postgres') && text.includes('sql server'))) {
-    return `${DEMO_MEDIA}/postgres-to-sqlserver-demo.mp4`;
   }
   if (text.includes('packaging') || text.includes('logistics')) {
     return '/media/videos/ai_logistics_web.mp4';

@@ -57,7 +57,7 @@ export const PRODUCTS_DATA: Product[] = [
     ],
     "iconName": "Database",
     "featured": true,
-    "imageUrl": "https://wclpchjxdglhinoazxmr.supabase.co/storage/v1/object/public/product-media/images/1794568013365-AI_Migration_Factory_Showcase.png",
+    "imageUrl": "/media/ai-migration-factory-showcase.png",
     "embedUrl": "https://databricks-migration-factory-9ym2.onrender.com/?embed=true",
     "detailContent": {
       "challenge": [
