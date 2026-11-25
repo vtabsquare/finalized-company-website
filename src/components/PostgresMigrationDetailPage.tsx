@@ -14,12 +14,14 @@ import { POSTGRES_MIGRATION_CONFIG } from '../data/postgresMigrationData';
 interface PostgresMigrationDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
+  pptUrl?: string;
   isLightMode?: boolean;
 }
 
 export const PostgresMigrationDetailPage: React.FC<PostgresMigrationDetailPageProps> = ({
   onBack,
   onScheduleDemo,
+  pptUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -96,6 +98,7 @@ export const PostgresMigrationDetailPage: React.FC<PostgresMigrationDetailPagePr
         <PostgresHero3DExperience
           onScheduleDemo={onScheduleDemo}
           onExploreCapabilities={scrollToCapabilities}
+          pptUrl={pptUrl}
           isLightMode={isLightMode}
         />
 

@@ -58,6 +58,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     (product.demoSnippet as any)?.embedUrl ||
     liveUrls[product.id] ||
     '';
+  const effectivePptUrl =
+    product.detailContent?.pptUrl ||
+    (product.demoSnippet as any)?.pptUrl ||
+    '';
   if (product.id === 'ai-reporting-platform') {
     return (
       <VTABReportingDetailPage
@@ -173,6 +177,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       <PostgresMigrationDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
+        pptUrl={effectivePptUrl}
         isLightMode={isLightMode}
       />
     );
