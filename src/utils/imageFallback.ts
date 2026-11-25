@@ -55,7 +55,16 @@ export const getDefaultProjectImage = (category?: string, title?: string, id?: s
  */
 export const getValidImageUrl = (imageUrl?: string | null, category?: string, title?: string, id?: string | number): string => {
   if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim().length > 0) {
-    return imageUrl.trim();
+    const trimmed = imageUrl.trim();
+    // Ignore locked/deprecated old Supabase project storage URLs
+    if (
+      trimmed.includes('wclpchjxdglhinoazxmr.supabase.co') ||
+      trimmed.includes('doazlhotvvzmsngjbfne.supabase.co') ||
+      trimmed.includes('jqxqujrldlutwgkaqwkb.supabase.co')
+    ) {
+      return getDefaultProjectImage(category, title, id);
+    }
+    return trimmed;
   }
   return getDefaultProjectImage(category, title, id);
 };

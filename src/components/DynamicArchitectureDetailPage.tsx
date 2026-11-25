@@ -29,6 +29,7 @@ import {
 import { Product } from '../types';
 import { FiveScreenArchitectureData } from '../types/architecture';
 import { LiveApplicationSandbox } from './LiveApplicationSandbox';
+import { SmartVideo } from './SmartVideo';
 
 interface DynamicArchitectureDetailPageProps {
   product: Product;
@@ -314,8 +315,9 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
                 {/* Media Stage: Video or Image */}
                 <div className="relative rounded-xl overflow-hidden bg-black/90 aspect-video flex items-center justify-center">
                   {videoUrl ? (
-                    <video
+                    <SmartVideo
                       src={videoUrl}
+                      title={product.title}
                       autoPlay
                       loop
                       muted={isMuted}
@@ -965,10 +967,12 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
           </button>
           <div className="w-full max-w-5xl aspect-video rounded-2xl overflow-hidden border border-cyan-500/30 bg-black shadow-2xl">
             {videoUrl ? (
-              <video
+              <SmartVideo
                 src={videoUrl}
+                title={product.title}
                 controls
                 autoPlay
+                muted={false}
                 className="w-full h-full object-contain"
               />
             ) : product.imageUrl ? (

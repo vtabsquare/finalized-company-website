@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getValidImageUrl } from '../utils/imageFallback';
+import { getYouTubeEmbedUrl, isYouTubeUrl } from '../utils/youtube';
 import { 
   Play, 
   Pause, 
@@ -344,40 +345,54 @@ export const ProductVideoStreamingPlayer: React.FC<ProductVideoStreamingPlayerPr
       )}
 
       {/* Main Video Stream Element */}
-      <video
-        ref={videoRef}
-        src={videoSource}
-        autoPlay={true}
-        loop={!onVideoEnded}
-        onEnded={onVideoEnded}
-        muted={isMuted}
-        playsInline
-        preload="auto"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onLoadedMetadata={() => {
-          if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration) && isFinite(videoRef.current.duration)) {
-            setDuration(Math.min(30, videoRef.current.duration));
-          }
-          if (videoRef.current && !userPausedRef.current) {
-            videoRef.current.play().catch(() => {});
-          }
-        }}
-        onCanPlay={() => {
-          setIsBuffered(true);
-          if (videoRef.current && !userPausedRef.current) {
-            videoRef.current.play().catch(() => {});
-          }
-        }}
-        style={{
-          willChange: 'transform',
-          transform: 'translateZ(0)',
-          backfaceVisibility: 'hidden'
-        }}
-        className={`absolute inset-0 w-full h-full object-contain z-10 transition-opacity duration-700 ${
-          isBuffered ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
+      {isYouTubeUrl(videoSource) ? (
+        <iframe
+          src={getYouTubeEmbedUrl(videoSource, { autoplay: true, mute: isMuted, loop: !onVideoEnded, controls: true }) || videoSource}
+          title={productTitle}
+          className="absolute inset-0 w-full h-full border-0 z-20"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          onLoad={() => {
+            setIsBuffered(true);
+            setIsPlaying(true);
+          }}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          src={videoSource}
+          autoPlay={true}
+          loop={!onVideoEnded}
+          onEnded={onVideoEnded}
+          muted={isMuted}
+          playsInline
+          preload="auto"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onLoadedMetadata={() => {
+            if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration) && isFinite(videoRef.current.duration)) {
+              setDuration(Math.min(30, videoRef.current.duration));
+            }
+            if (videoRef.current && !userPausedRef.current) {
+              videoRef.current.play().catch(() => {});
+            }
+          }}
+          onCanPlay={() => {
+            setIsBuffered(true);
+            if (videoRef.current && !userPausedRef.current) {
+              videoRef.current.play().catch(() => {});
+            }
+          }}
+          style={{
+            willChange: 'transform',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden'
+          }}
+          className={`absolute inset-0 w-full h-full object-contain z-10 transition-opacity duration-700 ${
+            isBuffered ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
 
 
 

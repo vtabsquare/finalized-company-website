@@ -8,6 +8,7 @@ import { ScrollReveal } from './animations/ScrollReveal';
 import { useDemoVideos, type DemoProduct } from '../hooks/useDemoVideos';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { trackBusinessEvent } from '../lib/analyticsService';
+import { getYouTubeEmbedUrl, isYouTubeUrl } from '../utils/youtube';
 
 const DEMO_APP_URL = 'https://vibrant-foundation.onrender.com';
 
@@ -175,14 +176,25 @@ const VideoModal: React.FC<VideoModalProps> = ({ product, allProducts, onClose, 
               <a href={`${DEMO_APP_URL}?product=${product.id}`} onClick={() => trackBusinessEvent('demo_open')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-500 text-white text-sm hover:bg-cyan-400 transition-colors"><ExternalLink className="w-4 h-4" />Open Demo App</a>
             </div>
           )}
-          <video ref={videoRef} src={product.videoUrl} className="w-full h-full object-contain" playsInline muted={isMuted}
-            onCanPlay={() => { setIsLoading(false); videoRef.current?.play().then(() => setIsPlaying(true)).catch(() => {}); }}
-            onTimeUpdate={() => { if (videoRef.current) setCurrentTime(videoRef.current.currentTime); }}
-            onLoadedMetadata={() => { if (videoRef.current) setDuration(videoRef.current.duration); }}
-            onEnded={() => { setIsPlaying(false); next(); }}
-            onError={() => { setIsLoading(false); setHasError(true); }}
-            onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)}
-          />
+          {isYouTubeUrl(product.videoUrl) ? (
+            <iframe
+              src={getYouTubeEmbedUrl(product.videoUrl, { autoplay: true, mute: isMuted, loop: true, controls: true }) || product.videoUrl}
+              title={product.name}
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              onLoad={() => setIsLoading(false)}
+            />
+          ) : (
+            <video ref={videoRef} src={product.videoUrl} className="w-full h-full object-contain" playsInline muted={isMuted}
+              onCanPlay={() => { setIsLoading(false); videoRef.current?.play().then(() => setIsPlaying(true)).catch(() => {}); }}
+              onTimeUpdate={() => { if (videoRef.current) setCurrentTime(videoRef.current.currentTime); }}
+              onLoadedMetadata={() => { if (videoRef.current) setDuration(videoRef.current.duration); }}
+              onEnded={() => { setIsPlaying(false); next(); }}
+              onError={() => { setIsLoading(false); setHasError(true); }}
+              onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)}
+            />
+          )}
           {!isLoading && !hasError && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300" style={{ opacity: showCtrl && !isPlaying ? 1 : 0 }}>
               <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
