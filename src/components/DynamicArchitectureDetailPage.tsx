@@ -19,6 +19,7 @@ import {
   Volume2,
   VolumeX,
   Maximize2,
+  Minimize2,
   X,
   Download,
   Lock,
@@ -30,6 +31,8 @@ import { Product } from '../types';
 import { FiveScreenArchitectureData } from '../types/architecture';
 import { LiveApplicationSandbox } from './LiveApplicationSandbox';
 import { SmartVideo } from './SmartVideo';
+import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
+import { getValidImageUrl } from '../utils/imageFallback';
 
 interface DynamicArchitectureDetailPageProps {
   product: Product;
@@ -271,12 +274,72 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
       {/* ── 2. HERO SECTION: 3D ENTERPRISE EXPERIENCE ── */}
       <section
         ref={heroRootRef}
-        className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 overflow-hidden"
+        className={`relative pt-28 pb-20 lg:pt-32 lg:pb-24 overflow-hidden ${isBiDashboard ? '' : 'min-h-[680px] flex items-center'}`}
         style={{ perspective: '1200px' }}
       >
         {/* Ambient atmospheric glows */}
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-b from-cyan-500/20 via-blue-600/15 to-transparent blur-[140px] rounded-full pointer-events-none mix-blend-screen" />
         <div className="absolute top-[30%] -left-[10%] w-[600px] h-[500px] bg-indigo-600/15 blur-[150px] rounded-full pointer-events-none mix-blend-screen" />
+
+        {/* Full-Bleed Right-Side Hero Background (Video or Picture Banner fallback) */}
+        {!isBiDashboard && (
+          <>
+            <div className="absolute inset-0 z-10 flex justify-end overflow-hidden">
+              {/* Left & Bottom Gradient Masks for text readability */}
+              <div
+                className={`absolute inset-0 z-20 w-full lg:w-[55%] transition-opacity duration-700 ${
+                  isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                } bg-gradient-to-r from-[#030712] via-[#030712]/90 to-transparent pointer-events-none`}
+              />
+              <div
+                className={`absolute inset-0 z-20 transition-opacity duration-700 ${
+                  isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                } bg-gradient-to-t from-[#030712] via-[#030712]/40 to-transparent pointer-events-none`}
+              />
+
+              {/* Media Stage (65% width on desktop, full width when expanded) */}
+              <div
+                className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center ${
+                  isCinematic ? 'w-full opacity-100 z-10' : 'w-full lg:w-[65%] opacity-100 z-10'
+                }`}
+                style={{
+                  maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+                  WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+                }}
+              >
+                <ProductVideoStreamingPlayer
+                  productId={product.id}
+                  productTitle={product.title}
+                  imageUrl={getValidImageUrl(product.imageUrl, product.category, product.title, product.id)}
+                  videoUrl={videoUrl}
+                  compactMode={false}
+                  isCinematic={isCinematic}
+                  onToggleCinematic={() => setIsCinematic(!isCinematic)}
+                  isActive={true}
+                />
+              </div>
+            </div>
+
+            {/* Top-Right Expand Control */}
+            <div className="absolute top-24 lg:top-28 right-6 lg:right-10 z-40 flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsCinematic(!isCinematic)}
+                className={`px-4 py-2.5 rounded-2xl border transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md ${
+                  isCinematic
+                    ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
+                    : 'bg-gradient-to-r from-blue-600/30 to-cyan-500/30 hover:from-blue-600/50 hover:to-cyan-500/50 border-cyan-400/50 text-cyan-300'
+                }`}
+                title={isCinematic ? 'Show Text' : videoUrl ? 'Expand Video' : 'Expand Banner'}
+              >
+                {isCinematic ? <Minimize2 className="w-4 h-4 text-amber-400" /> : <Maximize2 className="w-4 h-4 text-cyan-300" />}
+                <span className="hidden sm:inline text-xs font-bold">
+                  {isCinematic ? 'Show Text' : videoUrl ? 'Expand Video' : 'Expand Preview'}
+                </span>
+              </button>
+            </div>
+          </>
+        )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {isBiDashboard ? (
@@ -363,10 +426,10 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
               </div>
             </>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-              {/* Left Column: Narrative Headline & Actions */}
-              <div className="lg:col-span-7 space-y-6">
-                {/* Eyebrow Pill */}
+            <div className={`w-full lg:w-[54%] space-y-6 transition-all duration-700 ${
+              isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+            }`}>
+              {/* Eyebrow Pill */}
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/40 text-cyan-300 text-xs font-mono tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.15)]">
                   <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
                   <span className="uppercase font-semibold">
@@ -438,12 +501,6 @@ export const DynamicArchitectureDetailPage: React.FC<DynamicArchitectureDetailPa
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Right Column: Visual Console Preview */}
-              <div className="lg:col-span-5">
-                {renderMediaConsole(false)}
-              </div>
             </div>
           )}
         </div>
