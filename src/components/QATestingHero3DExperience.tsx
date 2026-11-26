@@ -1,45 +1,62 @@
-import React, { useRef, useState } from 'react';
-import { Sparkles, ArrowRight, Shield, Layers, FileCode, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, Layers, Maximize2, Minimize2, Download } from 'lucide-react';
 import { qaTestingHero } from '../data/qaTestingData';
 import { ProductVideoStreamingPlayer } from './ProductVideoStreamingPlayer';
 
 interface QATestingHero3DExperienceProps {
   onScheduleDemo?: () => void;
   onExploreSpecs?: () => void;
+  pptUrl?: string;
+  videoUrl?: string;
 }
 
 export const QATestingHero3DExperience: React.FC<QATestingHero3DExperienceProps> = ({
   onScheduleDemo,
-  onExploreSpecs
+  onExploreSpecs,
+  pptUrl,
+  videoUrl,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rX = ((y - centerY) / centerY) * -5;
-    const rY = ((x - centerX) / centerX) * 5;
-
-    setRotateX(rX);
-    setRotateY(rY);
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-  };
+  const [isCinematic, setIsCinematic] = useState(false);
 
   return (
-    <div className="relative pt-10 pb-16 lg:pt-14 lg:pb-20 overflow-hidden">
+    <div className="relative pt-10 pb-16 lg:pt-14 lg:pb-24 min-h-[720px] overflow-hidden bg-[#020611]">
+      {/* Full-Bleed Right-Side Hero Background (Video or Picture Banner fallback) */}
+      <div className="absolute inset-0 z-10 flex justify-end overflow-hidden">
+        <div
+          className={`absolute inset-0 z-20 w-full lg:w-[55%] transition-opacity duration-700 ${
+            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          } bg-gradient-to-r from-[#020611] via-[#020611]/90 to-transparent pointer-events-none`}
+        />
+        <div
+          className={`absolute inset-0 z-20 transition-opacity duration-700 ${
+            isCinematic ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          } bg-gradient-to-t from-[#020611] via-[#020611]/40 to-transparent pointer-events-none`}
+        />
+
+        <div
+          className={`relative h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center ${
+            isCinematic ? 'w-full opacity-100 z-10' : 'w-full lg:w-[65%] opacity-100 z-10'
+          }`}
+          style={{
+            maskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+            WebkitMaskImage: isCinematic ? 'none' : 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+          }}
+        >
+          <ProductVideoStreamingPlayer
+            productId="qa-ai-autonomous-testing-platform"
+            productTitle={qaTestingHero.title}
+            imageUrl={qaTestingHero.mediaImage}
+            videoUrl={videoUrl}
+            compactMode={false}
+            isCinematic={isCinematic}
+            onToggleCinematic={() => setIsCinematic(!isCinematic)}
+            isActive={true}
+          />
+        </div>
+      </div>
+
       {/* Top Breadcrumb & Status Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <a
             href="/"
@@ -47,123 +64,102 @@ export const QATestingHero3DExperience: React.FC<QATestingHero3DExperienceProps>
           >
             <span>←</span> Back to Home
           </a>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/20 text-cyan-400 text-xs font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            {qaTestingHero.badge}
+          <div className="flex items-center gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/20 text-cyan-400 text-xs font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              {qaTestingHero.badge}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsCinematic(!isCinematic)}
+              className={`px-3.5 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer shadow-lg backdrop-blur-md text-xs font-bold ${
+                isCinematic
+                  ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/50 text-amber-300'
+                  : 'bg-slate-900/80 hover:bg-slate-800 border-cyan-400/40 text-cyan-300'
+              }`}
+            >
+              {isCinematic ? <Minimize2 className="w-3.5 h-3.5 text-amber-400" /> : <Maximize2 className="w-3.5 h-3.5 text-cyan-300" />}
+              <span className="hidden sm:inline">{isCinematic ? 'Show Text' : 'Expand Preview'}</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Product Information & CTAs */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-950/20 text-purple-300 text-xs font-mono">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                ENTERPRISE SOLUTION · AUTONOMOUS TEST AUTOMATION
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white font-sans">
-                QA-AI Autonomous <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-300 bg-clip-text text-transparent">Testing Platform</span>
-              </h1>
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans pt-2">
-                {qaTestingHero.description}
-              </p>
+      {/* Left Foreground Content */}
+      <div className={`relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 ${isCinematic ? 'pointer-events-none' : ''}`}>
+        <div
+          className={`w-full lg:w-[54%] space-y-6 transition-all duration-700 ${
+            isCinematic ? 'opacity-0 -translate-x-12 pointer-events-none' : 'opacity-100 translate-x-0'
+          }`}
+        >
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-950/20 text-purple-300 text-xs font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+              ENTERPRISE SOLUTION · AUTONOMOUS TEST AUTOMATION
             </div>
-
-            {/* Metrics */}
-            <div className="grid grid-cols-3 gap-4 pt-2">
-              {qaTestingHero.metrics.map((metric, i) => (
-                <div key={i} className="p-3 rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-md">
-                  <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400">
-                    {metric.value}
-                  </div>
-                  <div className="text-xs text-slate-400 font-mono mt-1">
-                    {metric.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* CTAs (No download buttons, strictly demo & explore) */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <button
-                onClick={onScheduleDemo}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-semibold font-sans text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-all flex items-center gap-2 group cursor-pointer"
-              >
-                <span>{qaTestingHero.primaryAction}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-
-              <button
-                onClick={onExploreSpecs}
-                className="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/50 hover:bg-slate-800/50 text-slate-200 font-medium font-sans text-sm transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <span>{qaTestingHero.secondaryAction}</span>
-                <Layers className="w-4 h-4 text-slate-400" />
-              </button>
-            </div>
-
-            {/* Technology Tags */}
-            <div className="pt-2 flex flex-wrap gap-2">
-              {qaTestingHero.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white font-sans">
+              QA-AI Autonomous <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-300 bg-clip-text text-transparent">Testing Platform</span>
+            </h1>
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans pt-2">
+              {qaTestingHero.description}
+            </p>
           </div>
 
-          {/* Right Column: 3D Parallax Media Console */}
-          <div className="lg:col-span-6">
-            <div
-              ref={containerRef}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              style={{
-                perspective: '1000px'
-              }}
-              className="relative w-full"
-            >
-              <div
-                style={{
-                  transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="relative rounded-2xl border border-indigo-500/30 bg-[#0B0F19]/90 shadow-2xl shadow-indigo-500/10 backdrop-blur-xl overflow-hidden group"
-              >
-                {/* Console Header Bar */}
-                <div className="px-4 py-3 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/60">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-green-500/80 inline-block" />
-                    <span className="ml-2 text-xs font-mono text-slate-400">
-                      QA-AI Autonomous Testing Platform · Media Console
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider">
-                      OPERATIONAL
-                    </span>
-                  </div>
+          {/* Metrics */}
+          <div className="grid grid-cols-3 gap-4 pt-2">
+            {qaTestingHero.metrics.map((metric, i) => (
+              <div key={i} className="p-3 rounded-xl border border-slate-800 bg-slate-900/75 backdrop-blur-md">
+                <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400">
+                  {metric.value}
                 </div>
-
-                {/* Console Media Preview / Video Player */}
-                <div className="relative aspect-video min-h-[340px] sm:min-h-[420px] w-full overflow-hidden bg-slate-950">
-                  <ProductVideoStreamingPlayer
-                    productId="qa-ai-autonomous-testing-platform"
-                    productTitle={qaTestingHero.title}
-                    imageUrl={qaTestingHero.mediaImage}
-                    compactMode={false}
-                  />
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {metric.label}
                 </div>
               </div>
-            </div>
+            ))}
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center gap-4 pt-4">
+            <button
+              onClick={onScheduleDemo}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-semibold font-sans text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-all flex items-center gap-2 group cursor-pointer"
+            >
+              <span>{qaTestingHero.primaryAction}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+
+            <button
+              onClick={onExploreSpecs}
+              className="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-900/70 hover:bg-slate-800/70 text-slate-200 font-medium font-sans text-sm transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span>{qaTestingHero.secondaryAction}</span>
+              <Layers className="w-4 h-4 text-slate-400" />
+            </button>
+
+            {pptUrl && (
+              <a
+                href={pptUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-xl font-bold font-sans text-sm text-cyan-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300 cursor-pointer flex items-center gap-2"
+              >
+                <Download className="w-4 h-4 text-cyan-400" />
+                <span>Download PPT</span>
+              </a>
+            )}
+          </div>
+
+          {/* Technology Tags */}
+          <div className="pt-2 flex flex-wrap gap-2">
+            {qaTestingHero.tags.map((tag, i) => (
+              <span
+                key={i}
+                className="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900/80 border border-slate-800 text-slate-400"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </div>

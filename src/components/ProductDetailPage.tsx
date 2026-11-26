@@ -113,10 +113,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.startsWith('ai-marketing') ||
     product.title.toLowerCase().includes('marketing agent')
   ) {
-    return withPptButton(
+    return (
       <MarketingAgentDetailPage
         onBack={onBack}
         onScheduleDemo={onScheduleDemo}
+        pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );
@@ -240,9 +242,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.id.includes('invoice') ||
     product.title.toLowerCase().includes('invoice')
   ) {
-    return withPptButton(
+    return (
       <InvoiceFlowDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
+        pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
       />
     );
   }
@@ -256,10 +260,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     product.title.toLowerCase().includes('qa testing') ||
     product.title.toLowerCase().includes('autonomous testing')
   ) {
-    return withPptButton(
+    return (
       <QATestingDetailPage
         onScheduleDemo={() => onScheduleDemo(product.title)}
         embedUrl={effectiveEmbedUrl}
+        pptUrl={effectivePptUrl}
+        videoUrl={effectiveVideoUrl}
         isLightMode={isLightMode}
       />
     );

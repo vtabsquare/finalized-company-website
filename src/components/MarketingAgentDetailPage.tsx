@@ -14,12 +14,16 @@ import { MARKETING_AGENT_CONFIG } from '../data/marketingAgentData';
 interface MarketingAgentDetailPageProps {
   onBack: () => void;
   onScheduleDemo: (interestArea?: string) => void;
+  pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
 export const MarketingAgentDetailPage: React.FC<MarketingAgentDetailPageProps> = ({
   onBack,
   onScheduleDemo,
+  pptUrl,
+  videoUrl,
   isLightMode = false,
 }) => {
   useEffect(() => {
@@ -94,6 +98,8 @@ export const MarketingAgentDetailPage: React.FC<MarketingAgentDetailPageProps> =
       <MarketingHero3DExperience
         onScheduleDemo={onScheduleDemo}
         onExploreCapabilities={scrollToCapabilities}
+        pptUrl={pptUrl}
+        videoUrl={videoUrl}
         isLightMode={isLightMode}
       />
 

@@ -9,12 +9,16 @@ import { LiveApplicationSandbox } from './LiveApplicationSandbox';
 interface QATestingDetailPageProps {
   onScheduleDemo?: () => void;
   embedUrl?: string;
+  pptUrl?: string;
+  videoUrl?: string;
   isLightMode?: boolean;
 }
 
 export const QATestingDetailPage: React.FC<QATestingDetailPageProps> = ({
   onScheduleDemo,
   embedUrl,
+  pptUrl,
+  videoUrl,
   isLightMode = false,
 }) => {
   const scrollToSpecs = () => {
@@ -37,8 +41,8 @@ export const QATestingDetailPage: React.FC<QATestingDetailPageProps> = ({
       <QATestingHero3DExperience
         onScheduleDemo={onScheduleDemo}
         onExploreSpecs={scrollToSpecs}
-        onExploreSandbox={scrollToSandbox}
-        hasSandbox={Boolean(embedUrl)}
+        pptUrl={pptUrl}
+        videoUrl={videoUrl}
       />
 
       {/* Live Interactive Application Sandbox (if configured in Admin Dashboard) */}

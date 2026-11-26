@@ -7,10 +7,14 @@ import { InvoiceEditionsSection } from './InvoiceEditionsSection';
 
 interface InvoiceFlowDetailPageProps {
   onScheduleDemo?: () => void;
+  pptUrl?: string;
+  videoUrl?: string;
 }
 
 export const InvoiceFlowDetailPage: React.FC<InvoiceFlowDetailPageProps> = ({
-  onScheduleDemo
+  onScheduleDemo,
+  pptUrl,
+  videoUrl,
 }) => {
   const scrollToSpecs = () => {
     const el = document.getElementById('pipeline-architecture');
@@ -25,6 +29,8 @@ export const InvoiceFlowDetailPage: React.FC<InvoiceFlowDetailPageProps> = ({
       <InvoiceHero3DExperience
         onScheduleDemo={onScheduleDemo}
         onExploreSpecs={scrollToSpecs}
+        pptUrl={pptUrl}
+        videoUrl={videoUrl}
       />
 
       {/* Screen 1 (cont.): End-to-End Pipeline Architecture (4 stages) */}
